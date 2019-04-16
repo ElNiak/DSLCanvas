@@ -4,10 +4,10 @@ import org.scalajs.dom
 import dom.document
 
 object WebAppDemo {
-  def main(args: Array[String]): Unit = {
+  /*def main(args: Array[String]): Unit = {
     println("Hello world!")
     appendPar(document.body, "Hello World")
-  }
+  }*/
 
   def appendPar(targetNode: dom.Node, text: String): Unit = {
     val parNode = document.createElement("p")

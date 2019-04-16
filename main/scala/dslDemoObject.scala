@@ -5,11 +5,17 @@ import dom.{document, html}
 
 
 object dslDemoObject {
-  def main(args: Array[String]): Unit = {
-    dslDemo()
-  }
+  /*def main(args: Array[String]): Unit = {
+    val canvas = document.createElement("canvas").asInstanceOf[html.Canvas]
+    document.body.appendChild(canvas)
+    val w = 300
+    canvas.width = w
+    canvas.height = w
 
-  def dslDemo(canvas: html.Canvas) = {
+    //dslDemo(canvas)
+  }*/
+
+  /*def dslDemo(canvas: html.Canvas) = {
     // From now on, we use the DSL
     val canvasy = new Canvasy(canvas) //isn't canvasy a nice name for a library?
 
@@ -72,5 +78,5 @@ object dslDemoObject {
 
     // let us draw all these things
     canvasy draw()
-  }
+  }*/
 }
