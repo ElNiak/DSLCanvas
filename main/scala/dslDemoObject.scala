@@ -15,7 +15,7 @@ object dslDemoObject {
     //dslDemo(canvas)
   }*/
 
-  /*def dslDemo(canvas: html.Canvas) = {
+  def dslDemo(canvas: html.Canvas) = {
     // From now on, we use the DSL
     val canvasy = new Canvasy(canvas) //isn't canvasy a nice name for a library?
 
@@ -28,7 +28,7 @@ object dslDemoObject {
     canvasy += rectangles
 
     // the first way to edit elements is by modifying their properties directly
-    circles(0) stroke rgb"#ee22aa"
+    circles(0) stroke rgb"#ee22aa" //usage of apply ?
     circles(0) stroke 12
     circles(1) translateY 50
 
@@ -36,7 +36,7 @@ object dslDemoObject {
     // this translates all the elements inside the group.
     circles translateX 100 translateY 100
 
-    // easily create a group with the keyword "and"
+    // easily create a group with the keyword "and" => groupBy
     circles(2) and circles(3) translateX 50
 
     circles(2) translateX 22
@@ -78,5 +78,5 @@ object dslDemoObject {
 
     // let us draw all these things
     canvasy draw()
-  }*/
+  }
 }
