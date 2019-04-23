@@ -7,13 +7,18 @@ import scala.collection.mutable.ListBuffer
 
 class Canvasy(c: html.Canvas) {
   private val ctx = c.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
-  private val list_groups = new ListBuffer[Array[Shape]]
+  private val circle_groups = new ListBuffer[Array[Circle]]
+  private val rect_groups = new ListBuffer[Array[Rectangle]]
 
   def draw(): Unit = {
     ???
   }
 
-  def +=(group: Array[Shape]): Unit = {
-    list_groups.+=:(group)
+  def +=(group: Array[Circle]): Unit = {
+    circle_groups.+=:(group)
+  }
+
+  def +=(group: Array[Rectangle]): Unit = {
+    rect_groups.+=:(group)
   }
 }

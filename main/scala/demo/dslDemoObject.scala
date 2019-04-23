@@ -1,4 +1,4 @@
-package demo
+package DSLStatic
 
 import DSLStatic._
 import org.scalajs.dom
