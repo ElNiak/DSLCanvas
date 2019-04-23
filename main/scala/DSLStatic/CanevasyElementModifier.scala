@@ -1,5 +1,5 @@
 package DSLStatic
 
-trait CanevasyElementModifier {
-
+trait CanvasyElementModifier[ApplyOn <: CanvasyElement] {
+  def change(x: ApplyOn): Unit
 }
