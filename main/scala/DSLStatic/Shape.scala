@@ -17,3 +17,17 @@ abstract class Shape{
   def translateY(y : Int) : Unit
   def translateX(x : Int) : Unit
 }
+
+object Shape {
+  def and(shape: Shape) = {
+
+  }
+
+  def change(shape: Shape) = {
+
+  }
+
+  def change(canvasyElement: CanvasyElement) = {
+
+  }
+}
