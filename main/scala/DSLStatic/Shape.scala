@@ -6,7 +6,7 @@ trait Shape{
   val stroke : Stroke
   val color : Color
   val x,y : Int
-  val canevasyElementModifier : CanevasyElementModifier
+  val canevasyElementModifier : CanvasyElementModifier[Shape]
 
   def stroke(col : Color) : Unit
   def and(shape: Shape) : Groups

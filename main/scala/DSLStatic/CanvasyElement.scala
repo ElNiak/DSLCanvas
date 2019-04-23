@@ -1,5 +1,7 @@
 package DSLStatic
 
-class CanvasyElement {
-
+class CanvasyElement extends CanvasyElementModifier[Shape] {
+  override def change(x: Shape): Unit = {
+    case
+  }
 }
