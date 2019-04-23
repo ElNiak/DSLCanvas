@@ -1,5 +1,7 @@
+package demo
+
 import org.scalajs.dom
-import dom.{document, html}
+import org.scalajs.dom.{document, html}
 
 object WebApp {
   def main(args: Array[String]): Unit = {

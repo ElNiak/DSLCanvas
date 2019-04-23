@@ -1,7 +1,7 @@
-import scala.scalajs.js
-import scala.scalajs.js.annotation._
+package demo
+
 import org.scalajs.dom
-import dom.{document, html}
+import org.scalajs.dom.html
 
 
 object dslDemoObject {

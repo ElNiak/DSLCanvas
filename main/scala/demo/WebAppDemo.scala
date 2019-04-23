@@ -1,7 +1,9 @@
-import scala.scalajs.js
-import scala.scalajs.js.annotation._
+package demo
+
 import org.scalajs.dom
-import dom.document
+import org.scalajs.dom.document
+
+import scala.scalajs.js.annotation._
 
 object WebAppDemo {
   /*def main(args: Array[String]): Unit = {

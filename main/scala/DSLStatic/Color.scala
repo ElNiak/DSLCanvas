@@ -1,0 +1,5 @@
+package DSLStatic
+
+class Color {
+
+}
