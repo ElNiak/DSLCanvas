@@ -8,7 +8,7 @@ class Circle(radius: Double, x:Int, y:Int) extends Shape {
 
   override def stroke(col: Color): Unit = ???
 
-  override def translateY(y: Int): Unit = ???
+  // override def translateY(y: Int): Unit = ???
 
-  override def translateX(x: Int): Unit = ???
+  // override def translateX(x: Int): Unit = ???
 }

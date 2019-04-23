@@ -2,7 +2,7 @@ package DSLStatic
 
 import DSLStatic.Color.Color
 
-abstract class Shape{
+trait Shape{
   var stroke : Stroke
   var color : Color
   var x : Int
@@ -14,9 +14,13 @@ abstract class Shape{
   def stroke(w : Int) : Unit
   def and(shape: Shape) : Shape
   def and(groups: Groups) : Groups
-  def translateY(y : Int) : Unit
-  def translateX(x : Int) : Unit
-}
+  def translateY(Y : Int) : Unit = {y += Y}
+  def translateX(X : Int) : Unit = {x += X}
+
+  implicit class arrayShape(group: Array[Circle]) {
+    def translateY(Y: Int) : Unit = {group foreach(_ translateY(Y))}
+    def translateX(X: Int) : Unit = {group foreach(_ translateX(X))}
+  }
 
 object Shape {
   def and(shape: Shape) = {

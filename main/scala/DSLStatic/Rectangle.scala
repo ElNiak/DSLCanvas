@@ -12,7 +12,7 @@ class Rectangle(x:Int, y:Int, width: Int, height: Int) extends Shape {
 
   override def and(shape: Shape): Groups = ???
 
-  override def translateY(y: Int): Unit = ???
-
-  override def translateX(x: Int): Unit = ???
+//  override def translateY(y: Int): Unit = ???
+//
+//  override def translateX(x: Int): Unit = ???
 }
