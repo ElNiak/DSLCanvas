@@ -1,5 +1,6 @@
 package demo
 
+import DSLStatic._
 import org.scalajs.dom
 import org.scalajs.dom.html
 
@@ -63,10 +64,10 @@ object dslDemoObject {
     // }
 
     // Let us create an example
-    case class StrokeWidth(w: Double) extends CanvasyElementModifier[Shape] {
+    /*case class StrokeWidth(w: Double) extends CanvasyElementModifier[Shape] {
       // every Shape has a stroke.
       override def change(x: Shape): Unit = x.stroke.width = w
-    }
+    }*/
     rectangles change StrokeWidth(3) and StrokeColor(rgb"#aa00e1")
     circles change StrokeWidth(2)
 

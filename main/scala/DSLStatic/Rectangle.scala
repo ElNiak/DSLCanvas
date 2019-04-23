@@ -1,10 +1,9 @@
 package DSLStatic
 import DSLStatic.Color.Color
 
-class Rectangle(x:Int, y:Int, width: Width, height: Height) extends Shape {
+class Rectangle(x:Int, y:Int, width: Double, height: Double) extends Shape {
   override val stroke: Stroke = _
   override val color: Color = _
-  override val x: Int = _
   override val canevasyElementModifier: Any = _
 
   override def stroke(col: Color): Unit = ???
