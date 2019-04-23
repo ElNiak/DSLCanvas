@@ -1,5 +1,5 @@
 package DSLStatic
 
-class CanvasyElement  {
+abstract class CanvasyElement  {
   def and(groups: Groups): Unit
 }

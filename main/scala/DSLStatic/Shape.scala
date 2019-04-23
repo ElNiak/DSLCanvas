@@ -2,7 +2,7 @@ package DSLStatic
 
 import DSLStatic.Color.Color
 
-trait Shape{
+abstract class Shape{
   var stroke : Stroke
   var color : Color
   var x : Int
