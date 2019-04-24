@@ -1,6 +1,5 @@
 package DSLStatic
 
-import DSLStatic.Color.Color
 
 trait Shape {
   var stroke: Stroke
@@ -43,8 +42,6 @@ trait Shape {
 }
 
 
-
-
 object Shape {
   def and(shape: Shape): Array[Shape] = {
 
@@ -62,13 +59,13 @@ object Shape {
     }
   }
 
-  implicit class Group(group: Array[Circle]) {
+  implicit class Group[ApplyOn <: Shape](group: Array[Shape]) {
 
-    def translateY(Y: Int) : Array[Circle] = {
+    def translateY[ApplyOn <: Shape](Y: Int) : Array[Shape] = {
       group foreach(_ translateY(Y))
       return group
     }
-    def translateX(X: Int) : Array[Circle] = {
+    def translateX[ApplyOn <: Shape](X: Int) : Array[Shape] = {
       group foreach(_ translateX(X))
       return group
     }
