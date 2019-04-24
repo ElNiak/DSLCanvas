@@ -13,15 +13,24 @@ trait Shape{
   def and[A](v: A) : A
   def translateY(Y : Int) : Unit = {y += Y}
   def translateX(X : Int) : Unit = {x += X}
+}
 
-  implicit class arrayShape(group: Array[Circle]) {
-    def translateY(Y: Int) : Unit = {group foreach(_ translateY(Y))}
-    def translateX(X: Int) : Unit = {group foreach(_ translateX(X))}
-  }
 
 object Shape {
   def and(shape: Shape) = {
+    val array = new Array[Shape]()
+  }
 
+  implicit class Group(group: Array[Circle]) {
+
+    def translateY(Y: Int) : Array[Circle] = {
+      group foreach(_ translateY(Y))
+      return group
+    }
+    def translateX(X: Int) : Array[Circle] = {
+      group foreach(_ translateX(X))
+      return group
+    }
   }
 
   def change(shape: Shape) = {
