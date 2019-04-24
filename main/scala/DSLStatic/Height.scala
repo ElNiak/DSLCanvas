@@ -7,4 +7,3 @@ case class Height(h: Double) extends CanvasyElementModifier[Shape] {
   override def change(x: Shape): Unit = x.height = h
 
 }
-

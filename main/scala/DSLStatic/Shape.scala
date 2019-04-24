@@ -8,9 +8,7 @@ trait Shape extends CanvasyElement {
   var color: Color
   var x: Int
   var y: Int
-  var canvasyElement: CanvasyElement
   var size : Int
-
 
   def stroke[A](v : A) : Unit
 
@@ -37,9 +35,7 @@ trait Shape extends CanvasyElement {
 
 
 object Shape {
-
   implicit class Group[I <: Shape](group: Array[I]) {
-
     def translateY(Y: Int) : Array[I] = {
       group foreach(_ translateY(Y))
       return group
@@ -47,23 +43,6 @@ object Shape {
     def translateX(X: Int) : Array[I] = {
       group foreach(_ translateX(X))
       return group
-    }
-
-    def and(groups: Array[I]): Array[I] = {
-      val array = new Array[I](1 + groups.length)
-      groups foreach (array(_))
-      array(this)
-      return array
-    }
-  }
-
-  implicit class Mofifier[I <: CanvasyElementModifier](group: Array[I])
-
-    def and(groups: Array[I]): Array[I] = {
-      val array = new Array[I](1 + groups.length)
-      groups foreach (array(_))
-      array(this)
-      return array
     }
   }
 }

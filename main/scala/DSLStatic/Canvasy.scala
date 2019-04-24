@@ -5,7 +5,7 @@ import org.scalajs.dom.{document, html}
 
 import scala.collection.mutable.ListBuffer
 
-class Canvasy[I <: Shape](c: html.Canvas) {
+class Canvasy[I <: CanvasyElement](c: html.Canvas) {
   private val ctx = c.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
   private val shape_groups = new ListBuffer[Array[I]]
 
@@ -13,7 +13,7 @@ class Canvasy[I <: Shape](c: html.Canvas) {
     ???
   }
 
-  def += [I <: Shape](group: Array[I]): Unit = {
+  def += [I <: CanvasyElement](group: Array[I]): Unit = {
     shape_groups.+=:(group)
   }
 }
