@@ -1,7 +1,9 @@
 package DSLStatic
 
+import DSLStatic.Color.Color
 
-trait Shape {
+
+trait Shape extends CanvasyElement {
   var stroke: Stroke
   var color: Color
   var x: Int
@@ -10,9 +12,7 @@ trait Shape {
   var size : Int
 
 
-  def stroke(col: Color.Value): Unit
-
-  def stroke(w: Int): Unit
+  def stroke[A](v : A) : Unit
 
   def size(s: Int): Unit = {
     size = s
@@ -25,12 +25,6 @@ trait Shape {
     return array
   }
 
-  def and(groups: Array[Shape]): Array[Shape] = {
-    val array = new Array[Shape](1 + groups.length)
-    groups foreach (array(_))
-    array(this)
-    return array
-  }
 
   def translateY(Y: Int): Unit = {
     y += Y
@@ -43,51 +37,33 @@ trait Shape {
 
 
 object Shape {
-  def and(shape: Shape): Array[Shape] = {
 
-  }
+  implicit class Group[I <: Shape](group: Array[I]) {
 
-  implicit class Group(group: Array[Shape]) {
-
-    def translateY(Y: Int) : Array[Shape] = {
+    def translateY(Y: Int) : Array[I] = {
       group foreach(_ translateY(Y))
       return group
     }
-    def translateX(X: Int) : Array[Shape] = {
+    def translateX(X: Int) : Array[I] = {
       group foreach(_ translateX(X))
       return group
     }
-  }
 
-  implicit class Group[ApplyOn <: Shape](group: Array[Shape]) {
-
-    def translateY[ApplyOn <: Shape](Y: Int) : Array[Shape] = {
-      group foreach(_ translateY(Y))
-      return group
-    }
-    def translateX[ApplyOn <: Shape](X: Int) : Array[Shape] = {
-      group foreach(_ translateX(X))
-      return group
+    def and(groups: Array[I]): Array[I] = {
+      val array = new Array[I](1 + groups.length)
+      groups foreach (array(_))
+      array(this)
+      return array
     }
   }
 
-  implicit class Group(group: Array[Rectangle]) {
+  implicit class Mofifier[I <: CanvasyElementModifier](group: Array[I])
 
-    def translateY(Y: Int) : Array[Rectangle] = {
-      group foreach(_ translateY(Y))
-      return group
+    def and(groups: Array[I]): Array[I] = {
+      val array = new Array[I](1 + groups.length)
+      groups foreach (array(_))
+      array(this)
+      return array
     }
-    def translateX(X: Int) : Array[Rectangle] = {
-      group foreach(_ translateX(X))
-      return group
-    }
-  }
-
-  def change(shape: Shape) = {
-
-  }
-
-  def change(canvasyElement: CanvasyElement) = {
-
   }
 }
