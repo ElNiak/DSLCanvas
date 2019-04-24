@@ -1,19 +1,16 @@
 package DSLStatic
 
-import DSLStatic.Color.Color
 
 trait Shape{
   var stroke : Stroke
-  var color : Color
+  var color : String
   var x : Int
   var y : Int
   var canvasyElement : CanvasyElement
 
 
-  def stroke(col : Color.Value) : Unit
-  def stroke(w : Int) : Unit
-  def and(shape: Shape) : Shape
-  def and(groups: Groups) : Groups
+  def stroke[A](v : A) : Unit
+  def and[A](v: A) : A
   def translateY(Y : Int) : Unit = {y += Y}
   def translateX(X : Int) : Unit = {x += X}
 
