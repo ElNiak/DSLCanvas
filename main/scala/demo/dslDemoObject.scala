@@ -49,6 +49,8 @@ object dslDemoObject {
     circles change Radius(10)
     circles(0) change Radius(20) and StrokeColor(Color.red)
 
+    // def change(f : CanvasyElement => CanvasyElement)
+
     // this should not compile, as a circle has no width:
     //circles change Width(10)
 
@@ -64,11 +66,12 @@ object dslDemoObject {
     // }
 
     // Let us create an example
-    /*case class StrokeWidth(w: Double) extends CanvasyElementModifier[Shape] {
+    case class StrokeWidth(w: Double) extends CanvasyElementModifier[Shape] {
       // every Shape has a stroke.
       override def change(x: Shape): Unit = x.stroke.width = w
-    }*/
-    rectangles change StrokeWidth(3) and StrokeColor(rgb"#aa00e1")
+    }
+
+    rectangles change StrokeWidth(3) and StrokeColor(Color.red)
     circles change StrokeWidth(2)
 
     //Another thing that should work is

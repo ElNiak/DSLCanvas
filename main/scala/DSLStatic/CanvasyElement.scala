@@ -1,13 +1,9 @@
 package DSLStatic
 
-trait CanvasyElement  {
-  def and(x: CanvasyElement) : Array[CanvasyElement] = {
-    val array = new Array[CanvasyElement](2)
-    array(this)
-    array(x)
-    return array
-  }
-  def change(x: CanvasyElement): Unit
+trait CanvasyElement {
+  def and(x: CanvasyElementModifier[Shape]) : Unit
+  def and(x: Shape) : Array[Shape]
+  def change (x: CanvasyElementModifier[Shape]): Shape
 }
 
 
@@ -20,7 +16,7 @@ object CanvasyElement {
       return array
     }
 
-    def change(element: CanvasyElementModifier[Shape]): Unit = {
+    def change[I <: CanvasyElementModifier[Shape]] (x: I): Shape  = {
 
     }
   }
