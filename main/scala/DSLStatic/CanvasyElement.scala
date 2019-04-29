@@ -11,12 +11,12 @@ trait CanvasyElement {
 
 object CanvasyElement {
   implicit class Group[I <: Shape](group: Array[I]) {
-    def and(groups: Array[I]): Array[I] = {
-      val array = new Array[I](1 + groups.length)
-      groups foreach (array(_))
-      array(this)
-      return array
-    }
+//    def and(groups: Array[I]): Array[I] = {
+//      val array = new Array[I](1 + groups.length)
+//      groups foreach (array(_))
+//      array(this)
+//      return array
+//    }
 
     def change[J <: CanvasyElementModifier[Shape]] (modifier: J): Array[I]  = {
       group foreach(_ change(modifier))

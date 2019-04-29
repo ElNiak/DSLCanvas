@@ -4,7 +4,7 @@ import org.scalajs.dom
 import org.scalajs.dom.{document, html}
 
 object WebApp {
-  def main(args: Array[String]): Unit = {
+  /*def main(args: Array[String]): Unit = {
     val canvas = document.createElement("canvas").asInstanceOf[html.Canvas]
     document.body.appendChild(canvas)
 
@@ -14,7 +14,7 @@ object WebApp {
 
     scalaJSDemo(canvas)
     //dslDemo(canvas)
-  }
+  }*/
 
   def scalaJSDemo(c: html.Canvas) = {
     val ctx = c.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
