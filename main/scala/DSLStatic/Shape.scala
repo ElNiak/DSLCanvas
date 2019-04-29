@@ -4,15 +4,18 @@ import DSLStatic.Color.Color
 
 trait Shape extends CanvasyElement {
   var stroke: Stroke
-  var color: Color.Value
+  var color: String
   var x: Int
   var y: Int
   var size : Int
 
-  def stroke[A](v : A) : Unit
-
   def size(s: Int): Unit = {
     size = s
+  }
+
+  override def change(x: CanvasyElementModifier[Shape]): Shape = {
+    x.change(this)
+    this
   }
 
   override def and(x: Shape): Array[Shape] = {

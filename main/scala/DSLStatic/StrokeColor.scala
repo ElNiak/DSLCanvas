@@ -1,11 +1,8 @@
 package DSLStatic
 
-case class StrokeColor(c: Color.Value) extends Stroke {
+case class StrokeColor(c: String) extends CanvasyElementModifier[Shape] {
   // every Shape has a stroke.
-  //override def change(x: Shape): Unit = x.stroke.color = c
   override def change(x: Shape): Unit = x.stroke.color = c
 
-  override var width: Double
-  override var color: Color.Value
 }
 

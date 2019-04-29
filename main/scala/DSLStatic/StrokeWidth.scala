@@ -1,9 +1,7 @@
 package DSLStatic
 
-case class StrokeWidth(w: Double) extends Stroke {
+case class StrokeWidth(w: Double) extends CanvasyElementModifier[Shape] {
   // every Shape has a stroke.
   override def change(x: Shape): Unit = x.stroke.width = w
 
-  override var width: Double
-  override var color: Color.Value
 }
