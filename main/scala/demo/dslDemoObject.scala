@@ -50,7 +50,7 @@ object dslDemoObject {
 
     // to modify multiple elements at the same time on their inner properties, we use the "change" notation:
     circles change Radius(10)
-    circles(0) change Radius(20) and StrokeColor(Color.red)
+    circles(0) change Radius(20) and StrokeColor("#1122aa")
 
     // def change(f : CanvasyElement => CanvasyElement)
 
@@ -78,7 +78,9 @@ object dslDemoObject {
     circles change StrokeWidth(2)
 
     //Another thing that should work is
-    (rectangles ++ circles) change StrokeColor(rgb"#ee22aa")
+    // (rectangles ++ circles) change StrokeColor(rgb"#1122aa")
+
+    circles(0) stroke 5
 
     //But of course, this should not (circles have no width, but rather have a radius)
     //(rectangles ++ circles) change Width(10)

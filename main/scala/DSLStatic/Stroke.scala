@@ -4,8 +4,8 @@ import ColorRGB.ColorRGBUtils
 
 class Stroke() {
   // Default value for an object stroke ?
-  var width : Double = 10
-  var color : String = rgb"#ee22aa"
+  var width : Double = -1
+  var color : String = ""
 
   def apply(w: Double): Unit = {
     width = w
