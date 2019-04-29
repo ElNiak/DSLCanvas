@@ -55,7 +55,7 @@ object dslDemoObject {
     // def change(f : CanvasyElement => CanvasyElement)
 
     // this should not compile, as a circle has no width:
-    //circles change Width(10)
+    circles change Width(10)
 
     // however, this should
     rectangles change Width(90)
