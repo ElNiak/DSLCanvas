@@ -11,10 +11,7 @@ class Canvasy[I <: CanvasyElement](c: html.Canvas) {
   private val ctx_stroke_color = ctx.strokeStyle
   private val ctx_stroke_width = ctx.lineWidth
 
-
   def draw(): Unit = {
-    //ctx.strokeRect(50, 50, 50, 50)
-    //println(shape_groups)
     shape_groups foreach(_ foreach(drawShape(_)))
   }
 
