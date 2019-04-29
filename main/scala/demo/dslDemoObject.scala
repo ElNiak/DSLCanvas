@@ -3,6 +3,7 @@ package DSLStatic
 import DSLStatic._
 import org.scalajs.dom
 import org.scalajs.dom.html
+import ColorRGB.ColorRGBUtils
 
 
 object dslDemoObject {
@@ -75,7 +76,7 @@ object dslDemoObject {
     circles change StrokeWidth(2)
 
     //Another thing that should work is
-    (rectangles ++ circles) change StrokeColor(Color.red)
+    (rectangles ++ circles) change StrokeColor(rgb"#ee22aa")
 
     //But of course, this should not (circles have no width, but rather have a radius)
     //(rectangles ++ circles) change Width(10)
