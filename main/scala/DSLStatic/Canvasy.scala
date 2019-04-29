@@ -8,6 +8,8 @@ import scala.collection.mutable.ListBuffer
 class Canvasy[I <: CanvasyElement](c: html.Canvas) {
   private val ctx = c.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
   private val shape_groups = new ListBuffer[Array[I]]()
+  private val ctx_stroke_color = ctx.strokeStyle
+  private val ctx_stroke_width = ctx.lineWidth
 
 
   def draw(): Unit = {
@@ -32,8 +34,12 @@ class Canvasy[I <: CanvasyElement](c: html.Canvas) {
   def drawCircle(circle: Circle): Unit = {
     if (circle.stroke.color != "")
       ctx.strokeStyle = circle.stroke.color
+    else
+      ctx.strokeStyle = ctx_stroke_color
     if (circle.stroke.width != -1)
-      ctx.strokeStyle = circle.stroke.width
+      ctx.lineWidth = circle.stroke.width
+    else
+      ctx.lineWidth = ctx_stroke_width
 
     ctx.beginPath()
     ctx.arc(circle.x, circle.y, circle.radius, 0, 2 * Math.PI)
@@ -44,8 +50,12 @@ class Canvasy[I <: CanvasyElement](c: html.Canvas) {
   def drawRectangle(rectangle: Rectangle): Unit = {
     if (rectangle.stroke.color != "")
       ctx.strokeStyle = rectangle.stroke.color
+    else
+      ctx.strokeStyle = ctx_stroke_color
     if (rectangle.stroke.width != -1)
-      ctx.strokeStyle = rectangle.stroke.width
+      ctx.lineWidth = rectangle.stroke.width
+    else
+      ctx.lineWidth = ctx_stroke_width
     ctx.strokeRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height)
   }
 

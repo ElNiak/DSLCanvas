@@ -78,9 +78,9 @@ object dslDemoObject {
     circles change StrokeWidth(2)
 
     //Another thing that should work is
-    // (rectangles ++ circles) change StrokeColor(rgb"#1122aa")
+    //(rectangles ++ circles) change StrokeColor(rgb"#1122aa")
 
-    circles(0) stroke 5
+    circles(0) stroke 10
 
     //But of course, this should not (circles have no width, but rather have a radius)
     //(rectangles ++ circles) change Width(10)
