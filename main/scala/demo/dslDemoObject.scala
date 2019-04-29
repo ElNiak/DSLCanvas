@@ -32,7 +32,7 @@ object dslDemoObject {
     canvasy += rectangles
 
     // the first way to edit elements is by modifying their properties directly
-    //circles(0) stroke rgb"#ee22aa" //usage of apply ?
+    circles(0) stroke rgb"#ee22aa" //usage of apply ?
     circles(0) stroke 12
     circles(1) translateY 50
 
