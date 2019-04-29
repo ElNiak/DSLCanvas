@@ -21,8 +21,8 @@ object dslDemoObject {
 
   def dslDemo(canvas: html.Canvas) = {
     // From now on, we use the DSL
-    val canvasy = new Canvasy(canvas) //isn't canvasy a nice name for a library?
 
+    val canvasy = new Canvasy(canvas) //isn't canvasy a nice name for a library?
     // Let us create some shapes
     val circles = Array.fill(4)(new Circle(50.0, 0, 0))
     val rectangles = Array.tabulate(2)(i => new Rectangle(i*50, i*50, 50, 100))

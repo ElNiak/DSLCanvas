@@ -1,5 +1,5 @@
 package DSLStatic
-import DSLStatic.Color.Color
+import org.scalajs.dom
 
 case class Circle(radiusv: Double, X:Int, Y:Int) extends Shape {
   var stroke = new Stroke()
