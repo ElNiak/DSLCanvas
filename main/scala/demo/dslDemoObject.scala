@@ -3,18 +3,20 @@ package DSLStatic
 import DSLStatic._
 import org.scalajs.dom
 import org.scalajs.dom.html
+import org.scalajs.dom.{document, html}
+
 
 
 object dslDemoObject {
-  /*def main(args: Array[String]): Unit = {
+  def main(args: Array[String]): Unit = {
     val canvas = document.createElement("canvas").asInstanceOf[html.Canvas]
     document.body.appendChild(canvas)
     val w = 300
     canvas.width = w
     canvas.height = w
 
-    //dslDemo(canvas)
-  }*/
+    dslDemo(canvas)
+  }
 
   def dslDemo(canvas: html.Canvas) = {
     // From now on, we use the DSL
@@ -29,7 +31,7 @@ object dslDemoObject {
     canvasy += rectangles
 
     // the first way to edit elements is by modifying their properties directly
-    circles(0) stroke rgb"#ee22aa" //usage of apply ?
+    //circles(0) stroke rgb"#ee22aa" //usage of apply ?
     circles(0) stroke 12
     circles(1) translateY 50
 

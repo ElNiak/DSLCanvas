@@ -7,13 +7,42 @@ import scala.collection.mutable.ListBuffer
 
 class Canvasy[I <: CanvasyElement](c: html.Canvas) {
   private val ctx = c.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
-  private val shape_groups = new ListBuffer[Array[I]]
+  private val shape_groups = new ListBuffer[Array[CanvasyElement]]
 
   def draw(): Unit = {
-    ???
+    shape_groups foreach(_ foreach(drawShape(_)))
+  }
+
+  def drawShape(shape: CanvasyElement): Unit = {
+    shape match {
+      case Rectangle(a,b,width, height) =>  {
+        drawRectangle(shape.asInstanceOf[Rectangle])
+      }
+      case Circle(radius, a,b) =>  {
+        drawCircle(shape.asInstanceOf[Circle])
+      }
+      case _ => print("Can only draw Rectangle and Circle")
+    }
+  }
+
+  def drawCircle(circle: Circle): Unit = {
+    ctx.strokeStyle = circle.stroke.color
+    ctx.strokeStyle = circle.stroke.width
+
+    ctx.beginPath()
+    ctx.arc(circle.x, circle.y, circle.radius, 0, 2 * Math.PI)
+    ctx.stroke()
+
+  }
+
+  def drawRectangle(rectangle: Rectangle): Unit = {
+    ctx.strokeStyle = rectangle.stroke.color
+    ctx.lineWidth = rectangle.stroke.width
+
+    ctx.strokeRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height)
   }
 
   def += [I <: CanvasyElement](group: Array[I]): Unit = {
-    shape_groups.+=:(group)
+    shape_groups:+ group
   }
 }

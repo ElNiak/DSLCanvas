@@ -20,8 +20,8 @@ trait Shape extends CanvasyElement {
 
   override def and(x: Shape): Array[Shape] = {
     val array = new Array[Shape](2)
-    array(this)
-    array(x)
+    array:+ this
+    array:+ x
     return array
   }
 
