@@ -13,8 +13,6 @@ class Canvasy[I <: CanvasyElement](c: html.Canvas) {
 
 
   def draw(): Unit = {
-    //ctx.strokeRect(50, 50, 50, 50)
-    //println(shape_groups)
     shape_groups foreach(_ foreach(drawShape(_)))
   }
 
