@@ -1,10 +1,11 @@
-package DSLStatic
+package DSLStatic.Shape
 
-import DSLStatic.Color.Color
+import DSLStatic.Style.{ColorRGB, ColorStyle, Fill, Gradient, Stroke, Style}
+import DSLStatic._
 
 trait Shape extends CanvasyElement {
-  var stroke: Stroke
-  var color: String
+  var style : Style
+  var opacity: Double
   var x: Double
   var y: Double
   var size : Int
@@ -22,17 +23,19 @@ trait Shape extends CanvasyElement {
     Array(this, x)
   }
 
-  override def and(x: CanvasyElementModifier[Shape]): Unit = {
-      x change this
+  override def and(x: CanvasyElementModifier[Shape]): Shape = {
+     this.change(x)
   }
 
 
-  def translateY(Y: Int): Unit = {
+  def translateY(Y: Int): Shape = {
     y += Y
+    this
   }
 
-  def translateX(X: Int): Unit = {
+  def translateX(X: Int): Shape = {
     x += X
+    this
   }
 }
 
