@@ -5,8 +5,8 @@ import DSLStatic.Color.Color
 trait Shape extends CanvasyElement {
   var stroke: Stroke
   var color: String
-  var x: Int
-  var y: Int
+  var x: Double
+  var y: Double
   var size : Int
 
   def size(s: Int): Unit = {

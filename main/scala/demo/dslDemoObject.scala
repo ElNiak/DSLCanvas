@@ -26,10 +26,18 @@ object dslDemoObject {
     // Let us create some shapes
     val circles = Array.fill(4)(new Circle(50.0, 0, 0))
     val rectangles = Array.tabulate(2)(i => new Rectangle(i*50, i*50, 50, 100))
+    val Recttriangles = Array.fill(1)(new RectangleTriangle(100, 100, 40, 40))
+    val equTriangle = Array.fill(1)(new EquilateralTriangle(200, 200, 50))
 
     // Tell the library to display both circles and rectangles in the canvas
     canvasy += circles
     canvasy += rectangles
+    canvasy += Recttriangles
+    canvasy += equTriangle
+
+    Recttriangles change StrokeColor(Color.red)
+
+    equTriangle change StrokeWidth(5)
 
     // the first way to edit elements is by modifying their properties directly
     circles(0) stroke rgb"#ee22aa" //usage of apply ?

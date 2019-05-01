@@ -25,8 +25,33 @@ class Canvasy[I <: CanvasyElement](c: html.Canvas) {
       case Circle(radius, a,b) =>  {
         drawCircle(shape.asInstanceOf[Circle])
       }
+      case RectangleTriangle(x, y, a, b) => {
+        drawTriangle(shape.asInstanceOf[Triangle])
+      }
+      case EquilateralTriangle(x, y, a) => {
+        drawTriangle(shape.asInstanceOf[Triangle])
+      }
       case _ => print("Can only draw Rectangle and Circle")
     }
+  }
+
+  def drawTriangle(triangle: Triangle): Unit = {
+    if (triangle.stroke.color != "")
+      ctx.strokeStyle = triangle.stroke.color
+    else
+      ctx.strokeStyle = ctx_stroke_color
+    if (triangle.stroke.width != -1)
+      ctx.lineWidth = triangle.stroke.width
+    else
+      ctx.lineWidth = ctx_stroke_width
+
+    ctx.beginPath()
+    ctx.moveTo(triangle.a._1, triangle.a._2)
+    ctx.lineTo(triangle.b._1, triangle.b._2)
+    ctx.lineTo(triangle.c._1, triangle.c._2)
+    ctx.lineTo(triangle.a._1, triangle.a._2)
+
+    ctx.stroke()
   }
 
   def drawCircle(circle: Circle): Unit = {
