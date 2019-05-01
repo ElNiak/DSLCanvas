@@ -28,12 +28,12 @@ class Canvasy[I <: CanvasyElement](c: html.Canvas) {
         drawSquare(shape.asInstanceOf[Square])
       case Circle(radius, a,b,s,o) =>
         drawCircle(shape.asInstanceOf[Circle])
-      case RectangleTriangle(x, y, a, b,s,o) => {
+      case RectangleTriangle(x, y, a, b,s,o) =>
         drawTriangle(shape.asInstanceOf[Triangle])
-      }
-      case EquilateralTriangle(x, y, a,s,o) => {
+      case EquilateralTriangle(x, y, a,s,o) =>
         drawTriangle(shape.asInstanceOf[Triangle])
-      }
+      case Text(x, y, t,sx,sy,b,c,f) =>
+        drawText(shape.asInstanceOf[Text])
       case _ => print("Can only draw Rectangle and Circle")
     }
   }
@@ -91,8 +91,22 @@ class Canvasy[I <: CanvasyElement](c: html.Canvas) {
       case _: Fill =>
         checkColor(rectangle)
         checkOpacity(rectangle)
-        println(ctx.fillStyle)
         ctx.fillRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height)
+      case _ =>
+    }
+  }
+
+  def drawText(text: Text): Unit = {
+    text.style match {
+      case _: Fill =>
+        checkColor(text)
+        ctx.shadowOffsetX = text.soX
+        ctx.shadowOffsetY = text.soY
+        ctx.shadowBlur = text.sb
+        ctx.shadowColor = text.sc
+        ctx.shadowOffsetX = text.soX
+        ctx.font = text.font
+        ctx.fillText(text.text, text.x, text.y)
       case _ =>
     }
   }
@@ -111,6 +125,7 @@ class Canvasy[I <: CanvasyElement](c: html.Canvas) {
       case _ =>
     }
   }
+
 
   def += [J <: CanvasyElement](group: Array[J]): Unit = {
     shape_groups += group.asInstanceOf[Array[I]]
