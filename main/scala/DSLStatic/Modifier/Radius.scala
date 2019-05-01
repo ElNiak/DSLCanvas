@@ -1,4 +1,7 @@
-package DSLStatic
+package DSLStatic.Modifier
+
+import DSLStatic.Shape.{Circle, Shape}
+import DSLStatic.{CanvasyElementModifier, ShapeAttributeException}
 
 case class Radius(r: Double) extends CanvasyElementModifier[Shape] {
   // every Shape has a stroke.

@@ -1,5 +1,7 @@
 package DSLStatic
 
+import DSLStatic.Shape.{Circle, Rectangle, Shape}
+import DSLStatic.Style.{ColorRGB, Fill, Gradient, Stroke}
 import org.scalajs.dom
 import org.scalajs.dom.{document, html}
 
@@ -19,162 +21,44 @@ class Canvasy[I <: CanvasyElement](c: html.Canvas) {
   def drawShape(shape: CanvasyElement): Unit = {
     println("Draw shape")
     shape match {
-      case Rectangle(a,b,width, height,s,o) =>  {
+      case Rectangle(a,b,width, height,s,o) =>
         drawRectangle(shape.asInstanceOf[Rectangle])
-      }
-      case Circle(radius, a,b,s,o) =>  {
+      case Circle(radius, a,b,s,o) =>
         drawCircle(shape.asInstanceOf[Circle])
-      }
       case _ => print("Can only draw Rectangle and Circle")
     }
   }
 
   def drawCircle(circle: Circle): Unit = {
-    if(circle.state == 2) {
-      if (circle.stroke.color.color != "")
-        ctx.strokeStyle = circle.stroke.color.color
-      else
-        ctx.strokeStyle = ctx_stroke_color
-
-      if(circle.opacity < 1){
-        if(ctx.strokeStyle.toString.charAt(0) == '#'){
-          val r = getR(ctx.strokeStyle.toString)
-          val g = getG(ctx.strokeStyle.toString)
-          val b = getB(ctx.strokeStyle.toString)
-          ctx.strokeStyle = "rgba(" + r + ", " + g + ", "  +  b  + ", "  +  circle.opacity + ")"
-        }
-        else if (ctx.strokeStyle.toString.charAt(0) == 'r') {
-          if(ctx.strokeStyle.toString.charAt(3) == 'a') {
-            val array = getRRGBA(ctx.strokeStyle.toString)
-            val r = array(0)
-            val g = array(1)
-            val b = array(2)
-            ctx.strokeStyle = "rgba(" + r + ", " + g + ", "  +  b  + ", "  +  circle.opacity + ")"
-          }
-          else {
-            val array = getRRGB(ctx.strokeStyle.toString)
-            val r = array(0)
-            val g = array(1)
-            val b = array(2)
-            ctx.strokeStyle = "rgba(" + r + ", " + g + ", "  +  b  + ", "  +  circle.opacity + ")"
-          }
-        }
-      }
-
-      if (circle.stroke.width != -1)
-        ctx.lineWidth = circle.stroke.width
-      else
-        ctx.lineWidth = ctx_stroke_width
-
-      ctx.beginPath()
-      ctx.arc(circle.x, circle.y, circle.radius, 0, 2 * Math.PI)
-      ctx.stroke()
-    }
-    else if(circle.state == 1 ) {
-      print(circle.fill.color.color)
-      if (circle.fill.color.color != "")
-        ctx.fillStyle = circle.fill.color.color
-      else
-        ctx.fillStyle = ctx_fill_color
-
-      if(circle.opacity < 1){
-        if(ctx.fillStyle.toString.charAt(0) == '#'){
-          val r = getR(ctx.fillStyle.toString)
-          val g = getG(ctx.fillStyle.toString)
-          val b = getB(ctx.fillStyle.toString)
-          ctx.fillStyle = "rgba(" + r + ", " + g + ", "  +  b  + ", "  +  circle.opacity + ")"
-        }
-        else if (ctx.fillStyle.toString.charAt(0) == 'r') {
-          if(ctx.fillStyle.toString.charAt(3) == 'a') {
-            val array = getRRGBA(ctx.fillStyle.toString)
-            val r = array(0)
-            val g = array(1)
-            val b = array(2)
-            ctx.fillStyle = "rgba(" + r + ", " + g + ", "  +  b  + ", "  +  circle.opacity + ")"
-          }
-          else {
-            val array = getRRGB(ctx.fillStyle.toString)
-            val r = array(0)
-            val g = array(1)
-            val b = array(2)
-            ctx.fillStyle = "rgba(" + r + ", " + g + ", "  +  b  + ", "  +  circle.opacity + ")"
-          }
-        }
-        println(ctx.fillStyle.toString)
-      }
-      ctx.beginPath()
-      ctx.arc(circle.x, circle.y, circle.radius, 0, 2 * Math.PI)
-      ctx.fill()
+    circle.style match {
+      case _: Stroke =>
+        checkColor(circle)
+        checkOpacity(circle)
+        ctx.beginPath()
+        ctx.arc(circle.x, circle.y, circle.radius, 0, 2 * Math.PI)
+        ctx.stroke()
+      case _: Fill =>
+        checkColor(circle)
+        checkOpacity(circle)
+        ctx.beginPath()
+        ctx.arc(circle.x, circle.y, circle.radius, 0, 2 * Math.PI)
+        ctx.fill()
+      case _ =>
     }
 
   }
 
   def drawRectangle(rectangle: Rectangle): Unit = {
-    if(rectangle.state == 2) {
-      if (rectangle.stroke.color.color != "")
-        ctx.strokeStyle = rectangle.stroke.color.color
-      else
-        ctx.strokeStyle = ctx_stroke_color
-      if(rectangle.opacity < 1){
-        if(ctx.strokeStyle.toString.charAt(0) == '#'){
-          val r = getR(ctx.strokeStyle.toString)
-          val g = getG(ctx.strokeStyle.toString)
-          val b = getB(ctx.strokeStyle.toString)
-          ctx.strokeStyle = "rgba(" + r + ", " + g + ", "  +  b  + ", "  +  rectangle.opacity + ")"
-        }
-        else if (ctx.strokeStyle.toString.charAt(0) == 'r') {
-          if(ctx.strokeStyle.toString.charAt(3) == 'a') {
-            val array = getRRGBA(ctx.strokeStyle.toString)
-            val r = array(0)
-            val g = array(1)
-            val b = array(2)
-            ctx.strokeStyle = "rgba(" + r + ", " + g + ", "  +  b  + ", "  +  rectangle.opacity + ")"
-          }
-          else {
-            val array = getRRGB(ctx.strokeStyle.toString)
-            val r = array(0)
-            val g = array(1)
-            val b = array(2)
-            ctx.strokeStyle = "rgba(" + r + ", " + g + ", "  +  b  + ", "  +  rectangle.opacity + ")"
-          }
-        }
-      }
-      if (rectangle.stroke.width != -1)
-        ctx.lineWidth = rectangle.stroke.width
-      else
-        ctx.lineWidth = ctx_stroke_width
-      ctx.strokeRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height)
-    }
-    else if (rectangle.state == 1){
-      if (rectangle.fill.color.color != "")
-        ctx.fillStyle = rectangle.fill.color.color
-      else
-        ctx.fillStyle = ctx_fill_color
-      if(rectangle.opacity < 1) {
-        if (ctx.fillStyle.toString.charAt(0) == '#') {
-          val r = getR(ctx.fillStyle.toString)
-          val g = getG(ctx.fillStyle.toString)
-          val b = getB(ctx.fillStyle.toString)
-          ctx.fillStyle = "rgba(" + r + ", " + g + ", " + b + ", " + rectangle.opacity + ")"
-        }
-        else if (ctx.fillStyle.toString.charAt(0) == 'r') {
-          if(ctx.fillStyle.toString.charAt(3) == 'a') {
-            val array = getRRGBA(ctx.fillStyle.toString)
-            val r = array(0)
-            val g = array(1)
-            val b = array(2)
-            ctx.fillStyle = "rgba(" + r + ", " + g + ", "  +  b  + ", "  +  rectangle.opacity + ")"
-          }
-          else {
-            val array = getRRGB(ctx.fillStyle.toString)
-            val r = array(0)
-            val g = array(1)
-            val b = array(2)
-            ctx.fillStyle = "rgba(" + r + ", " + g + ", "  +  b  + ", "  +  rectangle.opacity + ")"
-          }
-        }
-      }
-      ctx.fillRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height)
+    rectangle.style match {
+      case _: Stroke =>
+        checkColor(rectangle)
+        checkOpacity(rectangle)
+        ctx.strokeRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height)
+      case _: Fill =>
+        checkColor(rectangle)
+        checkOpacity(rectangle)
+        ctx.fillRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height)
+      case _ =>
     }
   }
 
@@ -219,5 +103,93 @@ class Canvasy[I <: CanvasyElement](c: html.Canvas) {
     val str = c.substring(3)
     var res = str.split(",")
     Array(res(0).toInt, res(1).toInt, res(2).toInt)
+  }
+
+  def checkOpacity [K <: Shape](shape : K) : Unit = {
+    shape.style match {
+      case _: Fill =>
+        if (shape.opacity < 1) {
+          if (ctx.fillStyle.toString.charAt(0) == '#') {
+            val r = getR(ctx.fillStyle.toString)
+            val g = getG(ctx.fillStyle.toString)
+            val b = getB(ctx.fillStyle.toString)
+            ctx.fillStyle = "rgba(" + r + ", " + g + ", " + b + ", " + shape.opacity + ")"
+          }
+          else if (ctx.fillStyle.toString.charAt(0) == 'r') {
+            if (ctx.fillStyle.toString.charAt(3) == 'a') {
+              val array = getRRGBA(ctx.fillStyle.toString)
+              val r = array(0)
+              val g = array(1)
+              val b = array(2)
+              ctx.fillStyle = "rgba(" + r + ", " + g + ", " + b + ", " + shape.opacity + ")"
+            }
+            else {
+              val array = getRRGB(ctx.fillStyle.toString)
+              val r = array(0)
+              val g = array(1)
+              val b = array(2)
+              ctx.fillStyle = "rgba(" + r + ", " + g + ", " + b + ", " + shape.opacity + ")"
+            }
+          }
+        }
+      case _: Stroke =>
+        if (shape.opacity < 1) {
+          if (ctx.strokeStyle.toString.charAt(0) == '#') {
+            val r = getR(ctx.strokeStyle.toString)
+            val g = getG(ctx.strokeStyle.toString)
+            val b = getB(ctx.strokeStyle.toString)
+            ctx.strokeStyle = "rgba(" + r + ", " + g + ", " + b + ", " + shape.opacity + ")"
+          }
+          else if (ctx.strokeStyle.toString.charAt(0) == 'r') {
+            if (ctx.strokeStyle.toString.charAt(3) == 'a') {
+              val array = getRRGBA(ctx.strokeStyle.toString)
+              val r = array(0)
+              val g = array(1)
+              val b = array(2)
+              ctx.strokeStyle = "rgba(" + r + ", " + g + ", " + b + ", " + shape.opacity + ")"
+            }
+            else {
+              val array = getRRGB(ctx.strokeStyle.toString)
+              val r = array(0)
+              val g = array(1)
+              val b = array(2)
+              ctx.strokeStyle = "rgba(" + r + ", " + g + ", " + b + ", " + shape.opacity + ")"
+            }
+          }
+        }
+      case _ =>
+    }
+  }
+
+  def checkColor [K <: Shape](shape : K) : Unit = {
+    shape.style match {
+      case s : Fill =>
+        s.colorStyle match {
+          case b: ColorRGB =>
+            println(b.color)
+            if (b.color != "")
+              ctx.fillStyle = b.color
+            else
+              ctx.fillStyle = ctx_fill_color
+          case b: Gradient =>
+
+        }
+      case s: Stroke =>
+        s.colorStyle match {
+          case b: ColorRGB =>
+            println(b.color)
+            if (b.color != "")
+              ctx.strokeStyle = b.color
+            else
+              ctx.strokeStyle = ctx_stroke_color
+            if (s.width != -1)
+              ctx.lineWidth = s.width
+            else
+              ctx.lineWidth = ctx_stroke_width
+
+          case b: Gradient =>
+          case _ =>
+        }
+    }
   }
 }

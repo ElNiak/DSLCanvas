@@ -1,5 +1,7 @@
 package DSLStatic
 
+import DSLStatic.Shape.Shape
+
 trait CanvasyElement {
   def and(x: CanvasyElementModifier[Shape]): Shape
   def and(x: Shape): Array[Shape]

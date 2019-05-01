@@ -1,4 +1,7 @@
-package DSLStatic
+package DSLStatic.Modifier
+
+import DSLStatic.Shape.{Rectangle, Shape}
+import DSLStatic.{CanvasyElementModifier, ShapeAttributeException}
 
 case class Height(h: Double) extends CanvasyElementModifier[Shape] {
   // every Shape has a stroke.

@@ -1,12 +1,10 @@
-package DSLStatic
+package DSLStatic.Shape
 
-import DSLStatic.Color.Color
+import DSLStatic.Style.{ColorRGB, ColorStyle, Fill, Gradient, Stroke, Style}
+import DSLStatic._
 
 trait Shape extends CanvasyElement {
-  val state : Int //1 = fill : 2 = stroke : 3 = clear
-  var stroke: Stroke
-  var fill : Fill
-  var color: ColorRGB
+  var style : Style
   var opacity: Double
   var x: Double
   var y: Double
