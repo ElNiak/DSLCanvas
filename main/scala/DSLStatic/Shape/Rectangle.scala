@@ -7,6 +7,8 @@ case class Rectangle(X:Double, Y: Double, widthI: Double, heightI: Double, s : I
   override var style : Style = if(s == 1) new Fill else if (s == 2) new Stroke else new Clear
   override var x: Double = X
   override var y: Double = Y
+  override var rotation: Double = 0
+
   var height  = heightI
   var width = widthI
 

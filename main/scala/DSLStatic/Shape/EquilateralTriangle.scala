@@ -12,4 +12,5 @@ case class EquilateralTriangle (X: Double, Y: Double, A: Double, s: Int , o : Do
   override var x: Double = X
   override var y: Double = Y
   override var size: Int = _
+  override var rotation: Double = 0
 }

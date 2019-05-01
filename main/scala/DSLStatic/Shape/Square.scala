@@ -7,7 +7,8 @@ case class Square (X:Double, Y: Double, cotee: Double, s : Int, o : Double) exte
   override var style: Style = if (s == 1) new Fill else if (s == 2) new Stroke else new Clear
   override var x: Double = X
   override var y: Double = Y
-  var cote = cotee
+  var cote : Double = cotee
+  override var rotation: Double = 0
   override var size: Int = _
 
   def apply(w: Stroke): Unit = {

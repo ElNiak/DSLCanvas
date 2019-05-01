@@ -9,6 +9,7 @@ trait Shape extends CanvasyElement {
   var x: Double
   var y: Double
   var size : Int
+  var rotation : Double
 
   def size(s: Int): Unit = {
     size = s
@@ -37,6 +38,11 @@ trait Shape extends CanvasyElement {
     x += X
     this
   }
+
+  def rotate(X: Double) : Shape = {
+    rotation = X
+    this
+  }
 }
 
 
@@ -48,6 +54,10 @@ object Shape {
     }
     def translateX(X: Int) : Array[I] = {
       group foreach(_ translateX(X))
+      return group
+    }
+    def rotate(X: Double) : Array[I] = {
+      group foreach(_ rotate (X))
       return group
     }
   }

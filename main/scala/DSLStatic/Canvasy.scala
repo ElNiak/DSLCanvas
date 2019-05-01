@@ -21,19 +21,26 @@ class Canvasy[I <: CanvasyElement](c: html.Canvas) {
 
   def drawShape(shape: CanvasyElement): Unit = {
     println("Draw shape")
+    ctx.save()
     shape match {
       case Rectangle(a,b,width, height,s,o) =>
         drawRectangle(shape.asInstanceOf[Rectangle])
+        ctx.restore()
       case Square(a,b,cote,s,o) =>
         drawSquare(shape.asInstanceOf[Square])
+        ctx.restore()
       case Circle(radius, a,b,s,o) =>
         drawCircle(shape.asInstanceOf[Circle])
+        ctx.restore()
       case RectangleTriangle(x, y, a, b,s,o) =>
         drawTriangle(shape.asInstanceOf[Triangle])
+        ctx.restore()
       case EquilateralTriangle(x, y, a,s,o) =>
         drawTriangle(shape.asInstanceOf[Triangle])
-      case Text(x, y, t,sx,sy,b,c,f) =>
+        ctx.restore()
+      case Text(x, y, t,sx,sy,b,c,f,str) =>
         drawText(shape.asInstanceOf[Text])
+        ctx.restore()
       case _ => print("Can only draw Rectangle and Circle")
     }
   }
@@ -43,6 +50,7 @@ class Canvasy[I <: CanvasyElement](c: html.Canvas) {
       case _: Stroke =>
         checkColor(triangle)
         checkOpacity(triangle)
+        ctx.rotate(triangle.rotation)
         ctx.beginPath()
         ctx.moveTo(triangle.a._1, triangle.a._2)
         ctx.lineTo(triangle.b._1, triangle.b._2)
@@ -52,6 +60,7 @@ class Canvasy[I <: CanvasyElement](c: html.Canvas) {
       case _: Fill =>
         checkColor(triangle)
         checkOpacity(triangle)
+        ctx.rotate(triangle.rotation)
         ctx.beginPath()
         ctx.moveTo(triangle.a._1, triangle.a._2)
         ctx.lineTo(triangle.b._1, triangle.b._2)
@@ -68,12 +77,14 @@ class Canvasy[I <: CanvasyElement](c: html.Canvas) {
       case _: Stroke =>
         checkColor(circle)
         checkOpacity(circle)
+        ctx.rotate(circle.rotation)
         ctx.beginPath()
         ctx.arc(circle.x, circle.y, circle.radius, 0, 2 * Math.PI)
         ctx.stroke()
       case _: Fill =>
         checkColor(circle)
         checkOpacity(circle)
+        ctx.rotate(circle.rotation)
         ctx.beginPath()
         ctx.arc(circle.x, circle.y, circle.radius, 0, 2 * Math.PI)
         ctx.fill()
@@ -87,10 +98,12 @@ class Canvasy[I <: CanvasyElement](c: html.Canvas) {
       case _: Stroke =>
         checkColor(rectangle)
         checkOpacity(rectangle)
+        ctx.rotate(rectangle.rotation)
         ctx.strokeRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height)
       case _: Fill =>
         checkColor(rectangle)
         checkOpacity(rectangle)
+        ctx.rotate(rectangle.rotation)
         ctx.fillRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height)
       case _ =>
     }
@@ -100,13 +113,17 @@ class Canvasy[I <: CanvasyElement](c: html.Canvas) {
     text.style match {
       case _: Fill =>
         checkColor(text)
+        ctx.rotate(text.rotation)
         ctx.shadowOffsetX = text.soX
         ctx.shadowOffsetY = text.soY
         ctx.shadowBlur = text.sb
         ctx.shadowColor = text.sc
         ctx.shadowOffsetX = text.soX
         ctx.font = text.font
-        ctx.fillText(text.text, text.x, text.y)
+        if(!text.stroke)
+          ctx.fillText(text.text, text.x, text.y)
+        else
+          ctx.strokeText(text.text,text.x,text.y)
       case _ =>
     }
   }
@@ -116,10 +133,12 @@ class Canvasy[I <: CanvasyElement](c: html.Canvas) {
       case _: Stroke =>
         checkColor(square)
         checkOpacity(square)
+        ctx.rotate(square.rotation)
         ctx.strokeRect(square.x, square.y, square.cote, square.cote)
       case _: Fill =>
         checkColor(square)
         checkOpacity(square)
+        ctx.rotate(square.rotation)
         println(ctx.fillStyle)
         ctx.fillRect(square.x, square.y, square.cote, square.cote)
       case _ =>
