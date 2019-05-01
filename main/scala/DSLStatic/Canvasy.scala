@@ -3,6 +3,7 @@ package DSLStatic
 import DSLStatic.Shape.{Circle, Rectangle, Shape}
 import DSLStatic.Style.{ColorRGB, Fill, Gradient, Stroke}
 import org.scalajs.dom
+import org.scalajs.dom.raw.CanvasGradient
 import org.scalajs.dom.{document, html}
 
 import scala.collection.mutable.ListBuffer
@@ -57,6 +58,7 @@ class Canvasy[I <: CanvasyElement](c: html.Canvas) {
       case _: Fill =>
         checkColor(rectangle)
         checkOpacity(rectangle)
+        println(ctx.fillStyle)
         ctx.fillRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height)
       case _ =>
     }
@@ -166,18 +168,31 @@ class Canvasy[I <: CanvasyElement](c: html.Canvas) {
       case s : Fill =>
         s.colorStyle match {
           case b: ColorRGB =>
-            println(b.color)
             if (b.color != "")
               ctx.fillStyle = b.color
             else
               ctx.fillStyle = ctx_fill_color
           case b: Gradient =>
+            if(b.r1 == -1){
+              var style = ctx.createLinearGradient(b.x1,b.y1,b.x2,b.y2)
+              for(c <- b.colors.indices){
+                style.addColorStop(b.offset(c),b.color(c).color)
+              }
+              ctx.fillStyle = style
+            }
+            else {
+              var style = ctx.createRadialGradient(b.x1,b.y1,b.r1,b.x2,b.y2,b.r2)
+              for(c <- b.colors.indices){
+                style.addColorStop(b.offset(c),b.color(c).color)
+              }
+              style.addColorStop(1, "rgba(0, 0, 0, 0)")
+              ctx.fillStyle = style
+            }
 
         }
       case s: Stroke =>
         s.colorStyle match {
           case b: ColorRGB =>
-            println(b.color)
             if (b.color != "")
               ctx.strokeStyle = b.color
             else
@@ -188,6 +203,20 @@ class Canvasy[I <: CanvasyElement](c: html.Canvas) {
               ctx.lineWidth = ctx_stroke_width
 
           case b: Gradient =>
+            if(b.r1 == -1){
+              var style = ctx.createLinearGradient(b.x1,b.y1,b.x2,b.y2)
+              for(c <- b.colors.indices){
+                style.addColorStop(b.offset(c),b.color(c).color)
+              }
+              ctx.strokeStyle = style
+            }
+            else {
+              var style = ctx.createRadialGradient(b.x1,b.y1,b.r1,b.x2,b.y2,b.r2)
+              for(c <- b.colors.indices){
+                style.addColorStop(b.offset(c),b.color(c).color)
+              }
+              ctx.strokeStyle = style
+            }
           case _ =>
         }
     }

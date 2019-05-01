@@ -1,25 +1,140 @@
 package DSLStatic.Style
 
-case class Gradient(X1 : Double, Y1 : Double,X2 : Double, Y2 : Double, R1 : Double, R2 : Double,  color: Array[ColorRGB]) extends ColorStyle {
+import scala.collection.mutable.ListBuffer
+
+case class Gradient(X1 : Double, Y1 : Double,X2 : Double, Y2 : Double, R1 : Double, R2 : Double,  color: ListBuffer[ColorRGB], off : ListBuffer[Double]) extends ColorStyle {
   val x1 : Double = X1
   val y1 : Double = Y1
   val x2 : Double = X2
   val y2 : Double = Y2
   val r1 : Double = R1
   val r2 : Double = R2
-  val colors : Array[ColorRGB] = color
+  val colors : ListBuffer[ColorRGB] = color
+  val offset : ListBuffer[Double] = off
   def this() {
-      this(0,0,0,0,0,0,null)
+      this(0,0,0,0,0,0,null,null)
   }
 }
 
 object Gradient {
   implicit class GradientUtils(val sc: StringContext) extends AnyVal {
-    def grad(args : String) : Gradient = {
-        null
+    def gradR(args : String) : Gradient = {// gradR"x1|y1|x2|y2|R1|R2|0.1,0.2,0.6,0.1|#58a3f8#58a3f8"
+      val array : Array[String] = args.split("&")
+      val off : Array[String] = array(array.length-2).split(",")
+      val col : Array[String] = array(array.length-1).split("#")
+      var color : ListBuffer[ColorRGB] = new ListBuffer[ColorRGB]
+      var offset : ListBuffer[Double] = new ListBuffer[Double]
+      if(checkColor(col) && checkCoord(array) && checkCoord(col)){
+        for(i <- col.indices)
+          if(!col(i).isEmpty) {
+            if(i == col.length-1)
+              color += ColorRGB('#'+col(i),0)
+            else
+              color += ColorRGB('#'+col(i),1)
+          }
+        for(i <- off.indices)
+          offset += off(i).toDouble
+        Gradient(array(0).toDouble,array(1).toDouble,array(2).toDouble,array(3).toDouble,array(4).toDouble,array(5).toDouble,color,offset)
+      }
+      else {
+        for(i <- col.indices)
+          color += ColorRGB("#000000",1)
+        for(i <- off.indices)
+          offset += 0
+        Gradient(array(0).toDouble,array(1).toDouble,array(2).toDouble,array(3).toDouble,array(4).toDouble,array(5).toDouble,color,offset)
+      }
     }
-    def grad(args : Unit) : Gradient = {
-        null
+    def gradR(args : Unit) : Gradient = {
+      val array : Array[String] = sc.parts(0).split("&")
+      val off : Array[String] = array(array.length-2).split(",")
+      val col : Array[String] = array(array.length-1).split("#")
+      var color : ListBuffer[ColorRGB] = new ListBuffer[ColorRGB]
+      var offset : ListBuffer[Double] = new ListBuffer[Double]
+      if(checkColor(col) && checkCoord(array) && checkCoord(col)){
+        for(i <- col.indices)
+          if(!col(i).isEmpty) {
+            if(i == col.length-1)
+              color += ColorRGB('#'+col(i),0)
+            else
+              color += ColorRGB('#'+col(i),1)
+          }
+        for(i <- off.indices)
+          offset += off(i).toDouble
+        Gradient(array(0).toDouble,array(1).toDouble,array(2).toDouble,array(3).toDouble,array(4).toDouble,array(5).toDouble,color,offset)
+      }
+      else {
+        for(i <- col.indices)
+          color += ColorRGB("#000000",1)
+        for(i <- off.indices)
+          offset += 0
+        Gradient(array(0).toDouble,array(1).toDouble,array(2).toDouble,array(3).toDouble,array(4).toDouble,array(5).toDouble,color,offset)
+      }
     }
+    def gradL(args : String) : Gradient = {// gradL"x1|y1|x2|y2|0.1,0.2,0.6,0.1|#58a3f8#58a3f8"
+      val array : Array[String] = args.split("&")
+      val off : Array[String] = array(array.length-2).split(",")
+      val col : Array[String] = array(array.length-1).split("#")
+      var color : ListBuffer[ColorRGB] = new ListBuffer[ColorRGB]
+      var offset : ListBuffer[Double] = new ListBuffer[Double]
+      if(checkColor(col) && checkCoord(array) && checkCoord(col)){
+        for(i <- col.indices)
+          if(!col(i).isEmpty) {
+            if(i == col.length-1)
+              color += ColorRGB('#'+col(i),0)
+            else
+              color += ColorRGB('#'+col(i),1)
+          }
+        for(i <- off.indices)
+          offset += off(i).toDouble
+        Gradient(array(0).toDouble,array(1).toDouble,array(2).toDouble,array(3).toDouble,-1,-1,color,offset)
+      }
+      else {
+        for(i <- col.indices)
+          color += ColorRGB("#000000",1)
+        for(i <- off.indices)
+          offset += 0
+        Gradient(array(0).toDouble,array(1).toDouble,array(2).toDouble,array(3).toDouble,-1,-1,color,offset)
+      }
+    }
+    def gradL(args : Unit) : Gradient = {
+      val array : Array[String] = sc.parts(0).split("&")
+      val off : Array[String] = array(array.length-2).split(",")
+      val col : Array[String] = array(array.length-1).split("#")
+      var color : ListBuffer[ColorRGB] = new ListBuffer[ColorRGB]
+      var offset : ListBuffer[Double] = new ListBuffer[Double]
+      if(checkColor(col) && checkCoord(array) && checkCoord(col)){
+        for(i <- col.indices)
+          if(!col(i).isEmpty) {
+            if(i == col.length-1)
+              color += ColorRGB('#'+col(i),0)
+            else
+              color += ColorRGB('#'+col(i),1)
+          }
+        for(i <- off.indices)
+          offset += off(i).toDouble
+        Gradient(array(0).toDouble,array(1).toDouble,array(2).toDouble,array(3).toDouble,-1,-1,color,offset)
+      }
+      else {
+        for(i <- col.indices)
+          color += ColorRGB("#000000",1)
+        for(i <- off.indices)
+          offset += 0
+        Gradient(array(0).toDouble,array(1).toDouble,array(2).toDouble,array(3).toDouble,-1,-1,color,offset)
+      }
+    }
+  }
+
+  def checkCoord(coo : Array[String]): Boolean = {
+    val test = (x : Char) => x.isDigit || x.equals('.')
+    var res = true
+    coo foreach(_ foreach(res && test(_)))
+    res
+  }
+
+  def checkColor(coo : Array[String]): Boolean = {
+    val test = (x : String) => x.length == 6
+    val res = true
+    coo foreach(res && test(_))
+    res
   }
 }
