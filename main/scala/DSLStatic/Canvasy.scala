@@ -24,6 +24,8 @@ class Canvasy[I <: CanvasyElement](c: html.Canvas) {
     shape match {
       case Rectangle(a,b,width, height,s,o) =>
         drawRectangle(shape.asInstanceOf[Rectangle])
+      case Square(a,b,cote,s,o) =>
+        drawSquare(shape.asInstanceOf[Square])
       case Circle(radius, a,b,s,o) =>
         drawCircle(shape.asInstanceOf[Circle])
       case RectangleTriangle(x, y, a, b,s,o) => {
@@ -91,6 +93,21 @@ class Canvasy[I <: CanvasyElement](c: html.Canvas) {
         checkOpacity(rectangle)
         println(ctx.fillStyle)
         ctx.fillRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height)
+      case _ =>
+    }
+  }
+
+  def drawSquare(square: Square): Unit = {
+    square.style match {
+      case _: Stroke =>
+        checkColor(square)
+        checkOpacity(square)
+        ctx.strokeRect(square.x, square.y, square.cote, square.cote)
+      case _: Fill =>
+        checkColor(square)
+        checkOpacity(square)
+        println(ctx.fillStyle)
+        ctx.fillRect(square.x, square.y, square.cote, square.cote)
       case _ =>
     }
   }
