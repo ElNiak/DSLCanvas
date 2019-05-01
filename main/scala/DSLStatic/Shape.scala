@@ -3,10 +3,13 @@ package DSLStatic
 import DSLStatic.Color.Color
 
 trait Shape extends CanvasyElement {
+  val state : Int //1 = fill : 2 = stroke : 3 = clear
   var stroke: Stroke
-  var color: String
-  var x: Int
-  var y: Int
+  var fill : Fill
+  var color: ColorRGB
+  var opacity: Double
+  var x: Double
+  var y: Double
   var size : Int
 
   def size(s: Int): Unit = {
@@ -27,12 +30,14 @@ trait Shape extends CanvasyElement {
   }
 
 
-  def translateY(Y: Int): Unit = {
+  def translateY(Y: Int): Shape = {
     y += Y
+    this
   }
 
-  def translateX(X: Int): Unit = {
+  def translateX(X: Int): Shape = {
     x += X
+    this
   }
 }
 

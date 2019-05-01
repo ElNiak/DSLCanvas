@@ -1,9 +1,9 @@
 package DSLStatic
 
 object Color extends Enumeration {
-  type Color = String
+  type Color = ColorRGB
   case class ColorValue(color: String) extends Val(color)
-  val red = "#ee22aa"
+  val red = ColorRGB("#ff0000",1)
 }
 
 
