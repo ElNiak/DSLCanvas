@@ -1,6 +1,6 @@
 package DSLStatic
 
-import DSLStatic.Shape.{Circle, Rectangle, Shape}
+import DSLStatic.Shape._
 import DSLStatic.Style.{ColorRGB, Fill, Gradient, Stroke}
 import org.scalajs.dom
 import org.scalajs.dom.raw.CanvasGradient
@@ -26,8 +26,39 @@ class Canvasy[I <: CanvasyElement](c: html.Canvas) {
         drawRectangle(shape.asInstanceOf[Rectangle])
       case Circle(radius, a,b,s,o) =>
         drawCircle(shape.asInstanceOf[Circle])
+      case RectangleTriangle(x, y, a, b,s,o) => {
+        drawTriangle(shape.asInstanceOf[Triangle])
+      }
+      case EquilateralTriangle(x, y, a,s,o) => {
+        drawTriangle(shape.asInstanceOf[Triangle])
+      }
       case _ => print("Can only draw Rectangle and Circle")
     }
+  }
+
+  def drawTriangle(triangle: Triangle): Unit = {
+    triangle.style match {
+      case _: Stroke =>
+        checkColor(triangle)
+        checkOpacity(triangle)
+        ctx.beginPath()
+        ctx.moveTo(triangle.a._1, triangle.a._2)
+        ctx.lineTo(triangle.b._1, triangle.b._2)
+        ctx.lineTo(triangle.c._1, triangle.c._2)
+        ctx.lineTo(triangle.a._1, triangle.a._2)
+        ctx.stroke()
+      case _: Fill =>
+        checkColor(triangle)
+        checkOpacity(triangle)
+        ctx.beginPath()
+        ctx.moveTo(triangle.a._1, triangle.a._2)
+        ctx.lineTo(triangle.b._1, triangle.b._2)
+        ctx.lineTo(triangle.c._1, triangle.c._2)
+        ctx.lineTo(triangle.a._1, triangle.a._2)
+        ctx.fill()
+      case _ =>
+    }
+
   }
 
   def drawCircle(circle: Circle): Unit = {

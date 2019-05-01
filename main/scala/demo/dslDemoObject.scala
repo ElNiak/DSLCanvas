@@ -1,11 +1,11 @@
 package DSLStatic
 
-import DSLStatic.Modifier.{FillColor, Radius, StrokeColor, StrokeWidth, Width}
+import DSLStatic.Modifier._
 import DSLStatic._
 import org.scalajs.dom
 import org.scalajs.dom.html
 import org.scalajs.dom.{document, html}
-import DSLStatic.Shape.{Circle, Rectangle, Shape}
+import DSLStatic.Shape._
 import DSLStatic.Style.Color
 import DSLStatic.Style.ColorRGB.ColorRGBUtils
 
@@ -24,12 +24,20 @@ object dslDemoObject {
 
     val canvasy = new Canvasy(canvas) //isn't canvasy a nice name for a library?
     // Let us create some shapes
-    val circles = Array.fill(4)(new Circle(50.0, 0, 0,1,0.5))
-    val rectangles = Array.tabulate(2)(i => new Rectangle(i*50, i*50, 50, 100,2,1.0))
+    val circles = Array.fill(4)(new Circle(50.0, 0, 0, 1, 0.5))
+    val rectangles = Array.tabulate(2)(i => new Rectangle(i*50, i*50, 50, 100, 2, 1))
+    val Recttriangles = Array.fill(1)(new RectangleTriangle(100, 100, 40, 40, 1, 0.5))
+    val equTriangle = Array.fill(1)(new EquilateralTriangle(200, 200, 50, 2, 1))
 
     // Tell the library to display both circles and rectangles in the canvas
     canvasy += circles
     canvasy += rectangles
+    canvasy += Recttriangles
+    canvasy += equTriangle
+
+    //Recttriangles change StrokeColor(Color.red)
+
+    equTriangle change StrokeWidth(5)
 
     circles translateX 100 translateY 100
 
