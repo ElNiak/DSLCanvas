@@ -7,6 +7,7 @@ import org.scalajs.dom.raw.CanvasGradient
 import org.scalajs.dom.{document, html}
 
 import scala.collection.mutable.ListBuffer
+import scala.scalajs.js
 
 class Canvasy[I <: CanvasyElement](c: html.Canvas) {
   private val ctx = c.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
@@ -14,6 +15,8 @@ class Canvasy[I <: CanvasyElement](c: html.Canvas) {
   private val ctx_stroke_color = ctx.strokeStyle
   private val ctx_stroke_width = ctx.lineWidth
   private val ctx_fill_color = ctx.fillStyle
+  private var raf = 0
+  private var running = false
 
   def draw(): Unit = {
     shape_groups foreach(_ foreach(drawShape(_)))
@@ -25,6 +28,8 @@ class Canvasy[I <: CanvasyElement](c: html.Canvas) {
     shape match {
       case Rectangle(a,b,width, height,s,o) =>
         drawRectangle(shape.asInstanceOf[Rectangle])
+        if(shape.asInstanceOf[Shape].movable)
+          addListenerMove(shape.asInstanceOf[Shape])
         ctx.restore()
       case Square(a,b,cote,s,o) =>
         drawSquare(shape.asInstanceOf[Square])
@@ -303,4 +308,100 @@ class Canvasy[I <: CanvasyElement](c: html.Canvas) {
         }
     }
   }
+
+  def addListenerMove(canvas : Shape): Unit ={
+    def rect = c.getBoundingClientRect()
+    var dragState = 0 // 0 => nothing, 1 = on drag, 2 = drop
+    var offX : Double = 0
+    var offY : Double = 0
+    c.onmousemove ={(e: dom.MouseEvent) =>
+      if (dragState == 1) {
+        c.style.position = "absolute"
+        c.style.left = (e.clientX - offX) + "px"
+        c.style.top = (e.clientY - offY) + "px"
+        drawShape(canvas)
+      }
+    }
+    c.onmouseup = {(e: dom.MouseEvent) =>
+      if(dragState == 1) {
+        ctx.fill()
+        dragState = 2
+      }else if (dragState == 2){
+        ctx.restore()
+        dragState = 0
+      }
+    }
+    c.onmousedown ={(e: dom.MouseEvent) =>
+      if (dragState == 0) {
+        dragState = 1
+        offX = e.clientX - rect.left
+        offY = e.clientY - rect.top
+        drawShape(canvas)
+      }
+    }
+  }
 }
+
+object Canvasy {
+  def drawHand(): Unit ={
+    val c = document.createElement("canvas").asInstanceOf[html.Canvas]
+    document.body.appendChild(c)
+    c.width = 500
+    c.height = 500
+    val ctx = c.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
+    def rect = c.getBoundingClientRect()
+    var dragState = 0
+    c.onmousemove ={(e: dom.MouseEvent) =>
+      if (dragState == 1) {
+        ctx.lineTo(
+          e.clientX - rect.left,
+          e.clientY - rect.top
+        )
+        ctx.stroke()
+      }
+    }
+    c.onmouseup = {(e: dom.MouseEvent) =>
+      if(dragState == 1) {
+        ctx.fill()
+        dragState = 2
+      }else if (dragState == 2){
+        ctx.clearRect(0, 0, 1000, 1000)
+        dragState = 0
+      }
+    }
+    c.onmousedown ={(e: dom.MouseEvent) =>
+      if (dragState == 0) {
+        dragState = 1
+        ctx.beginPath()
+        ctx.moveTo(
+          e.clientX - rect.left,
+          e.clientY - rect.top
+        )
+      }
+    }
+  }
+}
+
+/*
+var vy : Double = 0
+    var vx : Double = 0
+
+    var canvasyMove : js.Function1[dom.MouseEvent, Unit] = (e: dom.MouseEvent) => {
+      c.style.top = (e.clientY-vy) + "px"
+      c.style.left = (e.clientX-vx) + "px"
+    }
+
+    var mouseDown = (e: dom.MouseEvent) => {
+      vy = e.clientY - c.getBoundingClientRect().top
+      vx = e.clientX - c.getBoundingClientRect().left
+      dom.window.addEventListener("mousemove", canvasyMove, useCapture = true)
+      println("added")
+    }
+
+    var mouseUp = (e: dom.MouseEvent) => {
+      dom.window.removeEventListener("mousemove", canvasyMove, useCapture = true)
+      println("removed")
+    }
+    c.addEventListener("mousedown", mouseDown, useCapture = false)
+    dom.window.addEventListener("mouseup", mouseUp, useCapture = false)
+ */

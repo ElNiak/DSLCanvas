@@ -14,6 +14,7 @@ case class RectangleTriangle(X: Double, Y: Double, A: Double, B: Double, s: Int 
   override var y: Double = Y
   override var size: Int = _
   override var rotation: Double = 0
+  override var movable: Boolean = false
 //  def this(X: Double, Y: Double, angleA: Double, H: Double) {
 //    this(X, Y, H*Math.cos(a), H*Math.sin(a))
 //  }

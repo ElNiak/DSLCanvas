@@ -10,6 +10,7 @@ trait Shape extends CanvasyElement {
   var y: Double
   var size : Int
   var rotation : Double
+  var movable : Boolean
 
   def size(s: Int): Unit = {
     size = s
@@ -43,6 +44,11 @@ trait Shape extends CanvasyElement {
     rotation = X
     this
   }
+
+  def moveMouse(X: Boolean) : Shape = {
+    movable = X
+    this
+  }
 }
 
 
@@ -57,7 +63,11 @@ object Shape {
       return group
     }
     def rotate(X: Double) : Array[I] = {
-      group foreach(_ rotate (X))
+      group foreach(_ rotate(X))
+      return group
+    }
+    def moveMouse(X: Boolean) : Array[I] = {
+      group foreach(_ moveMouse(X))
       return group
     }
   }
