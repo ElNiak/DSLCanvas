@@ -9,7 +9,11 @@ import org.scalajs.dom.{document, html}
 import scala.collection.mutable.ListBuffer
 import scala.scalajs.js
 
-class Canvasy[I <: CanvasyElement](c: html.Canvas) {
+class Canvasy[I <: CanvasyElement](shape : Array[I], wi : Int, hi: Int) {
+  private val c = document.createElement("canvas").asInstanceOf[html.Canvas]
+  c.width = wi
+  c.height = hi
+  document.body.appendChild(c)
   private val ctx = c.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
   private val shape_groups = new ListBuffer[Array[I]]()
   private val ctx_stroke_color = ctx.strokeStyle
@@ -17,6 +21,32 @@ class Canvasy[I <: CanvasyElement](c: html.Canvas) {
   private val ctx_fill_color = ctx.fillStyle
   private var raf = 0
   private var running = false
+  shape_groups += shape
+
+  def this(i : Rectangle){
+    this(Array.fill(1)(i).asInstanceOf[Array[I]],i.asInstanceOf[Rectangle].width.toInt+10,i.asInstanceOf[Rectangle].height.toInt+10)
+  }
+
+  def this(i : Square){
+    this(Array.fill(1)(i).asInstanceOf[Array[I]],i.asInstanceOf[Square].cote.toInt+10,i.asInstanceOf[Square].cote.toInt+10)
+  }
+
+  def this(i : Circle){
+    this(Array.fill(1)(i).asInstanceOf[Array[I]],i.asInstanceOf[Circle].radius.toInt+10,i.asInstanceOf[Circle].radius.toInt+10)
+  }
+
+  def this(i : Text){
+    this(Array.fill(1)(i).asInstanceOf[Array[I]],i.asInstanceOf[Text].text.length.toInt+50,i.asInstanceOf[Text].text.length.toInt+50)
+  }
+
+  def this(i : Triangle){
+    this(Array.fill(1)(i).asInstanceOf[Array[I]],200,200)
+  }
+
+
+  def this(){
+    this(Array.fill(1)(Text(0, 0, "", 2, 2, 2, "#ffffff", "20px Times New Roman", false)).asInstanceOf[Array[I]],300,300)
+  }
 
   def draw(): Unit = {
     shape_groups foreach(_ foreach(drawShape(_)))
@@ -151,8 +181,17 @@ class Canvasy[I <: CanvasyElement](c: html.Canvas) {
   }
 
 
-  def += [J <: CanvasyElement](group: Array[J]): Unit = {
+  def += [J <: CanvasyElement](group: Array[J]): Canvasy[I] = {
     shape_groups += group.asInstanceOf[Array[I]]
+    resize(group.asInstanceOf[Array[CanvasyElement]])
+    this
+  }
+
+  def +=  (shape: Shape): Canvasy[I] = {
+    val group = Array.fill(1)(shape).asInstanceOf[Array[I]]
+    this += group
+    resize(group.asInstanceOf[Array[CanvasyElement]])
+    this
   }
 
   def getR(c: String) : Int = {
@@ -340,17 +379,59 @@ class Canvasy[I <: CanvasyElement](c: html.Canvas) {
       }
     }
   }
+
+  def resize(ss : Array[CanvasyElement]): Unit = {
+    var add1 : Double = 0
+    var add2 : Double = 0
+    for(s <- ss){
+      s match {
+        case Rectangle(a,b,width, height,sa,o) =>
+          print("cool")
+          add1 = width + a
+          add2 = height + b
+        case Square(a,b,cote,sa,o) =>
+          add1 = cote + a
+          add2 = cote + b
+        case Circle(radius, a,b,sa,o) =>
+          add1 = radius + a
+          add2 = radius + b
+        case RectangleTriangle(x, y, a, b,sa,o) =>
+          add1 = 50 + x
+          add2 = 50 + y
+        case EquilateralTriangle(x, y, a,sa,o) =>
+          add1 = 50 + x
+          add2 = 50 + y
+        case Text(x, y, t,sx,sy,b,cs,f,str) =>
+          add1 = s.asInstanceOf[Text].text.length + 20 + x
+          add2 = s.asInstanceOf[Text].text.length + 20 + y
+        case _ => print("Can only draw Rectangle and Circle")
+      }
+      if(c.height < add2.toInt) {
+        document.body.removeChild(c)
+        c.height += add2.toInt
+        document.body.appendChild(c)
+      }
+      if(c.width < add1.toInt) {
+        document.body.removeChild(c)
+        c.width += add1.toInt
+        document.body.appendChild(c)
+      }
+    }
+  }
 }
 
 object Canvasy {
-  def drawHand(): Unit ={
+  def drawHand(w:Int): Unit ={
     val c = document.createElement("canvas").asInstanceOf[html.Canvas]
     document.body.appendChild(c)
-    c.width = 500
-    c.height = 500
+    c.width = w+1
+    c.height = w+1
     val ctx = c.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
     def rect = c.getBoundingClientRect()
+    ctx.strokeStyle = "#000000"
+    ctx.lineWidth = 2
     var dragState = 0
+    ctx.strokeRect(0, 0, w+1, w+1)
     c.onmousemove ={(e: dom.MouseEvent) =>
       if (dragState == 1) {
         ctx.lineTo(
@@ -365,7 +446,8 @@ object Canvasy {
         ctx.fill()
         dragState = 2
       }else if (dragState == 2){
-        ctx.clearRect(0, 0, 1000, 1000)
+        ctx.strokeRect(0, 0, w, w)
+        ctx.clearRect(1, 1, w-1, w-1)
         dragState = 0
       }
     }
@@ -381,27 +463,3 @@ object Canvasy {
     }
   }
 }
-
-/*
-var vy : Double = 0
-    var vx : Double = 0
-
-    var canvasyMove : js.Function1[dom.MouseEvent, Unit] = (e: dom.MouseEvent) => {
-      c.style.top = (e.clientY-vy) + "px"
-      c.style.left = (e.clientX-vx) + "px"
-    }
-
-    var mouseDown = (e: dom.MouseEvent) => {
-      vy = e.clientY - c.getBoundingClientRect().top
-      vx = e.clientX - c.getBoundingClientRect().left
-      dom.window.addEventListener("mousemove", canvasyMove, useCapture = true)
-      println("added")
-    }
-
-    var mouseUp = (e: dom.MouseEvent) => {
-      dom.window.removeEventListener("mousemove", canvasyMove, useCapture = true)
-      println("removed")
-    }
-    c.addEventListener("mousedown", mouseDown, useCapture = false)
-    dom.window.addEventListener("mouseup", mouseUp, useCapture = false)
- */
