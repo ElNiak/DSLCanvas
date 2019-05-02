@@ -13,7 +13,7 @@ class Canvasy[I <: CanvasyElement](shape : Array[I], wi : Int, hi: Int) {
   private val c = document.createElement("canvas").asInstanceOf[html.Canvas]
   c.width = wi
   c.height = hi
-  document.body.appendChild(c)
+  document.getElementById("container").appendChild(c)
   private val ctx = c.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
   private val shape_groups = new ListBuffer[Array[I]]()
   private val ctx_stroke_color = ctx.strokeStyle
@@ -22,6 +22,7 @@ class Canvasy[I <: CanvasyElement](shape : Array[I], wi : Int, hi: Int) {
   private var raf = 0
   private var running = false
   shape_groups += shape
+  c.style.position = "absolute"
 
   def this(i : Rectangle){
     this(Array.fill(1)(i).asInstanceOf[Array[I]],i.asInstanceOf[Rectangle].width.toInt+10,i.asInstanceOf[Rectangle].height.toInt+10)
@@ -59,7 +60,7 @@ class Canvasy[I <: CanvasyElement](shape : Array[I], wi : Int, hi: Int) {
       case Rectangle(a,b,width, height,s,o) =>
         drawRectangle(shape.asInstanceOf[Rectangle])
         if(shape.asInstanceOf[Shape].movable)
-          addListenerMove(shape.asInstanceOf[Shape])
+          addListenerMove()
         ctx.restore()
       case Square(a,b,cote,s,o) =>
         drawSquare(shape.asInstanceOf[Square])
@@ -105,6 +106,10 @@ class Canvasy[I <: CanvasyElement](shape : Array[I], wi : Int, hi: Int) {
       case _ =>
     }
 
+  }
+
+  def moveMouse(boolean: Boolean): Unit = {
+    shape_groups foreach(_ foreach(_.asInstanceOf[Shape].movable = boolean))
   }
 
   def drawCircle(circle: Circle): Unit = {
@@ -348,36 +353,33 @@ class Canvasy[I <: CanvasyElement](shape : Array[I], wi : Int, hi: Int) {
     }
   }
 
-  def addListenerMove(canvas : Shape): Unit ={
+  def addListenerMove(): Unit ={
     def rect = c.getBoundingClientRect()
-    var dragState = 0 // 0 => nothing, 1 = on drag, 2 = drop
     var offX : Double = 0
     var offY : Double = 0
-    c.onmousemove ={(e: dom.MouseEvent) =>
-      if (dragState == 1) {
-        c.style.position = "absolute"
+    var isDragging = false
+    val onmousemove ={(e: dom.MouseEvent) =>
+      if(isDragging){
         c.style.left = (e.clientX - offX) + "px"
-        c.style.top = (e.clientY - offY) + "px"
-        drawShape(canvas)
+        c.style.top  = (e.clientY - offY) + "px"
       }
     }
-    c.onmouseup = {(e: dom.MouseEvent) =>
-      if(dragState == 1) {
-        ctx.fill()
-        dragState = 2
-      }else if (dragState == 2){
-        ctx.restore()
-        dragState = 0
+    val onmouseup = {(e: dom.MouseEvent) =>
+      if(isDragging) {
+        dom.window.removeEventListener("mousemove", onmousemove, useCapture = true)
+        isDragging = false
       }
     }
-    c.onmousedown ={(e: dom.MouseEvent) =>
-      if (dragState == 0) {
-        dragState = 1
+    val onmousedown ={(e: dom.MouseEvent) =>
+      if(!isDragging){
+        isDragging = true
         offX = e.clientX - rect.left
         offY = e.clientY - rect.top
-        drawShape(canvas)
+        dom.window.addEventListener("mousemove", onmousemove, useCapture = true)
       }
     }
+    c.addEventListener("mousedown", onmousedown, useCapture = false)
+    dom.window.addEventListener("mouseup", onmouseup, useCapture = false)
   }
 
   def resize(ss : Array[CanvasyElement]): Unit = {
@@ -386,7 +388,6 @@ class Canvasy[I <: CanvasyElement](shape : Array[I], wi : Int, hi: Int) {
     for(s <- ss){
       s match {
         case Rectangle(a,b,width, height,sa,o) =>
-          print("cool")
           add1 = width + a
           add2 = height + b
         case Square(a,b,cote,sa,o) =>
@@ -407,14 +408,14 @@ class Canvasy[I <: CanvasyElement](shape : Array[I], wi : Int, hi: Int) {
         case _ => print("Can only draw Rectangle and Circle")
       }
       if(c.height < add2.toInt) {
-        document.body.removeChild(c)
+        document.getElementById("container").removeChild(c)
         c.height += add2.toInt
-        document.body.appendChild(c)
+        document.getElementById("container").appendChild(c)
       }
       if(c.width < add1.toInt) {
-        document.body.removeChild(c)
+        document.getElementById("container").removeChild(c)
         c.width += add1.toInt
-        document.body.appendChild(c)
+        document.getElementById("container").appendChild(c)
       }
     }
   }

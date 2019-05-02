@@ -32,6 +32,9 @@ object dslDemoObject {
     // Tell the library to display both circles and rectangles in the canvas
     canvasy += rectangles += rectangles  += Recttriangles += equTriangle += square += txt
 
+
+    var r = Rectangle(50, 50, 150, 300, 1, 1.0)
+    var canvasy2 = new Canvasy(r)
     //Recttriangles change StrokeColor(Color.red)
 
     equTriangle change StrokeWidth(5)
@@ -56,13 +59,16 @@ object dslDemoObject {
 
     rectangles(0) change FillColor(gradR"45&45&52&50&10&30&0,0.5,0.7&#A7D30C#019F62#019F80")
 
-    rectangles(0) moveMouse true
+    canvasy moveMouse true
 
-    drawHand(100)
+    canvasy2 moveMouse true
+
+    drawHand(500)
 
     //rectangles(0) change StrokeColor(rgba"0.7#a3a3f8")
     //rectangles(0) change StrokeWidth(20)*/
     // let us draw all these things
     canvasy draw()
+    canvasy2 draw()
   }
 }
