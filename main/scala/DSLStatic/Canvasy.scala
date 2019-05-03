@@ -147,7 +147,7 @@ class Canvasy[I <: CanvasyElement](shape : Array[I], wi : Int, hi: Int, x : Int,
         val add = if (rectangle.height < rectangle.width) rectangle.width else rectangle.height
         var X : Double = 0
         var Y : Double = 0
-        if(rectangle.rotation != 0) ctx.translate(rectangle.x + add, rectangle.y + add/2)
+        if(rectangle.rotation != 0 && rectangle.movable) ctx.translate(rectangle.x + add, rectangle.y + add/2)
         else if(!rectangle.movable) {
           X = rectangle.x
           Y = rectangle.y
@@ -418,8 +418,9 @@ class Canvasy[I <: CanvasyElement](shape : Array[I], wi : Int, hi: Int, x : Int,
               add2 = res
             }
             else{
-              add1 = res + a
-              add2 = res + b
+              val res2 = if(a < b)  b else a
+              add1 = 2*res + res2
+              add2 = 2*res + res2
             }
           }
         case Square(a,b,cote,sa,o) =>
