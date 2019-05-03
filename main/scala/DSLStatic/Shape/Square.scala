@@ -11,6 +11,8 @@ case class Square (X:Double, Y: Double, cotee: Double, s : Int, o : Double) exte
   override var rotation: Double = 0
   override var size: Int = _
   override var movable: Boolean = false
+  override var canRotate: Boolean = false
+
   def apply(w: Stroke): Unit = {
     style = w
   }

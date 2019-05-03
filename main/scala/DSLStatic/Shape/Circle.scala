@@ -10,6 +10,7 @@ case class Circle(radiusv: Double, X:Double, Y:Double, s: Int , o : Double) exte
   override var size: Int = _
   override var rotation: Double = 0
   override var movable: Boolean = false
+  override var canRotate: Boolean = false
   var radius : Double = radiusv
 
   def apply(w: Double): Unit = {
@@ -23,4 +24,5 @@ case class Circle(radiusv: Double, X:Double, Y:Double, s: Int , o : Double) exte
   def apply(w: Fill): Unit = {
     style = w
   }
+
 }

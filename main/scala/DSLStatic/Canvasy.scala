@@ -1,5 +1,6 @@
 package DSLStatic
 
+import DSLStatic.Modifier.StrokeWidth
 import DSLStatic.Shape._
 import DSLStatic.Style.{ColorRGB, Fill, Gradient, Stroke}
 import org.scalajs.dom
@@ -21,6 +22,8 @@ class Canvasy[I <: CanvasyElement](shape : Array[I], wi : Int, hi: Int) {
   private val ctx_fill_color = ctx.fillStyle
   private var raf = 0
   private var running = false
+  private var setEventRotate = true
+  private var setEventMove = true
   shape_groups += shape
   c.style.position = "absolute"
 
@@ -56,6 +59,8 @@ class Canvasy[I <: CanvasyElement](shape : Array[I], wi : Int, hi: Int) {
   def drawShape(shape: CanvasyElement): Unit = {
     println("Draw shape")
     ctx.save()
+    if (shape.asInstanceOf[Shape].canRotate)
+      addListenerRotate()
     shape match {
       case Rectangle(a,b,width, height,s,o) =>
         drawRectangle(shape.asInstanceOf[Rectangle])
@@ -110,6 +115,10 @@ class Canvasy[I <: CanvasyElement](shape : Array[I], wi : Int, hi: Int) {
 
   def moveMouse(boolean: Boolean): Unit = {
     shape_groups foreach(_ foreach(_.asInstanceOf[Shape].movable = boolean))
+  }
+
+  def keyRotate(boolean: Boolean): Unit = {
+    shape_groups foreach(_ foreach(_.asInstanceOf[Shape].canRotate = boolean))
   }
 
   def drawCircle(circle: Circle): Unit = {
@@ -383,8 +392,48 @@ class Canvasy[I <: CanvasyElement](shape : Array[I], wi : Int, hi: Int) {
         dom.window.addEventListener("mousemove", onmousemove, useCapture = true)
       }
     }
-    c.addEventListener("mousedown", onmousedown, useCapture = false)
-    dom.window.addEventListener("mouseup", onmouseup, useCapture = false)
+    if (setEventMove) {
+      setEventMove = false
+      c.addEventListener("mousedown", onmousedown, useCapture = false)
+      dom.window.addEventListener("mouseup", onmouseup, useCapture = false)
+    }
+  }
+
+  def addListenerRotate(): Unit ={
+    var rotate = false
+    val onClick ={(e: dom.MouseEvent) =>
+      rotate = !rotate
+//      if (rotate)
+//        shape_groups foreach (_ foreach(_.asInstanceOf[Shape]. += ))
+//      else
+//        shape_groups foreach (_ foreach(_.asInstanceOf[Shape].opacity -= ))
+//      ctx.clearRect(0, 0, c.width, c.height)
+//      draw()
+      println(rotate)
+    }
+
+    val onKey ={(e: dom.KeyboardEvent) =>
+      if (rotate) {
+        e.key match {
+          case "ArrowRight" =>
+            shape_groups foreach(_ foreach(_.asInstanceOf[Shape].rotation -= 10))
+            ctx.clearRect(0, 0, c.width, c.height)
+            draw()
+          case "ArrowLeft" =>
+            shape_groups foreach(_ foreach(_.asInstanceOf[Shape].rotation += 10))
+            ctx.clearRect(0, 0, c.width, c.height)
+            draw()
+          case _ =>
+            println(e.key)
+        }
+      }
+    }
+    if (setEventRotate) {
+      c.addEventListener("click", onClick, useCapture = false)
+      dom.window.addEventListener("keydown", onKey, useCapture = false)
+      setEventRotate = false
+    }
+
   }
 
   def resize(ss : Array[CanvasyElement]): Unit = {

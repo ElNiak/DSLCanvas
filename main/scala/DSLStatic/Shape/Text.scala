@@ -16,6 +16,8 @@ case class Text (X:Double, Y: Double, texte: String, SOX : Double , SOY : Double
   var font : String = Font
   var stroke : Boolean = strokeB
   override var movable: Boolean = false
+  override var canRotate: Boolean = false
+
   override var size: Int = _
 
   def this(X:Double, Y: Double, texte: String, strokeB : Boolean, sizE : Int) {

@@ -11,6 +11,7 @@ trait Shape extends CanvasyElement {
   var size : Int
   var rotation : Double
   var movable : Boolean
+  var canRotate: Boolean
 
   def size(s: Int): Unit = {
     size = s
