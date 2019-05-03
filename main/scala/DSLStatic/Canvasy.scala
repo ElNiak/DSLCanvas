@@ -354,6 +354,11 @@ class Canvasy[I <: CanvasyElement](shape : Array[I], wi : Int, hi: Int) {
   }
 
   def addListenerMove(): Unit ={
+    def reinitXY(): Unit ={
+      shape_groups foreach(_ foreach(_.asInstanceOf[Shape].x = 0))
+      shape_groups foreach(_ foreach(_.asInstanceOf[Shape].y = 0))
+    }
+    reinitXY()
     def rect = c.getBoundingClientRect()
     var offX : Double = 0
     var offY : Double = 0
@@ -388,20 +393,20 @@ class Canvasy[I <: CanvasyElement](shape : Array[I], wi : Int, hi: Int) {
     for(s <- ss){
       s match {
         case Rectangle(a,b,width, height,sa,o) =>
-          add1 = width + a
-          add2 = height + b
+          add1 = width
+          add2 = height
         case Square(a,b,cote,sa,o) =>
-          add1 = cote + a
-          add2 = cote + b
+          add1 = cote
+          add2 = cote
         case Circle(radius, a,b,sa,o) =>
-          add1 = radius + a
-          add2 = radius + b
+          add1 = radius
+          add2 = radius
         case RectangleTriangle(x, y, a, b,sa,o) =>
-          add1 = 50 + x
-          add2 = 50 + y
+          add1 = 50
+          add2 = 50
         case EquilateralTriangle(x, y, a,sa,o) =>
-          add1 = 50 + x
-          add2 = 50 + y
+          add1 = 50
+          add2 = 50
         case Text(x, y, t,sx,sy,b,cs,f,str) =>
           add1 = s.asInstanceOf[Text].text.length + 20 + x
           add2 = s.asInstanceOf[Text].text.length + 20 + y
@@ -409,12 +414,14 @@ class Canvasy[I <: CanvasyElement](shape : Array[I], wi : Int, hi: Int) {
       }
       if(c.height < add2.toInt) {
         document.getElementById("container").removeChild(c)
-        c.height += add2.toInt
+        c.height = add2.toInt
+        //ctx.translate(s.asInstanceOf[Shape].x,s.asInstanceOf[Shape].y)
         document.getElementById("container").appendChild(c)
       }
       if(c.width < add1.toInt) {
         document.getElementById("container").removeChild(c)
-        c.width += add1.toInt
+        c.width = add1.toInt
+        //ctx.translate(s.asInstanceOf[Shape].y,s.asInstanceOf[Shape].y)
         document.getElementById("container").appendChild(c)
       }
     }

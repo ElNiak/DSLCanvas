@@ -21,53 +21,25 @@ object dslDemoObject {
   def dslDemoPerso() = {
     // From now on, we use the DSL
 
-    var canvasy = new Canvasy(Circle(10.0, 0, 0, 1, 0.5)) //isn't canvasy a nice name for a library?
-    // Let us create some shapes
-    val circles = Array.fill(1)(Circle(10.0, 0, 0, 1, 0.5))
-    val rectangles = Array.tabulate(1)(i => Rectangle(i * 50, i * 50, 150, 300, 1, 1.0))
-    val Recttriangles = Array.fill(1)(RectangleTriangle(100, 100, 40, 40, 1, 0.5))
-    val equTriangle = Array.fill(1)(EquilateralTriangle(200, 200, 50, 2, 1))
-    val txt = Text(200, 150, "Smoke Weed Every Day", 2, 2, 2, "#A7D30C", "20px Times New Roman", false)
-    val square = Array.fill(1)(Square(50, 50, 150, 2, 1.0))
-    // Tell the library to display both circles and rectangles in the canvas
-    canvasy += rectangles += rectangles  += Recttriangles += equTriangle += square += txt
+    var re = Rectangle(0,0,200,300,1,0.5)
+    var canvasy = new Canvasy(re) //isn't canvasy a nice name for a library?
+    //canvasy += re
 
+    var ree = Rectangle(230,300,200,300,1,0.5)
+    var canvasy2 = new Canvasy(ree)
+    //canvasy2 += ree
 
-    var r = Rectangle(50, 50, 150, 300, 1, 1.0)
-    var canvasy2 = new Canvasy(r)
-    //Recttriangles change StrokeColor(Color.red)
+    re change FillColor(gradL"0&50&50&5&0,0.5,1&#A7D30C#019F62#58f6f8")
 
-    equTriangle change StrokeWidth(5)
+    ree change FillColor(Color.red)
 
-    txt rotate((Math.PI / 180)*25)
-
-    //circles translateX 100 translateY 100
-
-    // easily create a group with the keyword "and" => groupBy
-    //circles(2) and circles(3) translateX 50
-
-    circles(0) translateX 22 translateY 50
-
-    //rectangles change StrokeColor(Color.red)
-
-    //circles change FillColor(rgba"0.7#4b9e5c")
-    //circles(1) change FillColor(rgba"0.5#ffa3f8")
-    rectangles(0) translateX 20 translateY 10
-
-    square(0) translateX 30 translateY 50
-    square(0) change StrokeColor(gradL"0&0&50&150&0.8,0.85,0.8&#A7D30C#fbaf6d#58f6f8")
-
-    rectangles(0) change FillColor(gradR"45&45&52&50&10&30&0,0.5,0.7&#A7D30C#019F62#019F80")
+    //re rotate 60 //bug
 
     canvasy moveMouse true
-
-    canvasy2 moveMouse true
+    //canvasy2 moveMouse true
 
     drawHand(500)
 
-    //rectangles(0) change StrokeColor(rgba"0.7#a3a3f8")
-    //rectangles(0) change StrokeWidth(20)*/
-    // let us draw all these things
     canvasy draw()
     canvasy2 draw()
   }
