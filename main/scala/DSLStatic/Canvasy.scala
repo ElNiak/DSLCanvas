@@ -19,7 +19,6 @@ class Canvasy[I <: Shape](shape : I) {
   c.style.position = "absolute"
   private var movable : Boolean = false
   private var setEventRotate = true
-  private var setEventRotate = true
   private var l : Double = 0
   private var t : Double = 0
   this += shape
