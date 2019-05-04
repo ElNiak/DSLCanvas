@@ -35,6 +35,8 @@ object dslDemoObject {
     re change FillColor(gradL"0&50&50&5&0,0.5,1&#A7D30C#019F62#58f6f8")
     ree change FillColor(Color.red)
 
+    //ree change FillColor(Color.red)
+
     re rotate 80 //bug
     ree rotate -90 //bug
     canvasy moveMouse true

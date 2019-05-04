@@ -8,6 +8,7 @@ case class Rectangle(X:Double, Y: Double, widthI: Double, heightI: Double, s : I
   override var x: Double = X
   override var y: Double = Y
   override var rotation: Double = 0
+  override var canRotate: Boolean = false
   var height  = heightI
   var width = widthI
 

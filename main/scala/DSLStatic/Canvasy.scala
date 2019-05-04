@@ -17,9 +17,11 @@ class Canvasy[I <: Shape](shape : I) {
   private val ctx_stroke_width = ctx.lineWidth
   private val ctx_fill_color = ctx.fillStyle
   c.style.position = "absolute"
-  var movable : Boolean = false
-  var l : Double = 0
-  var t : Double = 0
+  private var movable : Boolean = false
+  private var setEventRotate = true
+  private var setEventRotate = true
+  private var l : Double = 0
+  private var t : Double = 0
   this += shape
 
   def this(){
@@ -51,6 +53,8 @@ class Canvasy[I <: Shape](shape : I) {
     if(movable)
       addListenerMove()
     ctx.save()
+    if (shape.asInstanceOf[Shape].canRotate)
+      addListenerRotate()
     shape match {
       case s : Rectangle =>
         drawRectangle(s)
@@ -103,6 +107,10 @@ class Canvasy[I <: Shape](shape : I) {
 
   def moveMouse(boolean: Boolean): Unit = {
     movable = boolean
+  }
+
+  def keyRotate(boolean: Boolean): Unit = {
+    shape_groups foreach(_.asInstanceOf[Shape].canRotate = boolean)
   }
 
   def drawCircle(circle: Circle): Unit = {
@@ -403,6 +411,43 @@ class Canvasy[I <: Shape](shape : I) {
     c.addEventListener("mousedown", onmousedown, useCapture = false)
     dom.window.addEventListener("mouseup", onmouseup, useCapture = false)
   }
+
+  def addListenerRotate(): Unit ={
+    var rotate = false
+    val onClick ={(e: dom.MouseEvent) =>
+      rotate = !rotate
+//      if (rotate)
+//        shape_groups foreach (_ foreach(_.asInstanceOf[Shape]. += ))
+//      else
+//        shape_groups foreach (_ foreach(_.asInstanceOf[Shape].opacity -= ))
+//      ctx.clearRect(0, 0, c.width, c.height)
+//      draw()
+      println(rotate)
+    }
+
+    val onKey ={(e: dom.KeyboardEvent) =>
+      if (rotate) {
+        e.key match {
+          case "ArrowRight" =>
+            shape_groups foreach(_.asInstanceOf[Shape].rotation -= 10)
+            ctx.clearRect(0, 0, c.width, c.height)
+            draw()
+          case "ArrowLeft" =>
+            shape_groups foreach(_.asInstanceOf[Shape].rotation += 10)
+            ctx.clearRect(0, 0, c.width, c.height)
+            draw()
+          case _ =>
+            println(e.key)
+        }
+      }
+    }
+    if(setEventRotate) {
+      c.addEventListener("click", onClick, useCapture = false)
+      dom.window.addEventListener("keydown", onKey, useCapture = false)
+      setEventRotate = false
+    }
+  }
+
 
   def resizeCanvas(): Unit ={
     var minX = Double.MaxValue

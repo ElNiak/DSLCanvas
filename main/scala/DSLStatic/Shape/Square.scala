@@ -10,6 +10,8 @@ case class Square (X:Double, Y: Double, cotee: Double, s : Int, o : Double) exte
   var cote : Double = cotee
   override var rotation: Double = 0
   override var size: Int = _
+  override var canRotate: Boolean = false
+
   def apply(w: Stroke): Unit = {
     style = w
   }
