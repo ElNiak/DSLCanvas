@@ -35,7 +35,7 @@ class Canvasy[I <: Shape](shape : I) {
     this(Text(0, 0, "", 2, 2, 2, "#ffffff", "0px Times New Roman", false).asInstanceOf[I])
   }
 
-  def draw : Unit = {
+  def draw() : Unit = {
     resizeCanvas()
     if(movable)
       addListenerMove()
@@ -577,10 +577,13 @@ class Canvasy[I <: Shape](shape : I) {
     var maxX = Double.MinValue
     var maxY = Double.MinValue
     var maxAdd : Double = 0
+    var isText :Boolean = false
     for(shape <- shape_groups){
       if(shape.x+shape.y < minX + minY){
         minX = shape.x
         minY = shape.y
+        if((minX == 0 || minY == 0) && shape.isInstanceOf[Text])
+          isText = true
       }
       if(shape.x+shape.y > maxX + maxY){
         maxX = shape.x
@@ -598,8 +601,15 @@ class Canvasy[I <: Shape](shape : I) {
       resizeCanvas()
     }
     else {
-      c.width= maxX.toInt + maxAdd.toInt
-      c.height= maxY.toInt + maxAdd.toInt
+      if(!isText){
+        c.width= maxX.toInt + maxAdd.toInt
+        c.height= maxY.toInt + maxAdd.toInt
+      }
+      else {
+        c.width= maxX.toInt + maxAdd.toInt
+        c.height= maxY.toInt + maxAdd.toInt
+        ctx.translate(0,maxAdd.toInt)
+      }
       document.getElementById("container").appendChild(c)
     }
   }
@@ -635,7 +645,7 @@ class Canvasy[I <: Shape](shape : I) {
         val ss = s.rangeSize
         if(ss._3 - ss._1  > ss._4 - ss._2)  (ss._3 - ss._1) * 1.15 else  (ss._4 - ss._2) * 1.15
       case Text(x, y, t,sx,sy,b,c,f,str) =>
-        200 //TODO
+        ctx.measureText(t).width
       case s: Xogone =>
         val ss = s.rangeSize
         if(ss._3 - ss._1  > ss._4 - ss._2)  ss._3 - ss._1 else  (ss._4 - ss._2) * 1.1

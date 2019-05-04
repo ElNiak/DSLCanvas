@@ -1,12 +1,12 @@
 package DSLStatic.Style
 
-object StrokeCapValue  {
+object Cap  {
   val butt = "butt"
   val round = "round"
   val square = "square"
 }
 
-object StrokeJoinValue {
+object Join {
   val round = "round"
   val bevel = "bevel"
   val miter = "miter"
