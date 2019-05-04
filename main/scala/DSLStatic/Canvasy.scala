@@ -9,76 +9,68 @@ import org.scalajs.dom.{document, html}
 import scala.collection.mutable.ListBuffer
 import scala.scalajs.js
 
-class Canvasy[I <: CanvasyElement](shape : Array[I], wi : Int, hi: Int, x : Int, y: Int, r: Double) {
+class Canvasy[I <: Shape](shape : I) {
   private val c = document.createElement("canvas").asInstanceOf[html.Canvas]
-  private val add = if(wi < hi)  hi else wi
-  private val add2 = if(x >= y)  x else y
-  c.width = add
-  c.height = add
-  document.getElementById("container").appendChild(c)
   private val ctx = c.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
-  private val shape_groups = new ListBuffer[Array[I]]()
+  private val shape_groups = new ListBuffer[I]()
   private val ctx_stroke_color = ctx.strokeStyle
   private val ctx_stroke_width = ctx.lineWidth
   private val ctx_fill_color = ctx.fillStyle
-  shape_groups += shape
-  resizeG(shape.asInstanceOf[Array[CanvasyElement]])
   c.style.position = "absolute"
-
-  def this(i : Rectangle){
-    this(Array.fill(1)(i).asInstanceOf[Array[I]],i.width.toInt+10,i.height.toInt+10,i.x.toInt,i.y.toInt,i.rotation)
-  }
-
-  def this(i : Square){
-    this(Array.fill(1)(i).asInstanceOf[Array[I]],i.cote.toInt+10,i.cote.toInt+10,i.x.toInt,i.y.toInt,i.rotation)
-  }
-
-  def this(i : Circle){
-    this(Array.fill(1)(i).asInstanceOf[Array[I]],i.radius.toInt+10,i.radius.toInt+10,i.x.toInt,i.y.toInt,i.rotation)
-  }
-
-  def this(i : Text){
-    this(Array.fill(1)(i).asInstanceOf[Array[I]],i.text.length+50,i.text.length.toInt+50,i.x.toInt,i.y.toInt,i.rotation)
-  }
-
-  def this(i : Triangle){
-    this(Array.fill(1)(i).asInstanceOf[Array[I]],200,200,i.x.toInt,i.y.toInt,i.rotation)
-  }
-
+  var movable : Boolean = false
+  var l : Double = 0
+  var t : Double = 0
+  this += shape
 
   def this(){
-    this(Array.fill(1)(Text(0, 0, "", 2, 2, 2, "#ffffff", "20px Times New Roman", false)).asInstanceOf[Array[I]],300,300,0,0,0)
+    this(Text(0, 0, "", 2, 2, 2, "#ffffff", "0px Times New Roman", false).asInstanceOf[I])
   }
 
   def draw(): Unit = {
-    shape_groups foreach(_ foreach(drawShape(_)))
+    resizeCanvas()
+    shape_groups foreach(drawShape(_))
   }
 
-  def drawShape(shape: CanvasyElement): Unit = {
-    println("Draw shape")
-    if(shape.asInstanceOf[Shape].movable)
+  def translateX(v : Double): Canvasy[I] ={
+    if(!movable){
+      l += v
+      c.style.left = l + "px"
+    }
+    this
+  }
+
+  def translateY(v : Double): Canvasy[I] ={
+    if(!movable) {
+      t += v
+      c.style.top = t + "px"
+    }
+    this
+  }
+
+  def drawShape(shape: Shape): Unit = {
+    if(movable)
       addListenerMove()
     ctx.save()
     shape match {
-      case Rectangle(a,b,width, height,s,o) =>
-        drawRectangle(shape.asInstanceOf[Rectangle])
+      case s : Rectangle =>
+        drawRectangle(s)
         ctx.restore()
-      case Square(a,b,cote,s,o) =>
-        drawSquare(shape.asInstanceOf[Square])
+      case s: Square =>
+        drawSquare(s)
         ctx.restore()
-      case Circle(radius, a,b,s,o) =>
-        drawCircle(shape.asInstanceOf[Circle])
+      case s: Circle =>
+        drawCircle(s)
         ctx.restore()
-      case RectangleTriangle(x, y, a, b,s,o) =>
-        drawTriangle(shape.asInstanceOf[Triangle])
+      case s: RectangleTriangle =>
+        drawTriangle(s)
         ctx.restore()
-      case EquilateralTriangle(x, y, a,s,o) =>
-        drawTriangle(shape.asInstanceOf[Triangle])
+      case s:EquilateralTriangle =>
+        drawTriangle(s)
         ctx.restore()
-      case Text(x, y, t,sx,sy,b,c,f,str) =>
-        drawText(shape.asInstanceOf[Text])
+      case s: Text =>
+        drawText(s)
         ctx.restore()
-      case _ => print("Can only draw Rectangle and Circle")
+      case _ => print("Shape not found")
     }
   }
 
@@ -110,7 +102,7 @@ class Canvasy[I <: CanvasyElement](shape : Array[I], wi : Int, hi: Int, x : Int,
   }
 
   def moveMouse(boolean: Boolean): Unit = {
-    shape_groups foreach(_ foreach(_.asInstanceOf[Shape].movable = boolean))
+    movable = boolean
   }
 
   def drawCircle(circle: Circle): Unit = {
@@ -139,22 +131,25 @@ class Canvasy[I <: CanvasyElement](shape : Array[I], wi : Int, hi: Int, x : Int,
       case _: Stroke =>
         checkColor(rectangle)
         checkOpacity(rectangle)
-        ctx.rotate(rectangle.rotation * Math.PI / 180)
-        ctx.strokeRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height)
+        if(rectangle.rotation != 0) {
+          ctx.translate(rectangle.x+ rectangle.width/2, rectangle.y+rectangle.height/2)
+          ctx.rotate(rectangle.rotation * Math.PI / 180)
+          ctx.strokeRect(-rectangle.width/2,-rectangle.height/2, rectangle.width, rectangle.height)
+        }
+        else {
+          ctx.strokeRect(rectangle.x,rectangle.y, rectangle.width, rectangle.height)
+        }
       case _: Fill =>
         checkColor(rectangle)
         checkOpacity(rectangle)
-        val add = if (rectangle.height < rectangle.width) rectangle.width else rectangle.height
-        var X : Double = 0
-        var Y : Double = 0
-        if(rectangle.rotation != 0 && rectangle.movable) ctx.translate(rectangle.x + add, rectangle.y + add/2)
-        else if(!rectangle.movable) {
-          X = rectangle.x
-          Y = rectangle.y
-          ctx.translate(X, Y)
+        if(rectangle.rotation != 0) {
+          ctx.translate(rectangle.x+ rectangle.width/2, rectangle.y+rectangle.height/2)
+          ctx.rotate(rectangle.rotation * Math.PI / 180)
+          ctx.fillRect(-rectangle.width/2,-rectangle.height/2, rectangle.width, rectangle.height)
         }
-        ctx.rotate(rectangle.rotation * Math.PI / 180)
-        ctx.fillRect(0,0, rectangle.width, rectangle.height)
+        else {
+          ctx.fillRect(rectangle.x,rectangle.y, rectangle.width, rectangle.height)
+        }
       case _ =>
     }
   }
@@ -183,72 +178,81 @@ class Canvasy[I <: CanvasyElement](shape : Array[I], wi : Int, hi: Int, x : Int,
       case _: Stroke =>
         checkColor(square)
         checkOpacity(square)
-        ctx.rotate(square.rotation * Math.PI / 180)
-        ctx.strokeRect(square.x, square.y, square.cote, square.cote)
+        if(square.rotation != 0) {
+          ctx.translate(square.x+ square.cote/2, square.y+square.cote/2)
+          ctx.rotate(square.rotation * Math.PI / 180)
+          ctx.strokeRect(-square.cote/2,-square.cote/2, square.cote, square.cote)
+        }
+        else {
+          ctx.strokeRect(square.x, square.y, square.cote, square.cote)
+        }
       case _: Fill =>
         checkColor(square)
         checkOpacity(square)
-        ctx.rotate(square.rotation * Math.PI / 180)
-        println(ctx.fillStyle)
-        ctx.fillRect(square.x, square.y, square.cote, square.cote)
+        if(square.rotation != 0) {
+          ctx.translate(square.x+ square.cote/2, square.y+square.cote/2)
+          ctx.rotate(square.rotation * Math.PI / 180)
+          ctx.fillRect(-square.cote/2,-square.cote/2, square.cote, square.cote)
+        }
+        else {
+          ctx.fillRect(square.x, square.y, square.cote, square.cote)
+        }
       case _ =>
     }
   }
 
 
-  def += [J <: CanvasyElement](group: Array[J]): Canvasy[I] = {
-    shape_groups += group.asInstanceOf[Array[I]]
-    resizeG(group.asInstanceOf[Array[CanvasyElement]])
+  def += (group: ListBuffer[Shape]): Canvasy[I] = {
+    group foreach(shape_groups += _.asInstanceOf[I])
+    shape_groups sortBy(shape_groups => (shape_groups.x,shape_groups.y))
     this
   }
 
   def +=  (shape: Shape): Canvasy[I] = {
-    val group = Array.fill(1)(shape).asInstanceOf[Array[I]]
-    this += group
-    resizeG(group.asInstanceOf[Array[CanvasyElement]])
+    shape_groups += shape.asInstanceOf[I]
+    shape_groups sortBy(shape_groups => (shape_groups.x,shape_groups.y))
     this
   }
 
-  def getR(c: String) : Int = {
-    val str = c.substring(1,2)
-    try {
-      Integer.parseInt(str,16) * 16
-    } catch {
-      case ne: NumberFormatException => -1
-    }
-  }
-
-  def getG(c: String) : Int = {
-    val str = c.substring(3,4)
-    try {
-      Integer.parseInt(str,16) * 16
-    } catch {
-      case ne: NumberFormatException => -1
-    }
-  }
-
-  def getB(c: String) : Int = {
-    val str = c.substring(5,6)
-    try {
-      Integer.parseInt(str,16) * 16
-    } catch {
-      case ne: NumberFormatException => -1
-    }
-  }
-
-  def getRRGBA(c: String) : Array[Int] = {
-    val str = c.substring(4)
-    var res = str.split(",")
-    Array(res(0).toInt, res(1).toInt, res(2).toInt)
-  }
-
-  def getRRGB(c: String) : Array[Int] = {
-    val str = c.substring(3)
-    var res = str.split(",")
-    Array(res(0).toInt, res(1).toInt, res(2).toInt)
-  }
-
   def checkOpacity [K <: Shape](shape : K) : Unit = {
+    def getRRGBA(c: String) : Array[Int] = {
+      val str = c.substring(4)
+      var res = str.split(",")
+      Array(res(0).toInt, res(1).toInt, res(2).toInt)
+    }
+
+    def getRRGB(c: String) : Array[Int] = {
+      val str = c.substring(3)
+      var res = str.split(",")
+      Array(res(0).toInt, res(1).toInt, res(2).toInt)
+    }
+
+    def getR(c: String) : Int = {
+      val str = c.substring(1,2)
+      try {
+        Integer.parseInt(str,16) * 16
+      } catch {
+        case ne: NumberFormatException => -1
+      }
+    }
+
+    def getG(c: String) : Int = {
+      val str = c.substring(3,4)
+      try {
+        Integer.parseInt(str,16) * 16
+      } catch {
+        case ne: NumberFormatException => -1
+      }
+    }
+
+    def getB(c: String) : Int = {
+      val str = c.substring(5,6)
+      try {
+        Integer.parseInt(str,16) * 16
+      } catch {
+        case ne: NumberFormatException => -1
+      }
+    }
     shape.style match {
       case _: Fill =>
         if (shape.opacity < 1) {
@@ -365,14 +369,13 @@ class Canvasy[I <: CanvasyElement](shape : Array[I], wi : Int, hi: Int, x : Int,
 
   def addListenerMove(): Unit ={
     def reinitXY(): Unit ={
-      shape_groups foreach(_ foreach(_.asInstanceOf[Shape].x = 0))
-      shape_groups foreach(_ foreach(_.asInstanceOf[Shape].y = 0))
+      shape_groups foreach(_.asInstanceOf[Shape].x = 0)
+      shape_groups foreach(_.asInstanceOf[Shape].y = 0)
     }
-
-    reinitXY()
-    shape_groups.asInstanceOf[ListBuffer[Array[CanvasyElement]]] foreach(resizeL(_))
-
-    println(c.width)
+    if(shape_groups.length == 1){
+      reinitXY()
+      resizeCanvas()
+    }
     def rect = c.getBoundingClientRect()
     var offX : Double = 0
     var offY : Double = 0
@@ -401,112 +404,71 @@ class Canvasy[I <: CanvasyElement](shape : Array[I], wi : Int, hi: Int, x : Int,
     dom.window.addEventListener("mouseup", onmouseup, useCapture = false)
   }
 
-  def resizeG(ss : Array[CanvasyElement]): Unit = {
-    var add1 : Double = 0
-    var add2 : Double = 0
-    for(s <- ss){
-      s match {
-        case Rectangle(a,b,width, height,sa,o) =>
-          val res = if(width < height)  height else width
-          if(s.asInstanceOf[Shape].rotation != 0.0){
-            add1 = res + res
-            add2 = res + res
-          }
-          else {
-            if(s.asInstanceOf[Shape].movable){
-              add1 = res
-              add2 = res
-            }
-            else{
-              val res2 = if(a < b)  b else a
-              add1 = 2*res + res2
-              add2 = 2*res + res2
-            }
-          }
-        case Square(a,b,cote,sa,o) =>
-          add1 = cote + cote/2
-          add2 = cote + cote/2
-        case Circle(radius, a,b,sa,o) =>
-          add1 = radius + radius/2
-          add2 = radius + radius/2
-        case RectangleTriangle(x, y, a, b,sa,o) =>
-          add1 = 50
-          add2 = 50
-        case EquilateralTriangle(x, y, a,sa,o) =>
-          add1 = 50
-          add2 = 50
-        case Text(x, y, t,sx,sy,b,cs,f,str) => //TODO
-          add1 = s.asInstanceOf[Text].text.length + 20
-          add2 = s.asInstanceOf[Text].text.length + 20
-        case _ => print("Can only draw Rectangle and Circle")
+  def resizeCanvas(): Unit ={
+    var minX = Double.MaxValue
+    var minY = Double.MaxValue
+    var maxX = Double.MinValue
+    var maxY = Double.MinValue
+    var maxAdd : Double = 0
+    for(shape <- shape_groups){
+      if(shape.x+shape.y < minX + minY){
+        minX = shape.x
+        minY = shape.y
       }
-      if(c.height < add2.toInt) {
-        document.getElementById("container").removeChild(c)
-        c.height = add2.toInt
-        //ctx.translate(s.asInstanceOf[Shape].x,s.asInstanceOf[Shape].y)
-        document.getElementById("container").appendChild(c)
+      if(shape.x+shape.y > maxX + maxY){
+        maxX = shape.x
+        maxY = shape.y
+        maxAdd = addSizeForShape(shape)
       }
-      if(c.width < add1.toInt) {
-        document.getElementById("container").removeChild(c)
-        c.width = add1.toInt
-        //ctx.translate(s.asInstanceOf[Shape].y,s.asInstanceOf[Shape].y)
-        document.getElementById("container").appendChild(c)
+    }
+    if(minY != 0 || minX != 0){
+      for(shape <- shape_groups){
+        shape.x = shape.x - minX
+        shape.y = shape.y - minY
       }
+      resizeCanvas()
+    }
+    else {
+      c.width= maxX.toInt + maxAdd.toInt
+      c.height= maxY.toInt + maxAdd.toInt
+      document.getElementById("container").appendChild(c)
     }
   }
 
-  def resizeL(ss : Array[CanvasyElement]): Unit = {
-    var add1 : Double = 0
-    var add2 : Double = 0
-    for(s <- ss){
-      s match {
-        case Rectangle(a,b,width, height,sa,o) =>
-          val res = if(width < height)  height else width
-          if(s.asInstanceOf[Shape].rotation != 0.0){
-            add1 = res + res
-            add2 = res + res
-          }
-          else {
-            if(s.asInstanceOf[Shape].movable){
-              add1 = res
-              add2 = res
-            }
-            else{
-              add1 = res + a
-              add2 = res + b
-            }
-          }
-        case Square(a,b,cote,sa,o) =>
-          add1 = cote + cote/2
-          add2 = cote + cote/2
-        case Circle(radius, a,b,sa,o) =>
-          add1 = radius + radius/2
-          add2 = radius + radius/2
-        case RectangleTriangle(x, y, a, b,sa,o) =>
-          add1 = 50
-          add2 = 50
-        case EquilateralTriangle(x, y, a,sa,o) =>
-          add1 = 50
-          add2 = 50
-        case Text(x, y, t,sx,sy,b,cs,f,str) => //TODO
-          add1 = s.asInstanceOf[Text].text.length + 20
-          add2 = s.asInstanceOf[Text].text.length + 20
-        case _ => print("Can only draw Rectangle and Circle")
-      }
-      if(c.height > add2.toInt) {
-        document.getElementById("container").removeChild(c)
-        c.height = add2.toInt
-        //ctx.translate(s.asInstanceOf[Shape].x,s.asInstanceOf[Shape].y)
-        document.getElementById("container").appendChild(c)
-      }
-      if(c.width > add1.toInt) {
-        document.getElementById("container").removeChild(c)
-        c.width = add1.toInt
-        //ctx.translate(s.asInstanceOf[Shape].y,s.asInstanceOf[Shape].y)
-        document.getElementById("container").appendChild(c)
-      }
+  def addSizeForShape(shape : Shape): Double = {
+    shape match {
+      case Rectangle(a,b,width, height,s,o) =>
+        if(shape.rotation == 0) {
+          if(width > height) width else height
+        }
+        else {
+          if(shape.rotation <= 45 && shape.rotation >= -45)
+            if(width > height) width + width/2 * Math.cos(Math.abs(shape.rotation)*Math.PI/180) else height + height/2 * Math.cos(Math.abs(shape.rotation)*Math.PI/180)
+          else
+            if(width > height) width - width/2 * Math.cos(Math.abs(shape.rotation)*Math.PI/180) else height - height/2 * Math.cos(Math.abs(shape.rotation)*Math.PI/180)
+        }
+      case Square(a,b,cote,s,o) =>
+        if(shape.rotation == 0) {
+          cote
+        }
+        else {
+          if(shape.rotation <= 45 && shape.rotation >= -45)
+             cote + cote/2 * Math.cos(Math.abs(shape.rotation)*Math.PI/180)
+          else
+             cote - cote/2 * Math.cos(Math.abs(shape.rotation)*Math.PI/180)
+        }
+      case Circle(radius, a,b,s,o) =>
+        radius
+      case RectangleTriangle(x, y, a, b,s,o) =>
+        200 //TODO
+      case EquilateralTriangle(x, y, a,s,o) =>
+        200 //TODO
+      case Text(x, y, t,sx,sy,b,c,f,str) =>
+        200 //TODO
+      case _ => 0
     }
   }
+
 }
 
 object Canvasy {

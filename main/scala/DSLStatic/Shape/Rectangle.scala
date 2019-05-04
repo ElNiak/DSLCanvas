@@ -1,6 +1,6 @@
 package DSLStatic.Shape
 
-import DSLStatic.Style.{Clear, Color, ColorRGB, ColorStyle, Fill, Stroke, Style}
+import DSLStatic.Style.{Clear, Color, ColorRGB, ColorStyle, Fill, Gradient, Stroke, Style}
 
 case class Rectangle(X:Double, Y: Double, widthI: Double, heightI: Double, s : Int, o : Double) extends Shape {
   override var opacity: Double = o
@@ -8,11 +8,20 @@ case class Rectangle(X:Double, Y: Double, widthI: Double, heightI: Double, s : I
   override var x: Double = X
   override var y: Double = Y
   override var rotation: Double = 0
-  override var movable: Boolean = false
   var height  = heightI
   var width = widthI
 
   override var size: Int = _
+
+  def this(X:Double, Y: Double, widthI: Double, heightI: Double, s : Int, o : Double, ct : ColorRGB) {
+    this(X, Y, widthI, heightI, s , o)
+    this.style.colorStyle = ct
+  }
+
+  def this(X:Double, Y: Double, widthI: Double, heightI: Double, s : Int, o : Double, ct : Gradient) {
+    this(X, Y, widthI, heightI, s , o)
+    this.style.colorStyle = ct
+  }
 
   def apply(w: Stroke): Unit = {
     style = w

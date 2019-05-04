@@ -3,6 +3,8 @@ package DSLStatic.Shape
 import DSLStatic.Style.{ColorRGB, ColorStyle, Fill, Gradient, Stroke, Style}
 import DSLStatic._
 
+import scala.collection.mutable.ListBuffer
+
 trait Shape extends CanvasyElement {
   var style : Style
   var opacity: Double
@@ -10,7 +12,6 @@ trait Shape extends CanvasyElement {
   var y: Double
   var size : Int
   var rotation : Double
-  var movable : Boolean
 
   def size(s: Int): Unit = {
     size = s
@@ -21,8 +22,8 @@ trait Shape extends CanvasyElement {
     this
   }
 
-  override def and(x: Shape): Array[Shape] = {
-    Array(this, x)
+  override def and(x: Shape): ListBuffer[Shape] = {
+    ListBuffer(this, x)
   }
 
   override def and(x: CanvasyElementModifier[Shape]): Shape = {
@@ -41,24 +42,37 @@ trait Shape extends CanvasyElement {
   }
 
   def rotate(X: Double) : Shape = {
-    rotation = X
+    if(X <= 90 && X >= -90)
+      rotation = X
+    else {
+      val i : Int = (X/90).toInt
+      if(X > 90)
+        rotation = 90*i - X
+      else
+        rotation = 90*i + X
+    }
+    println(rotation)
     this
+  }
+
+  def apply(w: Style): Unit = {
+    style = w
   }
 
 }
 
 
 object Shape {
-  implicit class Group[I <: Shape](group: Array[I]) {
-    def translateY(Y: Int) : Array[I] = {
+  implicit class Group[I <: Shape](group: ListBuffer[I]) {
+    def translateY(Y: Int) : ListBuffer[I] = {
       group foreach(_ translateY(Y))
       return group
     }
-    def translateX(X: Int) : Array[I] = {
+    def translateX(X: Int) : ListBuffer[I] = {
       group foreach(_ translateX(X))
       return group
     }
-    def rotate(X: Double) : Array[I] = {
+    def rotate(X: Double) : ListBuffer[I] = {
       group foreach(_ rotate(X))
       return group
     }
