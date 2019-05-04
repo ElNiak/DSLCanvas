@@ -41,7 +41,7 @@ object dslDemoObject {
     ree rotate -90 //bug
     canvasy moveMouse true
     //canvasy2 moveMouse true
-
+    canvasy keyRotate true
     canvasy2 translateX 50 translateY 100
 
     drawHand(500)

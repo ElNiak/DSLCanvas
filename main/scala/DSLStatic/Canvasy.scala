@@ -18,6 +18,7 @@ class Canvasy[I <: Shape](shape : I) {
   private val ctx_fill_color = ctx.fillStyle
   c.style.position = "absolute"
   private var movable : Boolean = false
+  private var rotable : Boolean = false
   private var setEventRotate = true
   private var l : Double = 0
   private var t : Double = 0
@@ -29,6 +30,10 @@ class Canvasy[I <: Shape](shape : I) {
 
   def draw(): Unit = {
     resizeCanvas()
+    if(movable)
+      addListenerMove()
+    if(rotable)
+      addListenerRotate()
     shape_groups foreach(drawShape(_))
   }
 
@@ -49,11 +54,7 @@ class Canvasy[I <: Shape](shape : I) {
   }
 
   def drawShape(shape: Shape): Unit = {
-    if(movable)
-      addListenerMove()
     ctx.save()
-    if (shape.asInstanceOf[Shape].canRotate)
-      addListenerRotate()
     shape match {
       case s : Rectangle =>
         drawRectangle(s)
@@ -109,7 +110,7 @@ class Canvasy[I <: Shape](shape : I) {
   }
 
   def keyRotate(boolean: Boolean): Unit = {
-    shape_groups foreach(_.asInstanceOf[Shape].canRotate = boolean)
+    rotable = boolean
   }
 
   def drawCircle(circle: Circle): Unit = {

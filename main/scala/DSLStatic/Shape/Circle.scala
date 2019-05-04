@@ -9,7 +9,6 @@ case class Circle(radiusv: Double, X:Double, Y:Double, s: Int , o : Double) exte
   override var y : Double = Y
   override var size: Int = _
   override var rotation: Double = 0
-  override var canRotate: Boolean = false
   var radius : Double = radiusv
 
   def apply(w: Double): Unit = {
