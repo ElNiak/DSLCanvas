@@ -20,6 +20,7 @@ class Canvasy[I <: Shape](shape : I) {
   private var movable : Boolean = false
   private var rotable : Boolean = false
   private var setEventRotate = true
+  private var setEventMovable = true
   private var l : Double = 0
   private var t : Double = 0
   this += shape
@@ -53,7 +54,7 @@ class Canvasy[I <: Shape](shape : I) {
     this
   }
 
-  def drawShape(shape: Shape): Unit = {
+  private def drawShape(shape: Shape): Unit = {
     ctx.save()
     shape match {
       case s : Rectangle =>
@@ -74,16 +75,20 @@ class Canvasy[I <: Shape](shape : I) {
       case s: Text =>
         drawText(s)
         ctx.restore()
+      case s: Xogone =>
+        drawXogone(s)
+        ctx.restore()
       case _ => print("Shape not found")
     }
   }
 
-  def drawTriangle(triangle: Triangle): Unit = {
+  private def drawTriangle(triangle: Triangle): Unit = {
     triangle.style match {
       case _: Stroke =>
         checkColor(triangle)
         checkOpacity(triangle)
         ctx.rotate(triangle.rotation * Math.PI / 180)
+        ctx.lineCap = "round"
         ctx.beginPath()
         ctx.moveTo(triangle.a._1, triangle.a._2)
         ctx.lineTo(triangle.b._1, triangle.b._2)
@@ -94,6 +99,7 @@ class Canvasy[I <: Shape](shape : I) {
         checkColor(triangle)
         checkOpacity(triangle)
         ctx.rotate(triangle.rotation * Math.PI / 180)
+        ctx.lineCap = "round"
         ctx.beginPath()
         ctx.moveTo(triangle.a._1, triangle.a._2)
         ctx.lineTo(triangle.b._1, triangle.b._2)
@@ -102,7 +108,37 @@ class Canvasy[I <: Shape](shape : I) {
         ctx.fill()
       case _ =>
     }
+  }
 
+  private def drawXogone(xogone: Xogone): Unit = {
+    xogone.style match {
+      case _: Stroke =>
+        checkColor(xogone)
+        checkOpacity(xogone)
+        ctx.rotate(xogone.rotation * Math.PI / 180)
+        ctx.translate(xogone.x, xogone.y)
+        ctx.beginPath()
+        ctx.moveTo(xogone.list(0)._1, xogone.list(0)._2)
+        for(i <- 1 until xogone.list.length) {
+          ctx.lineTo(xogone.list(i)._1, xogone.list(i)._2)
+        }
+        ctx.lineTo(xogone.list(0)._1, xogone.list(0)._2)
+        ctx.stroke()
+      case _: Fill =>
+        println("ccol")
+        checkColor(xogone)
+        checkOpacity(xogone)
+        ctx.rotate(xogone.rotation * Math.PI / 180)
+        ctx.translate(xogone.x, xogone.y)
+        ctx.beginPath()
+        ctx.moveTo(xogone.list(0)._1, xogone.list(0)._2)
+        for(i <- 1 until xogone.list.length) {
+          ctx.lineTo(xogone.list(i)._1, xogone.list(i)._2)
+        }
+        ctx.lineTo(xogone.list(0)._1, xogone.list(0)._2)
+        ctx.fill()
+      case _ =>
+    }
   }
 
   def moveMouse(boolean: Boolean): Unit = {
@@ -113,7 +149,7 @@ class Canvasy[I <: Shape](shape : I) {
     rotable = boolean
   }
 
-  def drawCircle(circle: Circle): Unit = {
+  private def drawCircle(circle: Circle): Unit = {
     circle.style match {
       case _: Stroke =>
         checkColor(circle)
@@ -134,7 +170,7 @@ class Canvasy[I <: Shape](shape : I) {
 
   }
 
-  def drawRectangle(rectangle: Rectangle): Unit = {
+  private def drawRectangle(rectangle: Rectangle): Unit = {
     rectangle.style match {
       case _: Stroke =>
         checkColor(rectangle)
@@ -162,7 +198,7 @@ class Canvasy[I <: Shape](shape : I) {
     }
   }
 
-  def drawText(text: Text): Unit = {
+  private def drawText(text: Text): Unit = {
     text.style match {
       case _: Fill =>
         checkColor(text)
@@ -181,7 +217,7 @@ class Canvasy[I <: Shape](shape : I) {
     }
   }
 
-  def drawSquare(square: Square): Unit = {
+  private def drawSquare(square: Square): Unit = {
     square.style match {
       case _: Stroke =>
         checkColor(square)
@@ -222,7 +258,7 @@ class Canvasy[I <: Shape](shape : I) {
     this
   }
 
-  def checkOpacity [K <: Shape](shape : K) : Unit = {
+  private def checkOpacity [K <: Shape](shape : K) : Unit = {
     def getRRGBA(c: String) : Array[Int] = {
       val str = c.substring(4)
       var res = str.split(",")
@@ -316,7 +352,7 @@ class Canvasy[I <: Shape](shape : I) {
     }
   }
 
-  def checkColor [K <: Shape](shape : K) : Unit = {
+  private def checkColor [K <: Shape](shape : K) : Unit = {
     shape.style match {
       case s : Fill =>
         s.colorStyle match {
@@ -375,7 +411,7 @@ class Canvasy[I <: Shape](shape : I) {
     }
   }
 
-  def addListenerMove(): Unit ={
+  private def addListenerMove(): Unit ={
     def reinitXY(): Unit ={
       shape_groups foreach(_.asInstanceOf[Shape].x = 0)
       shape_groups foreach(_.asInstanceOf[Shape].y = 0)
@@ -412,17 +448,10 @@ class Canvasy[I <: Shape](shape : I) {
     dom.window.addEventListener("mouseup", onmouseup, useCapture = false)
   }
 
-  def addListenerRotate(): Unit ={
+  private def addListenerRotate(): Unit ={
     var rotate = false
     val onClick ={(e: dom.MouseEvent) =>
       rotate = !rotate
-//      if (rotate)
-//        shape_groups foreach (_ foreach(_.asInstanceOf[Shape]. += ))
-//      else
-//        shape_groups foreach (_ foreach(_.asInstanceOf[Shape].opacity -= ))
-//      ctx.clearRect(0, 0, c.width, c.height)
-//      draw()
-      println(rotate)
     }
 
     val onKey ={(e: dom.KeyboardEvent) =>
@@ -480,7 +509,7 @@ class Canvasy[I <: Shape](shape : I) {
     }
   }
 
-  def addSizeForShape(shape : Shape): Double = {
+  private def addSizeForShape(shape : Shape): Double = {
     shape match {
       case Rectangle(a,b,width, height,s,o) =>
         if(shape.rotation == 0) {
@@ -510,6 +539,9 @@ class Canvasy[I <: Shape](shape : I) {
         200 //TODO
       case Text(x, y, t,sx,sy,b,c,f,str) =>
         200 //TODO
+      case s: Xogone =>
+        var ss = s.rangeSize
+        if(ss._3 - ss._1  > ss._4 - ss._2)  ss._3 - ss._1 else  ss._4 - ss._2
       case _ => 0
     }
   }
