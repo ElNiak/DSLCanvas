@@ -15,6 +15,9 @@ class Canvasy[I <: Shape](shape : I) {
   private val shape_groups = new ListBuffer[I]()
   private val ctx_stroke_color = ctx.strokeStyle
   private val ctx_stroke_width = ctx.lineWidth
+  private val ctx_stroke_cap = ctx.lineCap
+  private val ctx_stroke_join = ctx.lineJoin
+  private val ctx_stroke_dash = ctx.lineDashOffset
   private val ctx_fill_color = ctx.fillStyle
   private var movable : Boolean = false
   private var rotatable : Boolean = false
@@ -143,7 +146,10 @@ class Canvasy[I <: Shape](shape : I) {
       case _: Stroke =>
         checkColor(triangle)
         checkOpacity(triangle)
-        ctx.rotate(triangle.rotation * Math.PI / 180)
+        if(triangle.rotation != 0) {
+          ctx.moveTo((triangle.a._1 + triangle.b._1 + triangle.c._1)/3, (triangle.a._2 + triangle.b._2 + triangle.c._2)/3)
+          ctx.rotate(triangle.rotation * Math.PI / 180)
+        }
         ctx.lineCap = "round"
         ctx.beginPath()
         ctx.moveTo(triangle.a._1, triangle.a._2)
@@ -154,7 +160,10 @@ class Canvasy[I <: Shape](shape : I) {
       case _: Fill =>
         checkColor(triangle)
         checkOpacity(triangle)
-        ctx.rotate(triangle.rotation * Math.PI / 180)
+        if(triangle.rotation != 0) {
+          ctx.moveTo((triangle.a._1 + triangle.b._1 + triangle.c._1)/3, (triangle.a._2 + triangle.b._2 + triangle.c._2)/3)
+          ctx.rotate(triangle.rotation * Math.PI / 180)
+        }
         ctx.lineCap = "round"
         ctx.beginPath()
         ctx.moveTo(triangle.a._1, triangle.a._2)
@@ -448,10 +457,29 @@ class Canvasy[I <: Shape](shape : I) {
               ctx.strokeStyle = b.color
             else
               ctx.strokeStyle = ctx_stroke_color
+
             if (s.width != -1)
               ctx.lineWidth = s.width
             else
               ctx.lineWidth = ctx_stroke_width
+
+            if (!s.cap.equals(""))
+              ctx.lineCap = s.cap
+            else
+              ctx.lineCap = ctx_stroke_cap
+
+            if (!s.join.equals(""))
+              ctx.lineJoin = s.join
+            else
+              ctx.lineJoin = ctx_stroke_join
+
+            if (s.offset != 0.0){
+              ctx.lineDashOffset = s.offset
+              ctx.setLineDash(js.Array(4.0,2.0))
+            }
+            else {
+              ctx.lineDashOffset = 0
+            }
 
           case b: Gradient =>
             if(b.r1 == -1){

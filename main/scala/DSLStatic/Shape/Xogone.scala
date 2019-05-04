@@ -14,6 +14,7 @@ case class Xogone(X:Double, Y:Double, s: Int , o : Double, list: ListBuffer[(Dou
   val coordinates : ListBuffer[(Double,Double)]= list
   val rangeSize = getSize()
 
+
   def this(X:Double, Y: Double, s : Int, o : Double, list: ListBuffer[(Double,Double)], ct : ColorRGB) {
     this(X, Y, s , o, list)
     this.style.colorStyle = ct
