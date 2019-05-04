@@ -1,6 +1,6 @@
 package DSLStatic.Shape
 
-import DSLStatic.Style.{Clear, Fill, Stroke, Style}
+import DSLStatic.Style.{Clear, ColorRGB, Fill, Gradient, Stroke, Style}
 
 import scala.collection.mutable.ListBuffer
 
@@ -14,12 +14,21 @@ case class Xogone(X:Double, Y:Double, s: Int , o : Double, list: ListBuffer[(Dou
   val coordinates : ListBuffer[(Double,Double)]= list
   val rangeSize = getSize()
 
+  def this(X:Double, Y: Double, s : Int, o : Double, list: ListBuffer[(Double,Double)], ct : ColorRGB) {
+    this(X, Y, s , o, list)
+    this.style.colorStyle = ct
+  }
+
+  def this(X:Double, Y: Double, widthI: Double, heightI: Double, s : Int, o : Double,list: ListBuffer[(Double,Double)], ct : Gradient) {
+    this(X, Y, s , o, list)
+    this.style.colorStyle = ct
+  }
+
   def getSize(): (Double,Double,Double,Double) ={
     var minX = Double.MaxValue
     var minY = Double.MaxValue
     var maxX = Double.MinValue
     var maxY = Double.MinValue
-    var maxAdd : Double = 0
     for(shape <- coordinates){
       if(shape._1+shape._2 < minX + minY){
         minX = shape._1

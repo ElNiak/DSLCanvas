@@ -32,13 +32,15 @@ object dslDemoObject {
     canvasy += new Rectangle(150,0,150,30,1,0.8, Color.purple)
     canvasy += new Rectangle(200,150,150,130,1,0.8, Color.green)
     canvasy += Circle(50.0, 200, 100, 1, 0.5)
-    val xo = Xogone(100, 100, 2, 0.5, ListBuffer((0,0),(100,100),(100,50),(30,10),(25,50)))
+    val xo = new Xogone(100, 100, 2, 0.5, ListBuffer((0,0),(100,100),(100,50),(30,10),(25,50)),Color.orange)
     var canvasy4 = new Canvasy(xo)
+
+    canvasy4 += new MyShapeExemple(400,400,1,1,1)
     //canvasy += re
 
-    val Recttriangles = RectangleTriangle(100, 100, 40, 40, 1, 0.5)
-    val equTriangle = EquilateralTriangle(200, 200, 50, 1, 0.5)
-    canvasy4 += Recttriangles += equTriangle
+    val Recttriangles = RectangleTriangle(100, 100, 40, 40, 2, 0.5)
+    val equTriangle   = EquilateralTriangle(200, 100, 100, 1, 0.5)
+    canvasy4 += equTriangle += Recttriangles
     re change FillColor(gradL"0&50&50&5&0,0.5,1&#A7D30C#019F62#58f6f8")
     ree change FillColor(Color.red)
 
@@ -51,9 +53,15 @@ object dslDemoObject {
     canvasy keyRotate true
     canvasy2 translateX 50 translateY 100
 
+    canvasy4 rotate 0
+
+    canvasy4.strokeElement change StrokeColor(Color.green)
+    canvasy4.fillElement change FillColor(Color.red)
+
+    canvasy4 moveMouse  true
     //drawHand(500)
     //canvasy draw()
     //canvasy2 draw()
-    canvasy4 draw()
+    canvasy4 draw
   }
 }

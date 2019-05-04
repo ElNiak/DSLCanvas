@@ -1,6 +1,6 @@
 package DSLStatic.Shape
 
-import DSLStatic.Style.{Clear, Color, ColorRGB, ColorStyle, Fill, Stroke, Style}
+import DSLStatic.Style.{Clear, Color, ColorRGB, ColorStyle, Fill, Gradient, Stroke, Style}
 
 
 case class EquilateralTriangle (X: Double, Y: Double, A: Double, s: Int , o : Double) extends Triangle {
@@ -13,4 +13,24 @@ case class EquilateralTriangle (X: Double, Y: Double, A: Double, s: Int , o : Do
   override var y: Double = Y
   override var size: Int = _
   override var rotation: Double = 0
+  val rangeSize = getSize()
+
+  def this(X:Double, Y: Double, A: Double, s : Int, o : Double, ct : ColorRGB) {
+    this(X, Y, A, s , o)
+    this.style.colorStyle = ct
+  }
+
+  def this(X:Double, Y: Double, A: Double, s : Int, o : Double, ct : Gradient) {
+    this(X, Y, A, s , o)
+    this.style.colorStyle = ct
+  }
+
+  def getSize(): (Double,Double,Double,Double) ={
+    val minX = X
+    val minY = Y
+    val maxX = if(X+A+Y > (X + A*0.5) + (Y + A*Math.sqrt(3)/2)) X + A else X + A*0.5
+    val maxY = if(X+A+Y > (X + A*0.5) + (Y + A*Math.sqrt(3)/2)) Y  else Y + A*Math.sqrt(3)/2
+    println((minX,minY,maxX,maxY))
+    (minX,minY,maxX,maxY)
+  }
 }
