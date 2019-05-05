@@ -40,7 +40,7 @@ object dslDemoObject {
 
     val Recttriangles = TriangleRectangle((100, 100), 40, 40, 2, 0.5)
     val equTriangle   = TriangleEquilateral((200, 100), 100, 1, 0.5)
-    val t = Text((50, 50), "Smoke Weed", 10, 10, 10, "#ff0000", "20px Times New Roman", true)
+    val t = Text((50, 50), "Smoke Weed", 10, 10, 10, "#ff0000", "20px Times New Roman", false)
     canvasy4 += equTriangle += Recttriangles += t
     re change FillColor(gradL"0&50&50&5&0,0.5,1&#A7D30C#019F62#58f6f8")
     ree change FillColor(Color.red)
@@ -77,10 +77,12 @@ object dslDemoObject {
     canvasy5.strokeElement change StrokeWidth(10)
     canvasy5.strokeElement change StrokeColor(Color.red)
 
+    canvasy4.getStrokeShape[PPLShape] change StrokeColor(Color.blue)
+
     canvasy4 moveMouse  true
     //drawHand(500)
-    //canvasy draw()
-    //canvasy2 draw()
+    canvasy draw()
+    canvasy2 draw()
     canvasy4 draw()
     canvasy5 draw()
   }

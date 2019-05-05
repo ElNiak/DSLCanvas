@@ -7,6 +7,7 @@ import org.scalajs.dom.raw.CanvasGradient
 import org.scalajs.dom.{document, html}
 
 import scala.collection.mutable.ListBuffer
+import scala.reflect.ClassTag
 import scala.scalajs.js
 
 class Canvasy[I <: Shape](shape : I) {
@@ -45,7 +46,7 @@ class Canvasy[I <: Shape](shape : I) {
   }
 
 
-  private def getStroke () : ListBuffer[Shape] = {
+  private def getStroke() : ListBuffer[Shape] = {
     val lst : ListBuffer[Shape] = new ListBuffer[Shape]
     for(shape <- shape_groups){
       shape.style match {
@@ -56,6 +57,29 @@ class Canvasy[I <: Shape](shape : I) {
     lst
   }
 
+  def getFillShape[A](implicit tag: ClassTag[A])  : ListBuffer[A] = {
+    val lst : ListBuffer[A] = new ListBuffer[A]
+    for(shape <- fillElement){
+      shape match {
+        case a: A =>
+            lst += a
+        case _ =>
+      }
+    }
+    lst
+  }
+
+  def getStrokeShape[A](implicit tag: ClassTag[A])  : ListBuffer[A] = {
+    val lst : ListBuffer[A] = new ListBuffer[A]
+    for(shape <- strokeElement){
+      shape match {
+        case a: A =>
+            lst += a
+        case _ =>
+      }
+    }
+    lst
+  }
 
   private def getFill() : ListBuffer[Shape] ={
     val lst : ListBuffer[Shape] = new ListBuffer[Shape]
@@ -92,12 +116,14 @@ class Canvasy[I <: Shape](shape : I) {
     this
   }
 
-  def moveMouse(boolean: Boolean): Unit = {
+  def moveMouse(boolean: Boolean): Canvasy[I] = {
     movable = boolean
+    this
   }
 
-  def keyRotate(boolean: Boolean): Unit = {
+  def keyRotate(boolean: Boolean): Canvasy[I] = {
     rotatable = boolean
+    this
   }
 
   def translateY(v : Double): Canvasy[I] ={
