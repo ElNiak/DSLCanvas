@@ -4,11 +4,11 @@ import DSLStatic.Style.{Clear, Fill, Stroke, Style}
 import org.scalajs.dom
 import org.scalajs.dom.{document, html}
 
-case class Text (X:Double, Y: Double, texte: String, SOX : Double , SOY : Double, SB : Double, SC : String, Font : String, strokeB : Boolean) extends Shape {
+case class Text (from : (Double, Double), texte: String, SOX : Double , SOY : Double, SB : Double, SC : String, Font : String, strokeB : Boolean) extends Shape {
   override var opacity: Double = 1
   override var style: Style = new Fill
-  override var x: Double = X
-  override var y: Double = Y
+  override var x: Double = from._1
+  override var y: Double = from._2
   override var rotation: Double = 0
   var text : String = texte
   var soX : Double = SOX
@@ -21,8 +21,8 @@ case class Text (X:Double, Y: Double, texte: String, SOX : Double , SOY : Double
   override var isMirror: Boolean = false
   override val rangeSize = getSize()
 
-  def this(X:Double, Y: Double, texte: String, strokeB : Boolean, sizE : Int) {
-    this(X,Y,texte,0,0,0,"000000",sizE.toString + "px Times New Roman", strokeB)
+  def this(from : (Double, Double), texte: String, strokeB : Boolean, sizE : Int) {
+    this(from,texte,0,0,0,"000000",sizE.toString + "px Times New Roman", strokeB)
   }
 
   def apply(w: Stroke): Unit = {

@@ -32,7 +32,7 @@ class Canvasy[I <: Shape](shape : I) {
   if(shape != null) this += shape
 
   def this(){
-    this(Text(0, 0, "", 2, 2, 2, "#ffffff", "0px Times New Roman", false).asInstanceOf[I])
+    this(Text((0, 0), "", 2, 2, 2, "#ffffff", "0px Times New Roman", false).asInstanceOf[I])
   }
 
   def draw() : Unit = {
@@ -158,7 +158,7 @@ class Canvasy[I <: Shape](shape : I) {
         ctx.rotate(triangle.rotation * Math.PI / 180)
         ctx.beginPath()
         ctx.moveTo(triangle.x,triangle.y)
-        ctx.quadraticCurveTo(triangle.cp1x, triangle.cp1y, triangle.tX, triangle.ty)
+        ctx.quadraticCurveTo(triangle.cp1x, triangle.cp1y, triangle.tx, triangle.ty)
         ctx.stroke()
       case _: Fill =>
         checkColor(triangle)
@@ -166,7 +166,7 @@ class Canvasy[I <: Shape](shape : I) {
         ctx.rotate(triangle.rotation * Math.PI / 180)
         ctx.beginPath()
         ctx.moveTo(triangle.x,triangle.y)
-        ctx.quadraticCurveTo(triangle.cp1x, triangle.cp1y, triangle.tX, triangle.ty)
+        ctx.quadraticCurveTo(triangle.cp1x, triangle.cp1y, triangle.tx, triangle.ty)
         ctx.fill()
       case _ =>
     }
@@ -179,14 +179,14 @@ class Canvasy[I <: Shape](shape : I) {
         checkOpacity(triangle)
         ctx.rotate(triangle.rotation * Math.PI / 180)
         ctx.moveTo(triangle.x,triangle.y)
-        ctx.bezierCurveTo(triangle.cp1x, triangle.cp1y, triangle.cp2x, triangle.cp2y, triangle.tX, triangle.ty)
+        ctx.bezierCurveTo(triangle.cp1x, triangle.cp1y, triangle.cp2x, triangle.cp2y, triangle.tx, triangle.ty)
         ctx.stroke()
       case _: Fill =>
         checkColor(triangle)
         checkOpacity(triangle)
         ctx.rotate(triangle.rotation * Math.PI / 180)
         ctx.moveTo(triangle.x,triangle.y)
-        ctx.bezierCurveTo(triangle.cp1x, triangle.cp1y, triangle.cp2x, triangle.cp2y, triangle.tX, triangle.ty)
+        ctx.bezierCurveTo(triangle.cp1x, triangle.cp1y, triangle.cp2x, triangle.cp2y, triangle.tx, triangle.ty)
         ctx.fill()
       case _ =>
     }

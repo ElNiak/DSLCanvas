@@ -5,11 +5,11 @@ import DSLStatic.Style.{Clear, ColorRGB, Fill, Gradient, Stroke, Style}
 import scala.collection.mutable.ListBuffer
 
 //Point to Point Lined shape
-case class PPLShape(X:Double, Y:Double, s: Int, o : Double, list: ListBuffer[(Double,Double)]) extends Shape {
+case class PPLShape(from : (Double, Double), s: Int, o : Double, list: ListBuffer[(Double,Double)]) extends Shape {
   override var opacity: Double = o
   override var style : Style =  if(s == 1) new Fill else if (s == 2) new Stroke else new Clear
-  override var x : Double = X
-  override var y : Double = Y
+  override var x : Double = from._1
+  override var y : Double = from._2
   override var size: Int = _
   override var rotation: Double = 0
   override var isMirror: Boolean = false
@@ -17,13 +17,13 @@ case class PPLShape(X:Double, Y:Double, s: Int, o : Double, list: ListBuffer[(Do
   override val rangeSize = getSize()
 
 
-  def this(X:Double, Y: Double, s : Int, o : Double, list: ListBuffer[(Double,Double)], ct : ColorRGB) {
-    this(X, Y, s , o, list)
+  def this(from : (Double, Double), s : Int, o : Double, list: ListBuffer[(Double,Double)], ct : ColorRGB) {
+    this(from, s , o, list)
     this.style.colorStyle = ct
   }
 
-  def this(X:Double, Y: Double, widthI: Double, heightI: Double, s : Int, o : Double,list: ListBuffer[(Double,Double)], ct : Gradient) {
-    this(X, Y, s , o, list)
+  def this(from : (Double, Double), widthI: Double, heightI: Double, s : Int, o : Double,list: ListBuffer[(Double,Double)], ct : Gradient) {
+    this(from, s , o, list)
     this.style.colorStyle = ct
   }
 
