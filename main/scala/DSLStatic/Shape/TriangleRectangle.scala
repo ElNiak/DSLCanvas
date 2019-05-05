@@ -5,7 +5,7 @@ import DSLStatic.Style.{Clear, Color, ColorRGB, ColorStyle, Fill, Gradient, Stro
 import scala.collection.mutable.ListBuffer
 
 
-case class RectangleTriangle(X: Double, Y: Double, A: Double, B: Double, s: Int , o : Double) extends Triangle {
+case class TriangleRectangle(X: Double, Y: Double, A: Double, B: Double, s: Int, o : Double) extends Triangle {
   override var a = (X, Y)
   override var b = (X + A, Y)
   override var c = (X, Y + B)
@@ -15,7 +15,8 @@ case class RectangleTriangle(X: Double, Y: Double, A: Double, B: Double, s: Int 
   override var y: Double = Y
   override var size: Int = _
   override var rotation: Double = 0
-  val rangeSize = getSize()
+  override var isMirror: Boolean = false
+  override val rangeSize = getSize()
 
   def this(X:Double, Y: Double, A: Double, B: Double, s : Int, o : Double, ct : ColorRGB) {
     this(X, Y, A, B, s , o)
@@ -27,12 +28,11 @@ case class RectangleTriangle(X: Double, Y: Double, A: Double, B: Double, s: Int 
     this.style.colorStyle = ct
   }
 
-  def getSize(): (Double,Double,Double,Double) ={
+  override def getSize(): Double ={
     val minX = X
     val minY = Y
     val maxX = if(X+A+Y > Y+B+X) X + A else X
     val maxY = if(X+A+Y > Y+B+X) Y  else Y + B
-
-    (minX,minY,maxX,maxY)
+    if(maxX - minX  > maxY - minY)  (maxX - minX) * 1.15 else  (maxY - minY) * 1.15
   }
 }

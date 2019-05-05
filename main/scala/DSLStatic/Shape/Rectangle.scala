@@ -8,9 +8,10 @@ case class Rectangle(X:Double, Y: Double, widthI: Double, heightI: Double, s : I
   override var x: Double = X
   override var y: Double = Y
   override var rotation: Double = 0
+  override var isMirror: Boolean = false
   var height  = heightI
   var width = widthI
-
+  override val rangeSize = getSize
   override var size: Int = _
 
   def this(X:Double, Y: Double, widthI: Double, heightI: Double, s : Int, o : Double, ct : ColorRGB) {
@@ -29,5 +30,17 @@ case class Rectangle(X:Double, Y: Double, widthI: Double, heightI: Double, s : I
 
   def apply(w: Fill): Unit = {
     style = w
+  }
+
+  override def getSize(): Double = {
+    if(rotation == 0) {
+      if(width > height) width else height
+    }
+    else {
+      if(rotation <= 45 && rotation >= -45)
+        if(width > height) width + width/2 * Math.cos(Math.abs(rotation)*Math.PI/180) else height + height/2 * Math.cos(Math.abs(rotation)*Math.PI/180)
+      else
+      if(width > height) width - width/2 * Math.cos(Math.abs(rotation)*Math.PI/180) else height - height/2 * Math.cos(Math.abs(rotation)*Math.PI/180)
+    }
   }
 }

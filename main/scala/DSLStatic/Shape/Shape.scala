@@ -12,10 +12,14 @@ trait Shape extends CanvasyElement {
   var y: Double
   var size : Int
   var rotation : Double
+  var isMirror : Boolean
+  val rangeSize : Double
 
   def size(s: Int): Unit = {
     size = s
   }
+
+  def getSize(): Double
 
   override def change(x: CanvasyElementModifier[Shape]): Shape = {
     x.change(this)

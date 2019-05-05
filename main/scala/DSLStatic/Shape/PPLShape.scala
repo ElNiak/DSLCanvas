@@ -4,15 +4,17 @@ import DSLStatic.Style.{Clear, ColorRGB, Fill, Gradient, Stroke, Style}
 
 import scala.collection.mutable.ListBuffer
 
-case class Xogone(X:Double, Y:Double, s: Int , o : Double, list: ListBuffer[(Double,Double)]) extends Shape {
+//Point to Point Lined shape
+case class PPLShape(X:Double, Y:Double, s: Int, o : Double, list: ListBuffer[(Double,Double)]) extends Shape {
   override var opacity: Double = o
   override var style : Style =  if(s == 1) new Fill else if (s == 2) new Stroke else new Clear
   override var x : Double = X
   override var y : Double = Y
   override var size: Int = _
   override var rotation: Double = 0
+  override var isMirror: Boolean = false
   val coordinates : ListBuffer[(Double,Double)]= list
-  val rangeSize = getSize()
+  override val rangeSize = getSize()
 
 
   def this(X:Double, Y: Double, s : Int, o : Double, list: ListBuffer[(Double,Double)], ct : ColorRGB) {
@@ -25,7 +27,7 @@ case class Xogone(X:Double, Y:Double, s: Int , o : Double, list: ListBuffer[(Dou
     this.style.colorStyle = ct
   }
 
-  def getSize(): (Double,Double,Double,Double) ={
+  override def getSize(): Double ={
     var minX = Double.MaxValue
     var minY = Double.MaxValue
     var maxX = Double.MinValue
@@ -40,7 +42,7 @@ case class Xogone(X:Double, Y:Double, s: Int , o : Double, list: ListBuffer[(Dou
         maxY = shape._1
       }
     }
-    (minX,minY,maxX,maxY)
+    if(maxX - minX  > maxY - minY)  (maxX - minX) * 1.15 else  (maxY - minY) * 1.15
   }
 
 }

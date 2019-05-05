@@ -3,7 +3,7 @@ package DSLStatic.Shape
 import DSLStatic.Style.{Clear, Color, ColorRGB, ColorStyle, Fill, Gradient, Stroke, Style}
 
 
-case class EquilateralTriangle (X: Double, Y: Double, A: Double, s: Int , o : Double) extends Triangle {
+case class TriangleEquilateral(X: Double, Y: Double, A: Double, s: Int, o : Double) extends Triangle {
   override var a: (Double, Double) = (X, Y)
   override var b: (Double, Double) = (X + A, Y)
   override var c: (Double, Double) = (X + A*0.5, Y + A*Math.sqrt(3)/2)
@@ -13,7 +13,8 @@ case class EquilateralTriangle (X: Double, Y: Double, A: Double, s: Int , o : Do
   override var y: Double = Y
   override var size: Int = _
   override var rotation: Double = 0
-  val rangeSize = getSize()
+  override var isMirror: Boolean = false
+  override val rangeSize = getSize()
 
   def this(X:Double, Y: Double, A: Double, s : Int, o : Double, ct : ColorRGB) {
     this(X, Y, A, s , o)
@@ -25,12 +26,11 @@ case class EquilateralTriangle (X: Double, Y: Double, A: Double, s: Int , o : Do
     this.style.colorStyle = ct
   }
 
-  def getSize(): (Double,Double,Double,Double) ={
+  override def getSize(): Double ={
     val minX = X
     val minY = Y
     val maxX = if(X+A+Y > (X + A*0.5) + (Y + A*Math.sqrt(3)/2)) X + A else X + A*0.5
     val maxY = if(X+A+Y > (X + A*0.5) + (Y + A*Math.sqrt(3)/2)) Y  else Y + A*Math.sqrt(3)/2
-    println((minX,minY,maxX,maxY))
-    (minX,minY,maxX,maxY)
+    if(maxX - minX  > maxY - minY)  (maxX - minX) * 1.15 else  (maxY - minY) * 1.15
   }
 }

@@ -125,23 +125,74 @@ class Canvasy[I <: Shape](shape : I) {
       case s: Circle =>
         drawCircle(s)
         ctx.restore()
-      case s: RectangleTriangle =>
+      case s: TriangleRectangle =>
         drawTriangleR(s)
         ctx.restore()
-      case s:EquilateralTriangle =>
+      case s:TriangleEquilateral =>
         drawTriangleE(s)
         ctx.restore()
       case s: Text =>
         drawText(s)
         ctx.restore()
-      case s: Xogone =>
-        drawXogone(s)
+      case s: PPLShape =>
+        drawPPLShape(s)
+        ctx.restore()
+      case s: TrianglePP =>
+        drawTrianglePP(s)
+        ctx.restore()
+      case s: CurveQuadratic =>
+        drawQCurve(s)
+        ctx.restore()
+      case s: CurveBezier =>
+        drawBCurve(s)
         ctx.restore()
       case _ => print("Shape not found")
     }
   }
 
-  private def drawTriangleR(triangle: RectangleTriangle): Unit = {
+  private def drawQCurve(triangle: CurveQuadratic): Unit = {
+    triangle.style match {
+      case _: Stroke =>
+        checkColor(triangle)
+        checkOpacity(triangle)
+        ctx.rotate(triangle.rotation * Math.PI / 180)
+        ctx.beginPath()
+        ctx.moveTo(triangle.x,triangle.y)
+        ctx.quadraticCurveTo(triangle.cp1x, triangle.cp1y, triangle.tX, triangle.ty)
+        ctx.stroke()
+      case _: Fill =>
+        checkColor(triangle)
+        checkOpacity(triangle)
+        ctx.rotate(triangle.rotation * Math.PI / 180)
+        ctx.beginPath()
+        ctx.moveTo(triangle.x,triangle.y)
+        ctx.quadraticCurveTo(triangle.cp1x, triangle.cp1y, triangle.tX, triangle.ty)
+        ctx.fill()
+      case _ =>
+    }
+  }
+
+  private def drawBCurve(triangle: CurveBezier): Unit = {
+    triangle.style match {
+      case _: Stroke =>
+        checkColor(triangle)
+        checkOpacity(triangle)
+        ctx.rotate(triangle.rotation * Math.PI / 180)
+        ctx.moveTo(triangle.x,triangle.y)
+        ctx.bezierCurveTo(triangle.cp1x, triangle.cp1y, triangle.cp2x, triangle.cp2y, triangle.tX, triangle.ty)
+        ctx.stroke()
+      case _: Fill =>
+        checkColor(triangle)
+        checkOpacity(triangle)
+        ctx.rotate(triangle.rotation * Math.PI / 180)
+        ctx.moveTo(triangle.x,triangle.y)
+        ctx.bezierCurveTo(triangle.cp1x, triangle.cp1y, triangle.cp2x, triangle.cp2y, triangle.tX, triangle.ty)
+        ctx.fill()
+      case _ =>
+    }
+  }
+
+  private def drawTriangleR(triangle: TriangleRectangle): Unit = {
     triangle.style match {
       case _: Stroke =>
         checkColor(triangle)
@@ -175,12 +226,15 @@ class Canvasy[I <: Shape](shape : I) {
     }
   }
 
-  private def drawTriangleE(triangle: EquilateralTriangle): Unit = {
+  private def drawTriangleE(triangle: TriangleEquilateral): Unit = {
     triangle.style match {
       case _: Stroke =>
         checkColor(triangle)
         checkOpacity(triangle)
-        ctx.rotate(triangle.rotation * Math.PI / 180)
+        if(triangle.rotation != 0) {
+          ctx.moveTo((triangle.a._1 + triangle.b._1 + triangle.c._1)/3, (triangle.a._2 + triangle.b._2 + triangle.c._2)/3)
+          ctx.rotate(triangle.rotation * Math.PI / 180)
+        }
         ctx.lineCap = "round"
         ctx.beginPath()
         ctx.moveTo(triangle.a._1, triangle.a._2)
@@ -191,7 +245,10 @@ class Canvasy[I <: Shape](shape : I) {
       case _: Fill =>
         checkColor(triangle)
         checkOpacity(triangle)
-        ctx.rotate(triangle.rotation * Math.PI / 180)
+        if(triangle.rotation != 0) {
+          ctx.moveTo((triangle.a._1 + triangle.b._1 + triangle.c._1)/3, (triangle.a._2 + triangle.b._2 + triangle.c._2)/3)
+          ctx.rotate(triangle.rotation * Math.PI / 180)
+        }
         ctx.lineCap = "round"
         ctx.beginPath()
         ctx.moveTo(triangle.a._1, triangle.a._2)
@@ -203,7 +260,7 @@ class Canvasy[I <: Shape](shape : I) {
     }
   }
 
-  private def drawXogone(xogone: Xogone): Unit = {
+  private def drawPPLShape(xogone: PPLShape): Unit = {
     xogone.style match {
       case _: Stroke =>
         checkColor(xogone)
@@ -223,11 +280,46 @@ class Canvasy[I <: Shape](shape : I) {
         ctx.rotate(xogone.rotation * Math.PI / 180)
         ctx.translate(xogone.x, xogone.y)
         ctx.beginPath()
-        ctx.moveTo(xogone.list(0)._1, xogone.list(0)._2)
+        ctx.moveTo(xogone.coordinates(0)._1, xogone.coordinates(0)._2)
         for(i <- 1 until xogone.list.length) {
-          ctx.lineTo(xogone.list(i)._1, xogone.list(i)._2)
+          ctx.lineTo(xogone.coordinates(i)._1, xogone.coordinates(i)._2)
         }
-        ctx.lineTo(xogone.list(0)._1, xogone.list(0)._2)
+        ctx.lineTo(xogone.coordinates(0)._1, xogone.coordinates(0)._2)
+        ctx.fill()
+      case _ =>
+    }
+  }
+
+  private def drawTrianglePP(triangle : TrianglePP): Unit = {
+    println(triangle.coordinates)
+    triangle.style match {
+      case _: Stroke =>
+        checkColor(triangle)
+        checkOpacity(triangle)
+        if(triangle.rotation != 0) {
+          ctx.moveTo((triangle.a._1 + triangle.b._1 + triangle.c._1)/3, (triangle.a._2 + triangle.b._2 + triangle.c._2)/3)
+          ctx.rotate(triangle.rotation * Math.PI / 180)
+        }
+        ctx.lineCap = "round"
+        ctx.beginPath()
+        ctx.moveTo(triangle.a._1, triangle.a._2)
+        ctx.lineTo(triangle.b._1, triangle.b._2)
+        ctx.lineTo(triangle.c._1, triangle.c._2)
+        ctx.lineTo(triangle.a._1, triangle.a._2)
+        ctx.stroke()
+      case _: Fill =>
+        checkColor(triangle)
+        checkOpacity(triangle)
+        if(triangle.rotation != 0) {
+          ctx.moveTo((triangle.a._1 + triangle.b._1 + triangle.c._1)/3, (triangle.a._2 + triangle.b._2 + triangle.c._2)/3)
+          ctx.rotate(triangle.rotation * Math.PI / 180)
+        }
+        ctx.lineCap = "round"
+        ctx.beginPath()
+        ctx.moveTo(triangle.a._1, triangle.a._2)
+        ctx.lineTo(triangle.b._1, triangle.b._2)
+        ctx.lineTo(triangle.c._1, triangle.c._2)
+        ctx.lineTo(triangle.a._1, triangle.a._2)
         ctx.fill()
       case _ =>
     }
@@ -571,7 +663,7 @@ class Canvasy[I <: Shape](shape : I) {
   }
 
 
-  def resizeCanvas(): Unit ={
+  private def resizeCanvas(): Unit ={
     var minX = Double.MaxValue
     var minY = Double.MaxValue
     var maxX = Double.MinValue
@@ -588,7 +680,7 @@ class Canvasy[I <: Shape](shape : I) {
       if(shape.x+shape.y > maxX + maxY){
         maxX = shape.x
         maxY = shape.y
-        maxAdd = addSizeForShape(shape)
+        maxAdd =shape.getSize()
       }
     }
     if(minY != 0 || minX != 0){
@@ -607,52 +699,12 @@ class Canvasy[I <: Shape](shape : I) {
       }
       else {
         c.width= maxX.toInt + maxAdd.toInt
-        c.height= maxY.toInt + maxAdd.toInt
-        ctx.translate(0,maxAdd.toInt)
+        c.height= maxY.toInt + maxAdd.toInt + 20
+        ctx.translate(0,20)
       }
       document.getElementById("container").appendChild(c)
     }
   }
-
-  private def addSizeForShape(shape : Shape): Double = {
-    shape match {
-      case Rectangle(_, _,width, height, _, _) =>
-        if(shape.rotation == 0) {
-          if(width > height) width else height
-        }
-        else {
-          if(shape.rotation <= 45 && shape.rotation >= -45)
-            if(width > height) width + width/2 * Math.cos(Math.abs(shape.rotation)*Math.PI/180) else height + height/2 * Math.cos(Math.abs(shape.rotation)*Math.PI/180)
-          else
-            if(width > height) width - width/2 * Math.cos(Math.abs(shape.rotation)*Math.PI/180) else height - height/2 * Math.cos(Math.abs(shape.rotation)*Math.PI/180)
-        }
-      case Square(a,b,cote,s,o) =>
-        if(shape.rotation == 0) {
-          cote
-        }
-        else {
-          if(shape.rotation <= 45 && shape.rotation >= -45)
-             cote + cote/2 * Math.cos(Math.abs(shape.rotation)*Math.PI/180)
-          else
-             cote - cote/2 * Math.cos(Math.abs(shape.rotation)*Math.PI/180)
-        }
-      case Circle(radius, _, _, _, _) =>
-        radius
-      case s: RectangleTriangle =>
-        val ss = s.rangeSize
-        if(ss._3 - ss._1  > ss._4 - ss._2)  (ss._3 - ss._1) * 1.15 else  (ss._4 - ss._2) * 1.15
-      case s: EquilateralTriangle =>
-        val ss = s.rangeSize
-        if(ss._3 - ss._1  > ss._4 - ss._2)  (ss._3 - ss._1) * 1.15 else  (ss._4 - ss._2) * 1.15
-      case Text(x, y, t,sx,sy,b,c,f,str) =>
-        ctx.measureText(t).width
-      case s: Xogone =>
-        val ss = s.rangeSize
-        if(ss._3 - ss._1  > ss._4 - ss._2)  ss._3 - ss._1 else  (ss._4 - ss._2) * 1.1
-      case _ => 0
-    }
-  }
-
 }
 
 object Canvasy {
