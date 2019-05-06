@@ -22,8 +22,8 @@ trait Shape extends CanvasyElement {
     Array(this, x)
   }
 
-  override def and(x: CanvasyElementModifier[Shape]): Unit = {
-      x change this
+  override def and(x: CanvasyElementModifier[Shape]): Shape = {
+     this.change(x)
   }
 
 

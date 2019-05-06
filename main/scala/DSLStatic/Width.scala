@@ -7,7 +7,7 @@ case class Width(w: Double) extends CanvasyElementModifier[Shape] {
       case Rectangle(a,b,width, height) =>  {
         x.asInstanceOf[Rectangle].width = w
       }
-      case _ => print("Only rectangle have weed")
+      case _ => throw new ShapeAttributeException("Only rectangle have width")
     }
   }
 }
