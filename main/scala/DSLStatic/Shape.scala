@@ -7,11 +7,8 @@ trait Shape extends CanvasyElement {
   var color: String
   var x: Double
   var y: Double
-  var size : Int
 
-  def size(s: Int): Unit = {
-    size = s
-  }
+  def size(size: Int): Unit
 
   override def change(x: CanvasyElementModifier[Shape]): Shape = {
     x.change(this)

@@ -7,7 +7,6 @@ case class Circle(radiusv: Double, X:Int, Y:Int) extends Shape {
   var radius = radiusv
   var x = X
   var y = Y
-  override var size: Int = _
 
   def apply(w: Double): Unit = {
     radius = w
@@ -21,4 +20,8 @@ case class Circle(radiusv: Double, X:Int, Y:Int) extends Shape {
     stroke = w
   }
 
+  override def size(size: Int): Unit = {
+    println(size)
+    radius = size
+  }
 }

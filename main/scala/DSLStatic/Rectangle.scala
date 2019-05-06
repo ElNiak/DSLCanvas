@@ -9,6 +9,8 @@ case class Rectangle(X:Int, Y: Int, widthI: Double, heightI: Double) extends Sha
   var height  = heightI
   var width = widthI
 
-  override var size: Int = _
-
+  override def size(size: Int): Unit = {
+    height = size
+    width = size
+  }
 }
