@@ -1,99 +1,233 @@
 package DSLStatic
 
-import DSLStatic.Modifier.StrokeWidth
 import DSLStatic.Shape._
-import DSLStatic.Style.{ColorRGB, Fill, Gradient, Stroke}
+import DSLStatic.Style.{Clear, ColorRGB, Fill, Gradient, Stroke}
 import org.scalajs.dom
 import org.scalajs.dom.raw.CanvasGradient
 import org.scalajs.dom.{document, html}
 
 import scala.collection.mutable.ListBuffer
+import scala.reflect.ClassTag
 import scala.scalajs.js
 
-class Canvasy[I <: CanvasyElement](shape : Array[I], wi : Int, hi: Int, x : Int, y: Int, r: Double) {
+class Canvasy[I <: Shape](shape : I) {
   private val c = document.createElement("canvas").asInstanceOf[html.Canvas]
-  private val add = if(wi < hi)  hi else wi
-  private val add2 = if(x >= y)  x else y
-  c.width = add
-  c.height = add
-  document.getElementById("container").appendChild(c)
   private val ctx = c.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
-  private val shape_groups = new ListBuffer[Array[I]]()
+  private val shape_groups = new ListBuffer[I]()
   private val ctx_stroke_color = ctx.strokeStyle
   private val ctx_stroke_width = ctx.lineWidth
+  private val ctx_stroke_cap = ctx.lineCap
+  private val ctx_stroke_join = ctx.lineJoin
+  private val ctx_stroke_dash = ctx.lineDashOffset
   private val ctx_fill_color = ctx.fillStyle
-
+  private var movable : Boolean = false
+  private var rotatable : Boolean = false
   private var setEventRotate = true
-  private var setEventMove = true
-  shape_groups += shape
-  resizeG(shape.asInstanceOf[Array[CanvasyElement]])
+  private var setEventMovable = true
+  private var l : Double = 0
+  private var t : Double = 0
+  var strokeElement: ListBuffer[Shape] = getStroke()
+  var fillElement: ListBuffer[Shape] = getFill()
+
   c.style.position = "absolute"
-
-  def this(i : Rectangle){
-    this(Array.fill(1)(i).asInstanceOf[Array[I]],i.width.toInt+10,i.height.toInt+10,i.x.toInt,i.y.toInt,i.rotation)
-  }
-
-  def this(i : Square){
-    this(Array.fill(1)(i).asInstanceOf[Array[I]],i.cote.toInt+10,i.cote.toInt+10,i.x.toInt,i.y.toInt,i.rotation)
-  }
-
-  def this(i : Circle){
-    this(Array.fill(1)(i).asInstanceOf[Array[I]],i.radius.toInt+10,i.radius.toInt+10,i.x.toInt,i.y.toInt,i.rotation)
-  }
-
-  def this(i : Text){
-    this(Array.fill(1)(i).asInstanceOf[Array[I]],i.text.length+50,i.text.length.toInt+50,i.x.toInt,i.y.toInt,i.rotation)
-  }
-
-  def this(i : Triangle){
-    this(Array.fill(1)(i).asInstanceOf[Array[I]],200,200,i.x.toInt,i.y.toInt,i.rotation)
-  }
-
+  if(shape != null) this += shape
 
   def this(){
-    this(Array.fill(1)(Text(0, 0, "", 2, 2, 2, "#ffffff", "20px Times New Roman", false)).asInstanceOf[Array[I]],300,300,0,0,0)
+    this(Text((0, 0), "", 2, 2, 2, "#ffffff", "0px Times New Roman", false).asInstanceOf[I])
   }
 
-  def draw(): Unit = {
-    shape_groups foreach(_ foreach(drawShape(_)))
-  }
-
-  def drawShape(shape: CanvasyElement): Unit = {
-    println("Draw shape")
-    if(shape.asInstanceOf[Shape].movable)
+  def draw() : Unit = {
+    resizeCanvas()
+    if(movable)
       addListenerMove()
-    ctx.save()
-    if (shape.asInstanceOf[Shape].canRotate)
+    if(rotatable)
       addListenerRotate()
+    shape_groups foreach(drawShape(_))
+  }
+
+
+  private def getStroke() : ListBuffer[Shape] = {
+    val lst : ListBuffer[Shape] = new ListBuffer[Shape]
+    for(shape <- shape_groups){
+      shape.style match {
+        case _ : Stroke => lst += shape
+        case _ =>
+      }
+    }
+    lst
+  }
+
+  def getFillShape[A](implicit tag: ClassTag[A])  : ListBuffer[A] = {
+    val lst : ListBuffer[A] = new ListBuffer[A]
+    for(shape <- fillElement){
+      shape match {
+        case a: A =>
+            lst += a
+        case _ =>
+      }
+    }
+    lst
+  }
+
+  def getStrokeShape[A](implicit tag: ClassTag[A])  : ListBuffer[A] = {
+    val lst : ListBuffer[A] = new ListBuffer[A]
+    for(shape <- strokeElement){
+      shape match {
+        case a: A =>
+            lst += a
+        case _ =>
+      }
+    }
+    lst
+  }
+
+  private def getFill() : ListBuffer[Shape] ={
+    val lst : ListBuffer[Shape] = new ListBuffer[Shape]
+    for(shape <- shape_groups){
+      shape.style match {
+        case _:Fill => lst += shape
+        case _ =>
+      }
+    }
+    lst
+  }
+
+  def += (group: ListBuffer[Shape]): Canvasy[I] = {
+    group foreach(shape_groups += _.asInstanceOf[I])
+    shape_groups sortBy(shape_groups => (shape_groups.x,shape_groups.y))
+    strokeElement  = getStroke()
+    fillElement = getFill()
+    this
+  }
+
+  def +=  (shape: Shape): Canvasy[I] = {
+    shape_groups += shape.asInstanceOf[I]
+    shape_groups sortBy(shape_groups => (shape_groups.x,shape_groups.y))
+    strokeElement  = getStroke()
+    fillElement = getFill()
+    this
+  }
+
+  def translateX(v : Double): Canvasy[I] ={
+    if(!movable){
+      l += v
+      c.style.left = l + "px"
+    }
+    this
+  }
+
+  def moveMouse(boolean: Boolean): Canvasy[I] = {
+    movable = boolean
+    this
+  }
+
+  def keyRotate(boolean: Boolean): Canvasy[I] = {
+    rotatable = boolean
+    this
+  }
+
+  def translateY(v : Double): Canvasy[I] ={
+    if(!movable) {
+      t += v
+      c.style.top = t + "px"
+    }
+    this
+  }
+
+  def rotate(v: Double): Canvasy[I] = {
+    shape_groups foreach(_.rotation=v)
+    this
+  }
+
+  private def drawShape(shape: Shape): Unit = {
+    ctx.save()
     shape match {
-      case Rectangle(a,b,width, height,s,o) =>
-        drawRectangle(shape.asInstanceOf[Rectangle])
+      case s : Rectangle =>
+        drawRectangle(s)
         ctx.restore()
-      case Square(a,b,cote,s,o) =>
-        drawSquare(shape.asInstanceOf[Square])
+      case s: Square =>
+        drawSquare(s)
         ctx.restore()
-      case Circle(radius, a,b,s,o) =>
-        drawCircle(shape.asInstanceOf[Circle])
+      case s: Circle =>
+        drawCircle(s)
         ctx.restore()
-      case RectangleTriangle(x, y, a, b,s,o) =>
-        drawTriangle(shape.asInstanceOf[Triangle])
+      case s: TriangleRectangle =>
+        drawTriangleR(s)
         ctx.restore()
-      case EquilateralTriangle(x, y, a,s,o) =>
-        drawTriangle(shape.asInstanceOf[Triangle])
+      case s:TriangleEquilateral =>
+        drawTriangleE(s)
         ctx.restore()
-      case Text(x, y, t,sx,sy,b,c,f,str) =>
-        drawText(shape.asInstanceOf[Text])
+      case s: Text =>
+        drawText(s)
         ctx.restore()
-      case _ => print("Can only draw Rectangle and Circle")
+      case s: PPLShape =>
+        drawPPLShape(s)
+        ctx.restore()
+      case s: TrianglePP =>
+        drawTrianglePP(s)
+        ctx.restore()
+      case s: CurveQuadratic =>
+        drawQCurve(s)
+        ctx.restore()
+      case s: CurveBezier =>
+        drawBCurve(s)
+        ctx.restore()
+      case _ => print("Shape not found")
     }
   }
 
-  def drawTriangle(triangle: Triangle): Unit = {
+  private def drawQCurve(triangle: CurveQuadratic): Unit = {
     triangle.style match {
       case _: Stroke =>
         checkColor(triangle)
         checkOpacity(triangle)
         ctx.rotate(triangle.rotation * Math.PI / 180)
+        ctx.beginPath()
+        ctx.moveTo(triangle.x,triangle.y)
+        ctx.quadraticCurveTo(triangle.cp1x, triangle.cp1y, triangle.tx, triangle.ty)
+        ctx.stroke()
+      case _: Fill =>
+        checkColor(triangle)
+        checkOpacity(triangle)
+        ctx.rotate(triangle.rotation * Math.PI / 180)
+        ctx.beginPath()
+        ctx.moveTo(triangle.x,triangle.y)
+        ctx.quadraticCurveTo(triangle.cp1x, triangle.cp1y, triangle.tx, triangle.ty)
+        ctx.fill()
+      case _ =>
+    }
+  }
+
+  private def drawBCurve(triangle: CurveBezier): Unit = {
+    triangle.style match {
+      case _: Stroke =>
+        checkColor(triangle)
+        checkOpacity(triangle)
+        ctx.rotate(triangle.rotation * Math.PI / 180)
+        ctx.moveTo(triangle.x,triangle.y)
+        ctx.bezierCurveTo(triangle.cp1x, triangle.cp1y, triangle.cp2x, triangle.cp2y, triangle.tx, triangle.ty)
+        ctx.stroke()
+      case _: Fill =>
+        checkColor(triangle)
+        checkOpacity(triangle)
+        ctx.rotate(triangle.rotation * Math.PI / 180)
+        ctx.moveTo(triangle.x,triangle.y)
+        ctx.bezierCurveTo(triangle.cp1x, triangle.cp1y, triangle.cp2x, triangle.cp2y, triangle.tx, triangle.ty)
+        ctx.fill()
+      case _ =>
+    }
+  }
+
+  private def drawTriangleR(triangle: TriangleRectangle): Unit = {
+    triangle.style match {
+      case _: Stroke =>
+        checkColor(triangle)
+        checkOpacity(triangle)
+        if(triangle.rotation != 0) {
+          ctx.moveTo((triangle.a._1 + triangle.b._1 + triangle.c._1)/3, (triangle.a._2 + triangle.b._2 + triangle.c._2)/3)
+          ctx.rotate(triangle.rotation * Math.PI / 180)
+        }
+        ctx.lineCap = "round"
         ctx.beginPath()
         ctx.moveTo(triangle.a._1, triangle.a._2)
         ctx.lineTo(triangle.b._1, triangle.b._2)
@@ -103,7 +237,11 @@ class Canvasy[I <: CanvasyElement](shape : Array[I], wi : Int, hi: Int, x : Int,
       case _: Fill =>
         checkColor(triangle)
         checkOpacity(triangle)
-        ctx.rotate(triangle.rotation * Math.PI / 180)
+        if(triangle.rotation != 0) {
+          ctx.moveTo((triangle.a._1 + triangle.b._1 + triangle.c._1)/3, (triangle.a._2 + triangle.b._2 + triangle.c._2)/3)
+          ctx.rotate(triangle.rotation * Math.PI / 180)
+        }
+        ctx.lineCap = "round"
         ctx.beginPath()
         ctx.moveTo(triangle.a._1, triangle.a._2)
         ctx.lineTo(triangle.b._1, triangle.b._2)
@@ -112,18 +250,108 @@ class Canvasy[I <: CanvasyElement](shape : Array[I], wi : Int, hi: Int, x : Int,
         ctx.fill()
       case _ =>
     }
-
   }
 
-  def moveMouse(boolean: Boolean): Unit = {
-    shape_groups foreach(_ foreach(_.asInstanceOf[Shape].movable = boolean))
+  private def drawTriangleE(triangle: TriangleEquilateral): Unit = {
+    triangle.style match {
+      case _: Stroke =>
+        checkColor(triangle)
+        checkOpacity(triangle)
+        if(triangle.rotation != 0) {
+          ctx.moveTo((triangle.a._1 + triangle.b._1 + triangle.c._1)/3, (triangle.a._2 + triangle.b._2 + triangle.c._2)/3)
+          ctx.rotate(triangle.rotation * Math.PI / 180)
+        }
+        ctx.lineCap = "round"
+        ctx.beginPath()
+        ctx.moveTo(triangle.a._1, triangle.a._2)
+        ctx.lineTo(triangle.b._1, triangle.b._2)
+        ctx.lineTo(triangle.c._1, triangle.c._2)
+        ctx.lineTo(triangle.a._1, triangle.a._2)
+        ctx.stroke()
+      case _: Fill =>
+        checkColor(triangle)
+        checkOpacity(triangle)
+        if(triangle.rotation != 0) {
+          ctx.moveTo((triangle.a._1 + triangle.b._1 + triangle.c._1)/3, (triangle.a._2 + triangle.b._2 + triangle.c._2)/3)
+          ctx.rotate(triangle.rotation * Math.PI / 180)
+        }
+        ctx.lineCap = "round"
+        ctx.beginPath()
+        ctx.moveTo(triangle.a._1, triangle.a._2)
+        ctx.lineTo(triangle.b._1, triangle.b._2)
+        ctx.lineTo(triangle.c._1, triangle.c._2)
+        ctx.lineTo(triangle.a._1, triangle.a._2)
+        ctx.fill()
+      case _ =>
+    }
   }
 
-  def keyRotate(boolean: Boolean): Unit = {
-    shape_groups foreach(_ foreach(_.asInstanceOf[Shape].canRotate = boolean))
+  private def drawPPLShape(xogone: PPLShape): Unit = {
+    xogone.style match {
+      case _: Stroke =>
+        checkColor(xogone)
+        checkOpacity(xogone)
+        ctx.rotate(xogone.rotation * Math.PI / 180)
+        ctx.translate(xogone.x, xogone.y)
+        ctx.beginPath()
+        ctx.moveTo(xogone.list(0)._1, xogone.list(0)._2)
+        for(i <- 1 until xogone.list.length) {
+          ctx.lineTo(xogone.list(i)._1, xogone.list(i)._2)
+        }
+        ctx.lineTo(xogone.list(0)._1, xogone.list(0)._2)
+        ctx.stroke()
+      case _: Fill =>
+        checkColor(xogone)
+        checkOpacity(xogone)
+        ctx.rotate(xogone.rotation * Math.PI / 180)
+        ctx.translate(xogone.x, xogone.y)
+        ctx.beginPath()
+        ctx.moveTo(xogone.coordinates(0)._1, xogone.coordinates(0)._2)
+        for(i <- 1 until xogone.list.length) {
+          ctx.lineTo(xogone.coordinates(i)._1, xogone.coordinates(i)._2)
+        }
+        ctx.lineTo(xogone.coordinates(0)._1, xogone.coordinates(0)._2)
+        ctx.fill()
+      case _ =>
+    }
   }
 
-  def drawCircle(circle: Circle): Unit = {
+  private def drawTrianglePP(triangle : TrianglePP): Unit = {
+    println(triangle.coordinates)
+    triangle.style match {
+      case _: Stroke =>
+        checkColor(triangle)
+        checkOpacity(triangle)
+        if(triangle.rotation != 0) {
+          ctx.moveTo((triangle.a._1 + triangle.b._1 + triangle.c._1)/3, (triangle.a._2 + triangle.b._2 + triangle.c._2)/3)
+          ctx.rotate(triangle.rotation * Math.PI / 180)
+        }
+        ctx.lineCap = "round"
+        ctx.beginPath()
+        ctx.moveTo(triangle.a._1, triangle.a._2)
+        ctx.lineTo(triangle.b._1, triangle.b._2)
+        ctx.lineTo(triangle.c._1, triangle.c._2)
+        ctx.lineTo(triangle.a._1, triangle.a._2)
+        ctx.stroke()
+      case _: Fill =>
+        checkColor(triangle)
+        checkOpacity(triangle)
+        if(triangle.rotation != 0) {
+          ctx.moveTo((triangle.a._1 + triangle.b._1 + triangle.c._1)/3, (triangle.a._2 + triangle.b._2 + triangle.c._2)/3)
+          ctx.rotate(triangle.rotation * Math.PI / 180)
+        }
+        ctx.lineCap = "round"
+        ctx.beginPath()
+        ctx.moveTo(triangle.a._1, triangle.a._2)
+        ctx.lineTo(triangle.b._1, triangle.b._2)
+        ctx.lineTo(triangle.c._1, triangle.c._2)
+        ctx.lineTo(triangle.a._1, triangle.a._2)
+        ctx.fill()
+      case _ =>
+    }
+  }
+
+  private def drawCircle(circle: Circle): Unit = {
     circle.style match {
       case _: Stroke =>
         checkColor(circle)
@@ -144,32 +372,35 @@ class Canvasy[I <: CanvasyElement](shape : Array[I], wi : Int, hi: Int, x : Int,
 
   }
 
-  def drawRectangle(rectangle: Rectangle): Unit = {
+  private def drawRectangle(rectangle: Rectangle): Unit = {
     rectangle.style match {
       case _: Stroke =>
         checkColor(rectangle)
         checkOpacity(rectangle)
-        ctx.rotate(rectangle.rotation * Math.PI / 180)
-        ctx.strokeRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height)
+        if(rectangle.rotation != 0) {
+          ctx.translate(rectangle.x+ rectangle.width/2, rectangle.y+rectangle.height/2)
+          ctx.rotate(rectangle.rotation * Math.PI / 180)
+          ctx.strokeRect(-rectangle.width/2,-rectangle.height/2, rectangle.width, rectangle.height)
+        }
+        else {
+          ctx.strokeRect(rectangle.x,rectangle.y, rectangle.width, rectangle.height)
+        }
       case _: Fill =>
         checkColor(rectangle)
         checkOpacity(rectangle)
-        val add = if (rectangle.height < rectangle.width) rectangle.width else rectangle.height
-        var X : Double = 0
-        var Y : Double = 0
-        if(rectangle.rotation != 0 && rectangle.movable) ctx.translate(rectangle.x + add, rectangle.y + add/2)
-        else if(!rectangle.movable) {
-          X = rectangle.x
-          Y = rectangle.y
-          ctx.translate(X, Y)
+        if(rectangle.rotation != 0) {
+          ctx.translate(rectangle.x+ rectangle.width/2, rectangle.y+rectangle.height/2)
+          ctx.rotate(rectangle.rotation * Math.PI / 180)
+          ctx.fillRect(-rectangle.width/2,-rectangle.height/2, rectangle.width, rectangle.height)
         }
-        ctx.rotate(rectangle.rotation * Math.PI / 180)
-        ctx.fillRect(0,0, rectangle.width, rectangle.height)
+        else {
+          ctx.fillRect(rectangle.x,rectangle.y, rectangle.width, rectangle.height)
+        }
       case _ =>
     }
   }
 
-  def drawText(text: Text): Unit = {
+  private def drawText(text: Text): Unit = {
     text.style match {
       case _: Fill =>
         checkColor(text)
@@ -188,77 +419,73 @@ class Canvasy[I <: CanvasyElement](shape : Array[I], wi : Int, hi: Int, x : Int,
     }
   }
 
-  def drawSquare(square: Square): Unit = {
+  private def drawSquare(square: Square): Unit = {
     square.style match {
       case _: Stroke =>
         checkColor(square)
         checkOpacity(square)
-        ctx.rotate(square.rotation * Math.PI / 180)
-        ctx.strokeRect(square.x, square.y, square.cote, square.cote)
+        if(square.rotation != 0) {
+          ctx.translate(square.x+ square.cote/2, square.y+square.cote/2)
+          ctx.rotate(square.rotation * Math.PI / 180)
+          ctx.strokeRect(-square.cote/2,-square.cote/2, square.cote, square.cote)
+        }
+        else {
+          ctx.strokeRect(square.x, square.y, square.cote, square.cote)
+        }
       case _: Fill =>
         checkColor(square)
         checkOpacity(square)
-        ctx.rotate(square.rotation * Math.PI / 180)
-        println(ctx.fillStyle)
-        ctx.fillRect(square.x, square.y, square.cote, square.cote)
+        if(square.rotation != 0) {
+          ctx.translate(square.x+ square.cote/2, square.y+square.cote/2)
+          ctx.rotate(square.rotation * Math.PI / 180)
+          ctx.fillRect(-square.cote/2,-square.cote/2, square.cote, square.cote)
+        }
+        else {
+          ctx.fillRect(square.x, square.y, square.cote, square.cote)
+        }
       case _ =>
     }
   }
 
-
-  def += [J <: CanvasyElement](group: Array[J]): Canvasy[I] = {
-    shape_groups += group.asInstanceOf[Array[I]]
-    resizeG(group.asInstanceOf[Array[CanvasyElement]])
-    this
-  }
-
-  def +=  (shape: Shape): Canvasy[I] = {
-    val group = Array.fill(1)(shape).asInstanceOf[Array[I]]
-    this += group
-    resizeG(group.asInstanceOf[Array[CanvasyElement]])
-    this
-  }
-
-  def getR(c: String) : Int = {
-    val str = c.substring(1,2)
-    try {
-      Integer.parseInt(str,16) * 16
-    } catch {
-      case ne: NumberFormatException => -1
+  private def checkOpacity [K <: Shape](shape : K) : Unit = {
+    def getRRGBA(c: String) : Array[Int] = {
+      val str = c.substring(4)
+      var res = str.split(",")
+      Array(res(0).toInt, res(1).toInt, res(2).toInt)
     }
-  }
 
-  def getG(c: String) : Int = {
-    val str = c.substring(3,4)
-    try {
-      Integer.parseInt(str,16) * 16
-    } catch {
-      case ne: NumberFormatException => -1
+    def getRRGB(c: String) : Array[Int] = {
+      val str = c.substring(3)
+      var res = str.split(",")
+      Array(res(0).toInt, res(1).toInt, res(2).toInt)
     }
-  }
 
-  def getB(c: String) : Int = {
-    val str = c.substring(5,6)
-    try {
-      Integer.parseInt(str,16) * 16
-    } catch {
-      case ne: NumberFormatException => -1
+    def getR(c: String) : Int = {
+      val str = c.substring(1,2)
+      try {
+        Integer.parseInt(str,16) * 16
+      } catch {
+        case ne: NumberFormatException => -1
+      }
     }
-  }
 
-  def getRRGBA(c: String) : Array[Int] = {
-    val str = c.substring(4)
-    var res = str.split(",")
-    Array(res(0).toInt, res(1).toInt, res(2).toInt)
-  }
+    def getG(c: String) : Int = {
+      val str = c.substring(3,4)
+      try {
+        Integer.parseInt(str,16) * 16
+      } catch {
+        case ne: NumberFormatException => -1
+      }
+    }
 
-  def getRRGB(c: String) : Array[Int] = {
-    val str = c.substring(3)
-    var res = str.split(",")
-    Array(res(0).toInt, res(1).toInt, res(2).toInt)
-  }
-
-  def checkOpacity [K <: Shape](shape : K) : Unit = {
+    def getB(c: String) : Int = {
+      val str = c.substring(5,6)
+      try {
+        Integer.parseInt(str,16) * 16
+      } catch {
+        case ne: NumberFormatException => -1
+      }
+    }
     shape.style match {
       case _: Fill =>
         if (shape.opacity < 1) {
@@ -314,7 +541,7 @@ class Canvasy[I <: CanvasyElement](shape : Array[I], wi : Int, hi: Int, x : Int,
     }
   }
 
-  def checkColor [K <: Shape](shape : K) : Unit = {
+  private def checkColor [K <: Shape](shape : K) : Unit = {
     shape.style match {
       case s : Fill =>
         s.colorStyle match {
@@ -348,10 +575,29 @@ class Canvasy[I <: CanvasyElement](shape : Array[I], wi : Int, hi: Int, x : Int,
               ctx.strokeStyle = b.color
             else
               ctx.strokeStyle = ctx_stroke_color
+
             if (s.width != -1)
               ctx.lineWidth = s.width
             else
               ctx.lineWidth = ctx_stroke_width
+
+            if (!s.cap.equals(""))
+              ctx.lineCap = s.cap
+            else
+              ctx.lineCap = ctx_stroke_cap
+
+            if (!s.join.equals(""))
+              ctx.lineJoin = s.join
+            else
+              ctx.lineJoin = ctx_stroke_join
+
+            if (s.offset != 0.0){
+              ctx.lineDashOffset = s.offset
+              ctx.setLineDash(js.Array(4.0,2.0))
+            }
+            else {
+              ctx.lineDashOffset = 0
+            }
 
           case b: Gradient =>
             if(b.r1 == -1){
@@ -373,16 +619,15 @@ class Canvasy[I <: CanvasyElement](shape : Array[I], wi : Int, hi: Int, x : Int,
     }
   }
 
-  def addListenerMove(): Unit ={
+  private def addListenerMove(): Unit ={
     def reinitXY(): Unit ={
-      shape_groups foreach(_ foreach(_.asInstanceOf[Shape].x = 0))
-      shape_groups foreach(_ foreach(_.asInstanceOf[Shape].y = 0))
+      shape_groups foreach(_.asInstanceOf[Shape].x = 0)
+      shape_groups foreach(_.asInstanceOf[Shape].y = 0)
     }
-
-    reinitXY()
-    shape_groups.asInstanceOf[ListBuffer[Array[CanvasyElement]]] foreach(resizeL(_))
-
-    println(c.width)
+    if(shape_groups.length == 1){
+      reinitXY()
+      resizeCanvas()
+    }
     def rect = c.getBoundingClientRect()
     var offX : Double = 0
     var offY : Double = 0
@@ -407,154 +652,83 @@ class Canvasy[I <: CanvasyElement](shape : Array[I], wi : Int, hi: Int, x : Int,
         dom.window.addEventListener("mousemove", onmousemove, useCapture = true)
       }
     }
-    if (setEventMove) {
-      setEventMove = false
+    if(setEventMovable) {
       c.addEventListener("mousedown", onmousedown, useCapture = false)
       dom.window.addEventListener("mouseup", onmouseup, useCapture = false)
+      setEventMovable = false
     }
   }
 
-  def addListenerRotate(): Unit ={
+  private def addListenerRotate(): Unit ={
     var rotate = false
     val onClick ={(e: dom.MouseEvent) =>
       rotate = !rotate
-//      if (rotate)
-//        shape_groups foreach (_ foreach(_.asInstanceOf[Shape]. += ))
-//      else
-//        shape_groups foreach (_ foreach(_.asInstanceOf[Shape].opacity -= ))
-//      ctx.clearRect(0, 0, c.width, c.height)
-//      draw()
-      println(rotate)
     }
 
     val onKey ={(e: dom.KeyboardEvent) =>
       if (rotate) {
         e.key match {
           case "ArrowRight" =>
-            shape_groups foreach(_ foreach(_.asInstanceOf[Shape].rotation -= 10))
+            shape_groups foreach(_.asInstanceOf[Shape].rotation -= 10)
             ctx.clearRect(0, 0, c.width, c.height)
-            draw()
+            draw
           case "ArrowLeft" =>
-            shape_groups foreach(_ foreach(_.asInstanceOf[Shape].rotation += 10))
+            shape_groups foreach(_.asInstanceOf[Shape].rotation += 10)
             ctx.clearRect(0, 0, c.width, c.height)
-            draw()
+            draw
           case _ =>
             println(e.key)
         }
       }
     }
-    if (setEventRotate) {
+    if(setEventRotate) {
       c.addEventListener("click", onClick, useCapture = false)
       dom.window.addEventListener("keydown", onKey, useCapture = false)
       setEventRotate = false
     }
-
   }
 
-  def resizeG(ss : Array[CanvasyElement]): Unit = {
-    var add1 : Double = 0
-    var add2 : Double = 0
-    for(s <- ss){
-      s match {
-        case Rectangle(a,b,width, height,sa,o) =>
-          val res = if(width < height)  height else width
-          if(s.asInstanceOf[Shape].rotation != 0.0){
-            add1 = res + res
-            add2 = res + res
-          }
-          else {
-            if(s.asInstanceOf[Shape].movable){
-              add1 = res
-              add2 = res
-            }
-            else{
-              val res2 = if(a < b)  b else a
-              add1 = 2*res + res2
-              add2 = 2*res + res2
-            }
-          }
-        case Square(a,b,cote,sa,o) =>
-          add1 = cote + cote/2
-          add2 = cote + cote/2
-        case Circle(radius, a,b,sa,o) =>
-          add1 = radius + radius/2
-          add2 = radius + radius/2
-        case RectangleTriangle(x, y, a, b,sa,o) =>
-          add1 = 50
-          add2 = 50
-        case EquilateralTriangle(x, y, a,sa,o) =>
-          add1 = 50
-          add2 = 50
-        case Text(x, y, t,sx,sy,b,cs,f,str) => //TODO
-          add1 = s.asInstanceOf[Text].text.length + 20
-          add2 = s.asInstanceOf[Text].text.length + 20
-        case _ => print("Can only draw Rectangle and Circle")
+
+  private def resizeCanvas(): Unit ={
+    var minX = Double.MaxValue
+    var minY = Double.MaxValue
+    var maxX = Double.MinValue
+    var maxY = Double.MinValue
+    var maxAdd : Double = 0
+    var isText :Boolean = false
+    for(shape <- shape_groups){
+      if(shape.x+shape.y < minX + minY){
+        minX = shape.x
+        minY = shape.y
+        if((minX == 0 || minY == 0) && shape.isInstanceOf[Text])
+          isText = true
       }
-      if(c.height < add2.toInt) {
-        document.getElementById("container").removeChild(c)
-        c.height = add2.toInt
-        //ctx.translate(s.asInstanceOf[Shape].x,s.asInstanceOf[Shape].y)
-        document.getElementById("container").appendChild(c)
-      }
-      if(c.width < add1.toInt) {
-        document.getElementById("container").removeChild(c)
-        c.width = add1.toInt
-        //ctx.translate(s.asInstanceOf[Shape].y,s.asInstanceOf[Shape].y)
-        document.getElementById("container").appendChild(c)
+      if(shape.x+shape.y > maxX + maxY){
+        maxX = shape.x
+        maxY = shape.y
+        maxAdd =shape.getSize()
       }
     }
-  }
-
-  def resizeL(ss : Array[CanvasyElement]): Unit = {
-    var add1 : Double = 0
-    var add2 : Double = 0
-    for(s <- ss){
-      s match {
-        case Rectangle(a,b,width, height,sa,o) =>
-          val res = if(width < height)  height else width
-          if(s.asInstanceOf[Shape].rotation != 0.0){
-            add1 = res + res
-            add2 = res + res
-          }
-          else {
-            if(s.asInstanceOf[Shape].movable){
-              add1 = res
-              add2 = res
-            }
-            else{
-              add1 = res + a
-              add2 = res + b
-            }
-          }
-        case Square(a,b,cote,sa,o) =>
-          add1 = cote + cote/2
-          add2 = cote + cote/2
-        case Circle(radius, a,b,sa,o) =>
-          add1 = radius + radius/2
-          add2 = radius + radius/2
-        case RectangleTriangle(x, y, a, b,sa,o) =>
-          add1 = 50
-          add2 = 50
-        case EquilateralTriangle(x, y, a,sa,o) =>
-          add1 = 50
-          add2 = 50
-        case Text(x, y, t,sx,sy,b,cs,f,str) => //TODO
-          add1 = s.asInstanceOf[Text].text.length + 20
-          add2 = s.asInstanceOf[Text].text.length + 20
-        case _ => print("Can only draw Rectangle and Circle")
+    if(minY != 0 || minX != 0){
+      for(shape <- shape_groups){
+        if(!shape.isInstanceOf[Triangle]){
+          shape.x = shape.x - minX
+          shape.y = shape.y - minY
+        }
       }
-      if(c.height > add2.toInt) {
-        document.getElementById("container").removeChild(c)
-        c.height = add2.toInt
-        //ctx.translate(s.asInstanceOf[Shape].x,s.asInstanceOf[Shape].y)
-        document.getElementById("container").appendChild(c)
+      resizeCanvas()
+    }
+    else {
+      if(!isText){
+        c.width= maxX.toInt + maxAdd.toInt
+        c.height= maxY.toInt + maxAdd.toInt
       }
-      if(c.width > add1.toInt) {
-        document.getElementById("container").removeChild(c)
-        c.width = add1.toInt
-        //ctx.translate(s.asInstanceOf[Shape].y,s.asInstanceOf[Shape].y)
-        document.getElementById("container").appendChild(c)
+      else {
+        c.width= maxX.toInt + maxAdd.toInt
+        c.height= maxY.toInt + maxAdd.toInt + 20
+        ctx.translate(0,20)
       }
+      document.getElementById("container").appendChild(c)
     }
   }
 }
