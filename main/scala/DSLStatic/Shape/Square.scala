@@ -1,12 +1,15 @@
 package DSLStatic.Shape
 
 import DSLStatic.Style.{Clear, ColorRGB, Fill, Gradient, Stroke, Style}
+import org.scalajs.dom.CanvasRenderingContext2D
 
 case class Square (from : (Double, Double), cotee: Double, s : Int, o : Double) extends Shape {
   override var opacity: Double = o
   override var style: Style = if (s == 1) new Fill else if (s == 2) new Stroke else new Clear
   override var x : Double = from._1
   override var y : Double = from._2
+  override var  vx : Double = 0
+  override var vy : Double = 0
   var cote : Double = cotee
   override var rotation: Double = 0
   override var size: Int = _
@@ -40,6 +43,34 @@ case class Square (from : (Double, Double), cotee: Double, s : Int, o : Double) 
         cote + cote/2 * Math.cos(Math.abs(rotation)*Math.PI/180)
       else
         cote - cote/2 * Math.cos(Math.abs(rotation)*Math.PI/180)
+    }
+  }
+
+  override def draw(ctx: CanvasRenderingContext2D): Unit = {
+    style match {
+      case _: Stroke =>
+        Shape.checkColor(this,ctx)
+        Shape.checkOpacity(this,ctx)
+        if(rotation != 0) {
+          ctx.translate(x+ cote/2, y+cote/2)
+          ctx.rotate(rotation * Math.PI / 180)
+          ctx.strokeRect(-cote/2,-cote/2, cote, cote)
+        }
+        else {
+          ctx.strokeRect(x,y,cote,cote)
+        }
+      case _: Fill =>
+        Shape.checkColor(this,ctx)
+        Shape.checkOpacity(this,ctx)
+        if(rotation != 0) {
+          ctx.translate(x+ cote/2, y+cote/2)
+          ctx.rotate(rotation * Math.PI / 180)
+          ctx.fillRect(-cote/2,-cote/2, cote, cote)
+        }
+        else {
+          ctx.fillRect(x,y,cote,cote)
+        }
+      case _ =>
     }
   }
 

@@ -1,5 +1,12 @@
 package DSLStatic.Style
 
+object SV  {
+  val stroke = 2
+  val fill = 1
+  val clear = 3
+}
+
+
 object Cap  {
   val butt = "butt"
   val round = "round"
