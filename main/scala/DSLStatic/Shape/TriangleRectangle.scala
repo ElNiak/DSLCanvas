@@ -7,13 +7,13 @@ import scala.collection.mutable.ListBuffer
 
 
 case class TriangleRectangle(from : (Double, Double), A: Double, B: Double, s: Int, o : Double) extends Triangle {
-  override var a = (from._1, from._2)
-  override var b = (from._1 + A, from._2)
-  override var c = (from._1, from._2 + B)
   override var opacity: Double = o
   override var style : Style = if(s == 1) new Fill else if (s == 2) new Stroke else new Clear
   override var x: Double = from._1
   override var y: Double = from._2
+  override var a = (x, y)
+  override var b = (x + A, y)
+  override var c = (x, y + B)
   override var  vx : Double = 0
   override var vy : Double = 0
   override var size: Int = _
@@ -40,6 +40,9 @@ case class TriangleRectangle(from : (Double, Double), A: Double, B: Double, s: I
   }
 
   override def draw(ctx: CanvasRenderingContext2D): Unit = {
+    a = (x, y)
+    b = (x + A, y)
+    c = (x, y + B)
     style match {
       case _: Stroke =>
         Shape.checkColor(this,ctx)

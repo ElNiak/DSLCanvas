@@ -50,6 +50,11 @@ case class TrianglePP( A : (Double, Double),B : (Double, Double),C : (Double, Do
   }
 
   override def draw(ctx: CanvasRenderingContext2D): Unit = {
+    if(vx != 0 || vy != 0){
+      a  = (x, y)
+      b  = (B._1+x, B._2+y)
+      c  = (C._1+x, C._2+y)
+    }
     style match {
       case _: Stroke =>
         Shape.checkColor(this,ctx)

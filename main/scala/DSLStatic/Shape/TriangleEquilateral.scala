@@ -5,13 +5,13 @@ import org.scalajs.dom.CanvasRenderingContext2D
 
 
 case class TriangleEquilateral(from : (Double, Double), A: Double, s: Int, o : Double) extends Triangle {
-  override var a: (Double, Double) = (from._1, from._2)
-  override var b: (Double, Double) = (from._1 + A, from._2)
-  override var c: (Double, Double) = (from._1 + A*0.5, from._2 + A*Math.sqrt(3)/2)
   override var opacity: Double = o
   override var style : Style = if(s == 1) new Fill else if (s == 2) new Stroke else new Clear
   override var x: Double = from._1
   override var y: Double = from._2
+  override var a: (Double, Double) = (x, y)
+  override var b: (Double, Double) = (x + A, y)
+  override var c: (Double, Double) = (x + A*0.5, y + A*Math.sqrt(3)/2)
   override var  vx : Double = 0
   override var vy : Double = 0
   override var size: Int = _
@@ -38,6 +38,9 @@ case class TriangleEquilateral(from : (Double, Double), A: Double, s: Int, o : D
   }
 
   override def draw(ctx: CanvasRenderingContext2D): Unit = {
+     a  = (x, y)
+     b = (x + A, y)
+     c = (x + A*0.5, y + A*Math.sqrt(3)/2)
     style match {
       case _: Stroke =>
         Shape.checkColor(this,ctx)
@@ -48,10 +51,10 @@ case class TriangleEquilateral(from : (Double, Double), A: Double, s: Int, o : D
         }
         ctx.lineCap = "round"
         ctx.beginPath()
-        ctx.moveTo(a._1, a._2)
-        ctx.lineTo(b._1, b._2)
-        ctx.lineTo(c._1, c._2)
-        ctx.lineTo(a._1, a._2)
+        ctx.moveTo(a._1+x, a._2+y)
+        ctx.lineTo(b._1+x, b._2+y)
+        ctx.lineTo(c._1+x, c._2+y)
+        ctx.lineTo(a._1+x, a._2+y)
         ctx.stroke()
       case _: Fill =>
         Shape.checkColor(this,ctx)

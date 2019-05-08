@@ -11,8 +11,8 @@ import scala.reflect.ClassTag
 import scala.scalajs.js
 
 class Canvasy[I <: Shape](shape : I) {
-  private val c = document.createElement("canvas").asInstanceOf[html.Canvas]
-  private val ctx = c.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
+  val c = document.createElement("canvas").asInstanceOf[html.Canvas]
+  val ctx = c.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
   private val shape_groups = new ListBuffer[I]()
   private var movable : Boolean = false
   private var rotatable : Boolean = false
@@ -334,7 +334,7 @@ class Canvasy[I <: Shape](shape : I) {
     this
   }
 
-  def addListenerMoveAnimation(): Canvasy[I] ={
+  private def addListenerMoveAnimation(): Canvasy[I] ={
     resize = false
     var move = false
 

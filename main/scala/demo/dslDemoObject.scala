@@ -84,14 +84,14 @@ object dslDemoObject {
     //drawHand(500)
     //canvasy draw()
     //canvasy2 draw()
-    canvasy5 animLeftRightA  (true,20,true,(0.99,0.25))
-    canvasy5 moveMouse true
+    canvasy4 animLeftRight  (true,20,true)
+    canvasy4 moveMouse true
 
     //canvasy4 draw()
     //canvasy6 keyRotate true
 
 
-    canvasy5 draw()
+    canvasy4 draw()
 
     //val canvasy7 = new Canvasy()
     //canvasy7 drawHand(200,200) translateX 50 translateY 600
