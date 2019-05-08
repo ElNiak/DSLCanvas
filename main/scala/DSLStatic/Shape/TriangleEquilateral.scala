@@ -1,16 +1,19 @@
 package DSLStatic.Shape
 
 import DSLStatic.Style.{Clear, Color, ColorRGB, ColorStyle, Fill, Gradient, Stroke, Style}
+import org.scalajs.dom.CanvasRenderingContext2D
 
 
 case class TriangleEquilateral(from : (Double, Double), A: Double, s: Int, o : Double) extends Triangle {
-  override var a: (Double, Double) = (from._1, from._2)
-  override var b: (Double, Double) = (from._1 + A, from._2)
-  override var c: (Double, Double) = (from._1 + A*0.5, from._2 + A*Math.sqrt(3)/2)
   override var opacity: Double = o
   override var style : Style = if(s == 1) new Fill else if (s == 2) new Stroke else new Clear
   override var x: Double = from._1
   override var y: Double = from._2
+  override var a: (Double, Double) = (x, y)
+  override var b: (Double, Double) = (x + A, y)
+  override var c: (Double, Double) = (x + A*0.5, y + A*Math.sqrt(3)/2)
+  override var  vx : Double = 0
+  override var vy : Double = 0
   override var size: Int = _
   override var rotation: Double = 0
   override var isMirror: Boolean = false
@@ -33,4 +36,42 @@ case class TriangleEquilateral(from : (Double, Double), A: Double, s: Int, o : D
     val maxY = if(from._1+A+from._2 > (from._1 + A*0.5) + (from._2 + A*Math.sqrt(3)/2)) from._2  else from._2 + A*Math.sqrt(3)/2
     if(maxX - minX  > maxY - minY)  (maxX - minX) * 1.15 else  (maxY - minY) * 1.15
   }
+
+  override def draw(ctx: CanvasRenderingContext2D): Unit = {
+     a  = (x, y)
+     b = (x + A, y)
+     c = (x + A*0.5, y + A*Math.sqrt(3)/2)
+    style match {
+      case _: Stroke =>
+        Shape.checkColor(this,ctx)
+        Shape.checkOpacity(this,ctx)
+        if(rotation != 0) {
+          ctx.moveTo((a._1 + b._1 + c._1)/3, (a._2 + b._2 + c._2)/3)
+          ctx.rotate(rotation * Math.PI / 180)
+        }
+        ctx.lineCap = "round"
+        ctx.beginPath()
+        ctx.moveTo(a._1+x, a._2+y)
+        ctx.lineTo(b._1+x, b._2+y)
+        ctx.lineTo(c._1+x, c._2+y)
+        ctx.lineTo(a._1+x, a._2+y)
+        ctx.stroke()
+      case _: Fill =>
+        Shape.checkColor(this,ctx)
+        Shape.checkOpacity(this,ctx)
+        if(rotation != 0) {
+          ctx.moveTo((a._1 + b._1 + c._1)/3, (a._2 + b._2 + c._2)/3)
+          ctx.rotate(rotation * Math.PI / 180)
+        }
+        ctx.lineCap = "round"
+        ctx.beginPath()
+        ctx.moveTo(a._1, a._2)
+        ctx.lineTo(b._1, b._2)
+        ctx.lineTo(c._1, c._2)
+        ctx.lineTo(a._1, a._2)
+        ctx.fill()
+      case _ =>
+    }
+  }
+
 }

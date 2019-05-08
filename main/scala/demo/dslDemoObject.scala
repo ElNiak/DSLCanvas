@@ -6,10 +6,9 @@ import org.scalajs.dom
 import org.scalajs.dom.html
 import org.scalajs.dom.{document, html}
 import DSLStatic.Shape._
-import DSLStatic.Style.{Color, Cap, Join}
+import DSLStatic.Style.{Color, Cap, Join, SV}
 import DSLStatic.Style.ColorRGB.ColorRGBUtils
 import DSLStatic.Style.Gradient.GradientUtils
-import DSLStatic.Canvasy.drawHand
 
 import scala.collection.mutable.ListBuffer
 
@@ -53,11 +52,13 @@ object dslDemoObject {
     canvasy5 += CurveQuadratic((50,50),(100,100),2,1,(50,50))
     canvasy5 += CurveBezier((50,50),(100,100),2,1,(50,50),(60,60))
 
+    var canvasy6 = new Canvasy(new PPAShape((0, 0), SV.fill, 0.5, ListBuffer((0,0),(100,100),(100,50),(30,10),(25,50)),10.0,Color.red))
+
     re rotate 80 //bug
     ree rotate -90 //bug
-    canvasy moveMouse true
+    //canvasy moveMouse true
     //canvasy2 moveMouse true
-    canvasy4 keyRotate true
+    //canvasy4 keyRotate true
     canvasy2 translateX 50 translateY 100
 
     canvasy4 rotate 0
@@ -79,11 +80,20 @@ object dslDemoObject {
 
     canvasy4.getStrokeShape[PPLShape] change StrokeColor(Color.blue)
 
-    canvasy4 moveMouse  true
+    //canvasy4 moveMouse  true
     //drawHand(500)
-    canvasy draw()
-    canvasy2 draw()
+    //canvasy draw()
+    //canvasy2 draw()
+    canvasy4 animLeftRight  (true,20,true)
+    canvasy4 moveMouse true
+
+    //canvasy4 draw()
+    //canvasy6 keyRotate true
+
+
     canvasy4 draw()
-    canvasy5 draw()
+
+    //val canvasy7 = new Canvasy()
+    //canvasy7 drawHand(200,200) translateX 50 translateY 600
   }
 }

@@ -1,27 +1,35 @@
 package DSLStatic.Shape
-import DSLStatic.Style.{Clear, Fill, Stroke, Style}
+
+import DSLStatic.Style._
 import org.scalajs.dom.CanvasRenderingContext2D
 
 import scala.collection.mutable.ListBuffer
 
-case class CurveBezier(from : (Double, Double), to : (Double, Double), s: Int, o : Double, cp1 : (Double, Double), cp2 : (Double, Double)) extends Shape {
+//Point to Point Lined shape
+case class PPAShape(from : (Double, Double), s: Int, o : Double, list: ListBuffer[(Double,Double)], r : Double) extends Shape {
   override var opacity: Double = o
   override var style : Style =  if(s == 1) new Fill else if (s == 2) new Stroke else new Clear
   override var x : Double = from._1
   override var y : Double = from._2
   override var  vx : Double = 0
   override var vy : Double = 0
-  var tx : Double = to._1
-  var ty : Double = to._2
   override var size: Int = _
   override var rotation: Double = 0
   override var isMirror: Boolean = false
-  var cp1x : Double = cp1._1
-  var cp1y : Double = cp1._2
-  var cp2x : Double = cp2._1
-  var cp2y : Double = cp2._2
-  var coordinates = ListBuffer[(Double, Double)]((x,y),(tx,ty),(cp1x,cp1y),(cp2x,cp2y))
+  val coordinates : ListBuffer[(Double,Double)]= list
   override val rangeSize = getSize()
+  var radius : Double = r
+
+
+  def this(from : (Double, Double), s : Int, o : Double, list: ListBuffer[(Double,Double)],r : Double ,ct : ColorRGB) {
+    this(from, s , o, list,r)
+    this.style.colorStyle = ct
+  }
+
+  def this(from : (Double, Double), widthI: Double, heightI: Double, s : Int, o : Double,list: ListBuffer[(Double,Double)], r : Double, ct : Gradient) {
+    this(from, s , o, list,r)
+    this.style.colorStyle = ct
+  }
 
   override def getSize(): Double ={
     var minX = Double.MaxValue
@@ -38,7 +46,7 @@ case class CurveBezier(from : (Double, Double), to : (Double, Double), s: Int, o
         maxY = shape._1
       }
     }
-    if(maxX - minX  > maxY - minY)  (maxX - minX) * 2 else  (maxY - minY) * 2
+    if(maxX - minX  > maxY - minY)  (maxX - minX) * 1.15 else  (maxY - minY) * 1.15
   }
 
   override def draw(ctx: CanvasRenderingContext2D): Unit = {
@@ -47,17 +55,25 @@ case class CurveBezier(from : (Double, Double), to : (Double, Double), s: Int, o
         Shape.checkColor(this,ctx)
         Shape.checkOpacity(this,ctx)
         ctx.rotate(rotation * Math.PI / 180)
+        ctx.translate(x, y)
         ctx.beginPath()
-        ctx.moveTo(x,y)
-        ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, tx, ty)
+        ctx.moveTo(coordinates(0)._1, coordinates(0)._2)
+        for(i <- 1 until coordinates.length-1) {
+          ctx.arcTo(coordinates(i)._1, coordinates(i)._2,coordinates(i+1)._1, coordinates(i+1)._2,radius)
+        }
+        ctx.lineTo(list(0)._1, list(0)._2)
         ctx.stroke()
       case _: Fill =>
         Shape.checkColor(this,ctx)
         Shape.checkOpacity(this,ctx)
         ctx.rotate(rotation * Math.PI / 180)
+        ctx.translate(x, y)
         ctx.beginPath()
-        ctx.moveTo(x,y)
-        ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, tx, ty)
+        ctx.moveTo(coordinates(0)._1, coordinates(0)._2)
+        for(i <- 1 until coordinates.length-1) {
+          ctx.arcTo(coordinates(i)._1, coordinates(i)._2,coordinates(i+1)._1, coordinates(i+1)._2,radius)
+        }
+        ctx.lineTo(coordinates(0)._1, coordinates(0)._2)
         ctx.fill()
       case _ =>
     }
