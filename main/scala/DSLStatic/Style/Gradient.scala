@@ -2,8 +2,7 @@ package DSLStatic.Style
 
 import scala.collection.mutable.ListBuffer
 
-case class
-Gradient(X1 : Double, Y1 : Double,X2 : Double, Y2 : Double, R1 : Double, R2 : Double,  color: ListBuffer[ColorRGB], off : ListBuffer[Double]) extends ColorStyle {
+case class Gradient(X1 : Double, Y1 : Double,X2 : Double, Y2 : Double, R1 : Double, R2 : Double,  color: ListBuffer[ColorRGB], off : ListBuffer[Double]) extends ColorStyle {
   val x1 : Double = X1
   val y1 : Double = Y1
   val x2 : Double = X2

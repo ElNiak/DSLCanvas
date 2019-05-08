@@ -5,7 +5,7 @@ import DSLStatic.Style.{Clear, ColorRGB, Fill, Gradient, Stroke}
 import org.scalajs.dom
 import org.scalajs.dom.raw.CanvasGradient
 import org.scalajs.dom.{document, html}
-
+import scala.scalajs.js
 import scala.collection.mutable.ListBuffer
 import scala.reflect.ClassTag
 import scala.scalajs.js
@@ -16,6 +16,11 @@ class Canvasy[I <: Shape](shape : I) {
   private val shape_groups = new ListBuffer[I]()
   private var movable : Boolean = false
   private var rotatable : Boolean = false
+  private var animable : Boolean = false
+  private var border : Boolean = false
+  private var acceleration : Boolean = false
+  private var valid : Boolean = true
+  private var resize : Boolean = true
   private var setEventRotate = true
   private var setEventMovable = true
   private var setEventAnimation = true
@@ -23,8 +28,9 @@ class Canvasy[I <: Shape](shape : I) {
   private var t : Double = 0
   var strokeElement: ListBuffer[Shape] = getStroke()
   var fillElement: ListBuffer[Shape] = getFill()
-  var valid : Boolean = true
   var raf = 0
+  var ax : Double = 0
+  var ay : Double = 0
 
   c.style.position = "absolute"
   if(shape != null) this += shape
@@ -33,9 +39,14 @@ class Canvasy[I <: Shape](shape : I) {
     this(Text((0, 0), "", 2, 2, 2, "#ffffff", "0px Times New Roman", false).asInstanceOf[I])
   }
 
-  def draw() : Unit = {
+  def draw()  = {
+    ctx.clearRect(0, 0, c.width, c.height)
     if(valid){
-      resizeCanvas()
+      if(animable){
+        addListenerMoveAnimation()
+      }
+      if(resize)
+        resizeCanvas()
       if(movable)
         addListenerMove()
       if(rotatable)
@@ -126,6 +137,77 @@ class Canvasy[I <: Shape](shape : I) {
 
   def keyRotate(boolean: Boolean): Canvasy[I] = {
     rotatable = boolean
+    this
+  }
+
+  def anim(x : (Boolean,(Double,Double), Boolean)): Canvasy[I] = {
+    animable = x._1
+    border = x._3
+    resizeCanvas()
+    for(shape <- shape_groups){
+      shape.vx = x._2._1
+      shape.vy = x._2._2
+    }
+    this
+  }
+
+  def animLeftRight(x : (Boolean, Double , Boolean)): Canvasy[I] = {
+    animable = x._1
+    border = x._3
+    resizeCanvas()
+    for(shape <- shape_groups){
+      shape.vx = x._2
+    }
+    this
+  }
+
+  def animUpDown(x : (Boolean, Double , Boolean)): Canvasy[I] = {
+    animable = x._1
+    border = x._3
+    resizeCanvas()
+    for(shape <- shape_groups){
+      shape.vy = x._2
+    }
+    this
+  }
+
+  def animA(x : (Boolean,(Double,Double), Boolean, (Double,Double))): Canvasy[I] = {
+    animable = x._1
+    border = x._3
+    acceleration = true
+    ax = x._4._1
+    ay = x._4._2
+    resizeCanvas()
+    for(shape <- shape_groups){
+      shape.vx = x._2._1
+      shape.vy = x._2._2
+    }
+    this
+  }
+
+  def animLeftRightA(x : (Boolean, Double , Boolean, (Double,Double))): Canvasy[I] = {
+    animable = x._1
+    border = x._3
+    acceleration = true
+    ax = x._4._1
+    ay = x._4._2
+    resizeCanvas()
+    for(shape <- shape_groups){
+      shape.vx = x._2
+    }
+    this
+  }
+
+  def animUpDownA(x : (Boolean, Double , Boolean, (Double,Double))): Canvasy[I] = {
+    animable = x._1
+    border = x._3
+    acceleration = true
+    ax = x._4._1
+    ay = x._4._2
+    resizeCanvas()
+    for(shape <- shape_groups){
+      shape.vy = x._2
+    }
     this
   }
 
@@ -252,24 +334,53 @@ class Canvasy[I <: Shape](shape : I) {
     this
   }
 
-  def addListenerMoveAnimation(speed:(Double,Double)): Canvasy[I] ={
+  def addListenerMoveAnimation(): Canvasy[I] ={
+    resize = false
     var move = false
+
     val onClick ={(e: dom.MouseEvent) =>
       move = !move
     }
+
+    var handler: js.timers.SetIntervalHandle = js.timers.setInterval(20){
+    }
+
     val onKey ={(e: dom.KeyboardEvent) =>
       if (move) {
         e.key match {
           case "Enter" =>
-            shape_groups foreach(_.asInstanceOf[Shape].x += speed._1)
-            shape_groups foreach(_.asInstanceOf[Shape].y += speed._2)
-            ctx.clearRect(0, 0, c.width, c.height)
-            draw
+            if(animable){
+              animable = ! animable
+              handler = js.timers.setInterval(20){
+                for(shape <- shape_groups){
+                  shape.x += shape.vx
+                  shape.y += shape.vy
+                  if(border){
+                    if (shape.y + shape.vy > c.height || shape.y + shape.vy < 0) {
+                      shape.vy = -shape.vy
+                    }
+                    if (shape.x + shape.vx > c.width || shape.x + shape.vx < 0) {
+                      shape.vx = -shape.vx
+                    }
+                  }
+                  if(acceleration){
+                    shape.vy *= ay
+                    shape.vy += ax
+                  }
+                }
+                draw()
+              }
+            }
+            else {
+              js.timers.clearInterval(handler)
+              animable = !animable
+            }
           case _ =>
             println(e.key)
         }
       }
     }
+
     if(setEventAnimation) {
       c.addEventListener("click", onClick, useCapture = false)
       dom.window.addEventListener("keydown", onKey, useCapture = false)
@@ -309,7 +420,7 @@ class Canvasy[I <: Shape](shape : I) {
       resizeCanvas()
     }
     else {
-      if(!isText){
+      if(!isText || animable){
         c.width= maxX.toInt + maxAdd.toInt
         c.height= maxY.toInt + maxAdd.toInt
       }

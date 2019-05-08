@@ -56,9 +56,9 @@ object dslDemoObject {
 
     re rotate 80 //bug
     ree rotate -90 //bug
-    canvasy moveMouse true
+    //canvasy moveMouse true
     //canvasy2 moveMouse true
-    canvasy4 keyRotate true
+    //canvasy4 keyRotate true
     canvasy2 translateX 50 translateY 100
 
     canvasy4 rotate 0
@@ -80,19 +80,20 @@ object dslDemoObject {
 
     canvasy4.getStrokeShape[PPLShape] change StrokeColor(Color.blue)
 
-    canvasy4 moveMouse  true
+    //canvasy4 moveMouse  true
     //drawHand(500)
     //canvasy draw()
     //canvasy2 draw()
-    //canvasy4 addListenerMoveAnimation((20,20))
+    canvasy5 animLeftRightA  (true,20,true,(0.99,0.25))
+    canvasy5 moveMouse true
 
     //canvasy4 draw()
     //canvasy6 keyRotate true
 
 
-    canvasy6 draw()
+    canvasy5 draw()
 
-    val canvasy7 = new Canvasy()
+    //val canvasy7 = new Canvasy()
     //canvasy7 drawHand(200,200) translateX 50 translateY 600
   }
 }
