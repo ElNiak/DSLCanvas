@@ -5,15 +5,14 @@ import DSLStatic.Style.{Clear, ColorRGB, Fill, Gradient, Stroke}
 import org.scalajs.dom
 import org.scalajs.dom.html.Canvas
 import org.scalajs.dom.{CanvasRenderingContext2D, document, html}
-
 import scala.collection.mutable.ListBuffer
 import scala.reflect.ClassTag
 import scala.scalajs.js
 
 class Canvasy[I <: Shape](shape : I) {
-  val c: Canvas = document.createElement("canvas").asInstanceOf[html.Canvas]
-  val ctx: CanvasRenderingContext2D = c.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
-  private val shape_groups = new ListBuffer[I]()
+  val c : Canvas = document.createElement("canvas").asInstanceOf[html.Canvas]
+  val ctx : CanvasRenderingContext2D = c.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
+  private val shape_groups : ListBuffer[I] = new ListBuffer[I]()
   private var movable : Boolean = false
   private var rotatable : Boolean = false
   private var animable : Boolean = false
@@ -21,16 +20,15 @@ class Canvasy[I <: Shape](shape : I) {
   private var acceleration : Boolean = false
   private var valid : Boolean = true
   private var resize : Boolean = true
-  private var setEventRotate = true
-  private var setEventMovable = true
-  private var setEventAnimation = true
+  private var setEventRotate : Boolean = true
+  private var setEventMovable : Boolean = true
+  private var setEventAnimation : Boolean = true
   private var l : Double = 0
   private var t : Double = 0
-  var strokeElement: ListBuffer[Shape] = getStroke
-  var fillElement: ListBuffer[Shape] = getFill
+  var strokeElement : ListBuffer[Shape] = getStroke
+  var fillElement : ListBuffer[Shape] = getFill
   private var ax : Double = 0
   private var ay : Double = 0
-
   c.style.position = "absolute"
   if(shape != null) this += shape
 
@@ -275,9 +273,7 @@ class Canvasy[I <: Shape](shape : I) {
   private def addListenerRotate(): Unit ={
     var rotate = false
 
-    val onClick ={e: dom.MouseEvent =>
-      rotate = !rotate
-    }
+    val onClick ={e: dom.MouseEvent => rotate = !rotate }
 
     val onKey ={e: dom.KeyboardEvent =>
       if (rotate) {
@@ -347,9 +343,7 @@ class Canvasy[I <: Shape](shape : I) {
     resize = false
     var move = false
 
-    val onClick ={e: dom.MouseEvent =>
-      move = !move
-    }
+    val onClick ={e: dom.MouseEvent => move = !move }
 
     var handler: js.timers.SetIntervalHandle = js.timers.setInterval(20){}
 

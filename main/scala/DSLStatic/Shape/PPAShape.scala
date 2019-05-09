@@ -8,16 +8,16 @@ import scala.collection.mutable.ListBuffer
 
 //Point to Point Lined shape
 case class PPAShape(from : (Double, Double), s: Int, o : Double, list: ListBuffer[(Double,Double)], r : Double) extends Shape {
-  override var opacity: Double = if(o >= 0) o else throw new ShapeAttributeException("Opacity cannot be smaller than 0")
+  override var opacity : Double = if(o >= 0) o else throw new ShapeAttributeException("Opacity cannot be smaller than 0")
   override var style : Style =  if(s == 1) new Fill else if (s == 2) new Stroke else null
   override var x : Double = if(from._1 >= 0) from._1 else throw new ShapeAttributeException("x cannot be smaller than 0")
   override var y : Double = if(from._2 >= 0) from._2 else throw new ShapeAttributeException("y cannot be smaller than 0")
   override var  vx : Double = 0
   override var vy : Double = 0
   override var size: Int = _
-  override var rotation: Double = 0
-  override var isMirror: Boolean = false
-  val coordinates : ListBuffer[(Double,Double)]= list
+  override var rotation : Double = 0
+  override var isMirror : Boolean = false
+  val coordinates : ListBuffer[(Double,Double)] = list
   override val rangeSize : Double = getSize()
   var radius : Double = if(r >= 0) r else throw new ShapeAttributeException("Radius cannot be smaller than 0")
 

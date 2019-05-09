@@ -15,7 +15,7 @@ case class Rectangle(from : (Double, Double), widthI: Double, heightI: Double, s
   override var isMirror: Boolean = false
   var height: Double = if(heightI >= 0) heightI else throw new ShapeAttributeException("Height cannot be smaller than 0")
   var width: Double = if(widthI >= 0) widthI else throw new ShapeAttributeException("Width cannot be smaller than 0")
-  override val rangeSize: Double = getSize
+  override val rangeSize: Double = getSize()
   override var size: Int = _
 
   def this(from : (Double, Double), widthI: Double, heightI: Double, s : Int, o : Double, ct : ColorRGB) {

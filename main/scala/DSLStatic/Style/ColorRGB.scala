@@ -24,16 +24,14 @@ object ColorRGB {
     def rgba(args : String) : ColorRGB = { //rgba"1.0#000000"
       var array = args.split("#")
       if(checkColorPattern('#'+array(1)) && checkColorPattern2(array(0)))
-        if(array(0).toDouble < 0) throw new ShapeAttributeException("Opacity cannot be smaller than 0")
-        else ColorRGB('#'+array(1),array(0).toDouble)
+        ColorRGB('#'+array(1),array(0).toDouble)
       else
         ColorRGB("#000000",1)
     }
     def rgba(args : Unit) : ColorRGB = {
       var array = sc.parts(0).split("#")
       if(checkColorPattern('#'+array(1)) && checkColorPattern2(array(0)))
-        if(array(0).toDouble < 0) throw new ShapeAttributeException("Opacity cannot be smaller than 0")
-        else ColorRGB('#'+array(1),array(0).toDouble)
+        ColorRGB('#'+array(1),array(0).toDouble)
       else
         ColorRGB("#000000",1)
     }
