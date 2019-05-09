@@ -12,13 +12,13 @@ case class CurveQuadratic(from : (Double, Double), to : (Double, Double), s: Int
   override var y : Double = if(from._2 >= 0) from._2 else throw new ShapeAttributeException("y cannot be smaller than 0")
   override var  vx : Double = 0
   override var vy : Double = 0
-  var tx : Double = to._1
-  var ty : Double = to._2
+  var tx : Double = if(to._1 >= 0) to._1 else throw new ShapeAttributeException("tx cannot be smaller than 0")
+  var ty : Double = if(to._2 >= 0) to._2 else throw new ShapeAttributeException("ty cannot be smaller than 0")
   override var size: Int = _
   override var rotation: Double = 0
   override var isMirror: Boolean = false
-  var cp1x : Double = cp1._1 //TODO check input
-  var cp1y : Double = cp1._2
+  var cp1x : Double = if(cp1._1 >= 0) cp1._1 else throw new ShapeAttributeException("cp1x cannot be smaller than 0")
+  var cp1y : Double = if(cp1._2 >= 0) cp1._2 else throw new ShapeAttributeException("cp1y cannot be smaller than 0")
   var coordinates: ListBuffer[(Double, Double)] = ListBuffer[(Double, Double)]((x,y),(tx,ty),(cp1x,cp1y))
   override val rangeSize: Double = getSize()
 

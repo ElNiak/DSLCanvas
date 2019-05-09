@@ -1,15 +1,16 @@
 package DSLStatic.Shape
+import DSLStatic.ShapeAttributeException
 import DSLStatic.Style.{Clear, Fill, Stroke, Style}
 import org.scalajs.dom
 import org.scalajs.dom.{CanvasRenderingContext2D, Event}
 import org.scalajs.dom.html.Image
 import org.scalajs.dom.raw.HTMLImageElement
 
-case class Picture (from : (Double, Double), path: String, s : Int, o : Double) extends Shape {
+case class Picture (from : (Double, Double), path: String, s : Int) extends Shape {
   override var opacity: Double = 0
   override var style : Style = new Fill
-  override var x : Double = from._1
-  override var y : Double = from._2
+  override var x : Double = if(from._1 >= 0) from._1 else throw new ShapeAttributeException("x cannot be smaller than 0")
+  override var y : Double = if(from._2 >= 0) from._2 else throw new ShapeAttributeException("y cannot be smaller than 0")
   override var size: Int = _
   override var rotation: Double = 0
   override var isMirror: Boolean = false
@@ -18,8 +19,6 @@ case class Picture (from : (Double, Double), path: String, s : Int, o : Double) 
   val image: HTMLImageElement = dom.document.createElement("img").asInstanceOf[HTMLImageElement]
   image.src = path
   override val rangeSize: Double = getSize()
-
-
 
 
   override def getSize(): Double = {

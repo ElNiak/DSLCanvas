@@ -13,10 +13,10 @@ case class Text (from : (Double, Double), texte: String, SOX : Double , SOY : Do
   override var  vx : Double = 0
   override var vy : Double = 0
   override var rotation: Double = 0
-  var text : String = texte //TODO check input
-  var soX : Double = SOX
-  var soY : Double = SOY
-  var sb : Double = SB
+  var text : String = texte
+  var soX : Double = if(SOX >= 0) SOX else throw new ShapeAttributeException("shadow offset x cannot be smaller than 0")
+  var soY : Double = if(SOY >= 0) SOY else throw new ShapeAttributeException("shadow offset y cannot be smaller than 0")
+  var sb : Double = if(SB >= 0) SB else throw new ShapeAttributeException("shadow blur size cannot be smaller than 0")
   var sc : String = SC
   var font : String = Font
   var stroke : Boolean = strokeB

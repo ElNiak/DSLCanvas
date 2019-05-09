@@ -4,7 +4,7 @@ import DSLStatic.ShapeAttributeException
 
 case class ColorRGB(string: String, o : Double) extends ColorStyle {
   val color : String = string
-  val opacity : Double = o
+  val opacity : Double = if(o >= 0) o else throw new ShapeAttributeException("Opacity cannot be smaller than 0")
 }
 
 object ColorRGB {

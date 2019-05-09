@@ -1,5 +1,5 @@
 package DSLStatic.Shape
 
-class IsoceleTriangle {
+class TriangleIsocele {
 
 }

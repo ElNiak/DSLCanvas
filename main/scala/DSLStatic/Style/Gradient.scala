@@ -1,16 +1,19 @@
 package DSLStatic.Style
 
+import DSLStatic.ShapeAttributeException
+
 import scala.collection.mutable.ListBuffer
 
 case class Gradient(X1 : Double, Y1 : Double,X2 : Double, Y2 : Double, R1 : Double, R2 : Double,  color: ListBuffer[ColorRGB], off : ListBuffer[Double]) extends ColorStyle {
-  val x1 : Double = X1
-  val y1 : Double = Y1
-  val x2 : Double = X2
-  val y2 : Double = Y2
-  val r1 : Double = R1
-  val r2 : Double = R2
+  val x1 : Double = if(X1 >= 0) X1 else throw new ShapeAttributeException("X1 cannot be smaller than 0")
+  val y1 : Double = if(Y1 >= 0) Y1 else throw new ShapeAttributeException("Y1 cannot be smaller than 0")
+  val x2 : Double = if(X2 >= 0) X2 else throw new ShapeAttributeException("X2 cannot be smaller than 0")
+  val y2 : Double = if(Y2 >= 0) Y2 else throw new ShapeAttributeException("Y2 cannot be smaller than 0")
+  val r1 : Double = if(R1 >= -1) R1 else throw new ShapeAttributeException("R1 cannot be smaller than 0")
+  val r2 : Double = if(R2 >= -1) R2 else throw new ShapeAttributeException("R2 cannot be smaller than 0")
   val colors : ListBuffer[ColorRGB] = color
   val offset : ListBuffer[Double] = off
+  if(colors.size != offset.size)throw new ShapeAttributeException("Number of offset must be equal to the number of color cannot be smaller than 0")
   def this() {
       this(0,0,0,0,0,0,null,null)
   }
