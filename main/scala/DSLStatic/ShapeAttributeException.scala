@@ -1,6 +1,6 @@
 package DSLStatic
-class ShapeAttributeException(message: String) extends Exception(message) {
 
+class ShapeAttributeException(message: String) extends Exception(message) {
   def this(message: String, cause: Throwable) {
     this(message)
     initCause(cause)

@@ -3,16 +3,16 @@ package DSLStatic
 import DSLStatic.Shape._
 import DSLStatic.Style.{Clear, ColorRGB, Fill, Gradient, Stroke}
 import org.scalajs.dom
-import org.scalajs.dom.raw.CanvasGradient
-import org.scalajs.dom.{document, html}
-import scala.scalajs.js
+import org.scalajs.dom.html.Canvas
+import org.scalajs.dom.{CanvasRenderingContext2D, document, html}
+
 import scala.collection.mutable.ListBuffer
 import scala.reflect.ClassTag
 import scala.scalajs.js
 
 class Canvasy[I <: Shape](shape : I) {
-  val c = document.createElement("canvas").asInstanceOf[html.Canvas]
-  val ctx = c.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
+  val c: Canvas = document.createElement("canvas").asInstanceOf[html.Canvas]
+  val ctx: CanvasRenderingContext2D = c.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
   private val shape_groups = new ListBuffer[I]()
   private var movable : Boolean = false
   private var rotatable : Boolean = false
@@ -26,11 +26,10 @@ class Canvasy[I <: Shape](shape : I) {
   private var setEventAnimation = true
   private var l : Double = 0
   private var t : Double = 0
-  var strokeElement: ListBuffer[Shape] = getStroke()
-  var fillElement: ListBuffer[Shape] = getFill()
-  var raf = 0
-  var ax : Double = 0
-  var ay : Double = 0
+  var strokeElement: ListBuffer[Shape] = getStroke
+  var fillElement: ListBuffer[Shape] = getFill
+  private var ax : Double = 0
+  private var ay : Double = 0
 
   c.style.position = "absolute"
   if(shape != null) this += shape
@@ -39,7 +38,7 @@ class Canvasy[I <: Shape](shape : I) {
     this(Text((0, 0), "", 2, 2, 2, "#ffffff", "0px Times New Roman", false).asInstanceOf[I])
   }
 
-  def draw()  = {
+  def draw(): Unit = {
     ctx.clearRect(0, 0, c.width, c.height)
     if(valid){
       if(animable){
@@ -60,7 +59,7 @@ class Canvasy[I <: Shape](shape : I) {
   }
 
 
-  private def getStroke() : ListBuffer[Shape] = {
+  private def getStroke: ListBuffer[Shape] = {
     val lst : ListBuffer[Shape] = new ListBuffer[Shape]
     for(shape <- shape_groups){
       shape.style match {
@@ -83,6 +82,11 @@ class Canvasy[I <: Shape](shape : I) {
     lst
   }
 
+  def automaticResize(v : Boolean): Canvasy[I] ={
+    resize = v
+    this
+  }
+
   def getStrokeShape[A](implicit tag: ClassTag[A])  : ListBuffer[A] = {
     val lst : ListBuffer[A] = new ListBuffer[A]
     for(shape <- strokeElement){
@@ -95,7 +99,7 @@ class Canvasy[I <: Shape](shape : I) {
     lst
   }
 
-  private def getFill() : ListBuffer[Shape] ={
+  private def getFill: ListBuffer[Shape] ={
     val lst : ListBuffer[Shape] = new ListBuffer[Shape]
     for(shape <- shape_groups){
       shape.style match {
@@ -107,18 +111,22 @@ class Canvasy[I <: Shape](shape : I) {
   }
 
   def += (group: ListBuffer[Shape]): Canvasy[I] = {
-    group foreach(shape_groups += _.asInstanceOf[I])
-    shape_groups sortBy(shape_groups => (shape_groups.x,shape_groups.y))
-    strokeElement  = getStroke()
-    fillElement = getFill()
+    if(group != null){
+      group foreach(shape_groups += _.asInstanceOf[I])
+      shape_groups sortBy(shape_groups => (shape_groups.x,shape_groups.y))
+      strokeElement  = getStroke
+      fillElement = getFill
+    }
     this
   }
 
   def +=  (shape: Shape): Canvasy[I] = {
-    shape_groups += shape.asInstanceOf[I]
-    shape_groups sortBy(shape_groups => (shape_groups.x,shape_groups.y))
-    strokeElement  = getStroke()
-    fillElement = getFill()
+    if(shape != null) {
+      shape_groups += shape.asInstanceOf[I]
+      shape_groups sortBy (shape_groups => (shape_groups.x, shape_groups.y))
+      strokeElement = getStroke
+      fillElement = getFill
+    }
     this
   }
 
@@ -237,19 +245,19 @@ class Canvasy[I <: Shape](shape : I) {
     var offX : Double = 0
     var offY : Double = 0
     var isDragging = false
-    val onmousemove ={(e: dom.MouseEvent) =>
+    val onmousemove ={e: dom.MouseEvent =>
       if(isDragging){
         c.style.left = (e.clientX - offX) + "px"
         c.style.top  = (e.clientY - offY) + "px"
       }
     }
-    val onmouseup = {(e: dom.MouseEvent) =>
+    val onmouseup = {e: dom.MouseEvent =>
       if(isDragging) {
         dom.window.removeEventListener("mousemove", onmousemove, useCapture = true)
         isDragging = false
       }
     }
-    val onmousedown ={(e: dom.MouseEvent) =>
+    val onmousedown ={e: dom.MouseEvent =>
       if(!isDragging){
         isDragging = true
         offX = e.clientX - rect.left
@@ -266,21 +274,22 @@ class Canvasy[I <: Shape](shape : I) {
 
   private def addListenerRotate(): Unit ={
     var rotate = false
-    val onClick ={(e: dom.MouseEvent) =>
+
+    val onClick ={e: dom.MouseEvent =>
       rotate = !rotate
     }
 
-    val onKey ={(e: dom.KeyboardEvent) =>
+    val onKey ={e: dom.KeyboardEvent =>
       if (rotate) {
         e.key match {
           case "ArrowRight" =>
             shape_groups foreach(_.asInstanceOf[Shape].rotation -= 10)
             ctx.clearRect(0, 0, c.width, c.height)
-            draw
+            draw()
           case "ArrowLeft" =>
             shape_groups foreach(_.asInstanceOf[Shape].rotation += 10)
             ctx.clearRect(0, 0, c.width, c.height)
-            draw
+            draw()
           case _ =>
             println(e.key)
         }
@@ -302,7 +311,7 @@ class Canvasy[I <: Shape](shape : I) {
     ctx.lineWidth = 2
     var dragState = 0
     ctx.strokeRect(0, 0, w._1+1, w._2+1)
-    c.onmousemove ={(e: dom.MouseEvent) =>
+    c.onmousemove ={e: dom.MouseEvent =>
       if (dragState == 1) {
         ctx.lineTo(
           e.clientX - rect.left,
@@ -311,7 +320,7 @@ class Canvasy[I <: Shape](shape : I) {
         ctx.stroke()
       }
     }
-    c.onmouseup = {(e: dom.MouseEvent) =>
+    c.onmouseup = {e: dom.MouseEvent =>
       if(dragState == 1) {
         ctx.fill()
         dragState = 2
@@ -321,7 +330,7 @@ class Canvasy[I <: Shape](shape : I) {
         dragState = 0
       }
     }
-    c.onmousedown ={(e: dom.MouseEvent) =>
+    c.onmousedown ={e: dom.MouseEvent =>
       if (dragState == 0) {
         dragState = 1
         ctx.beginPath()
@@ -338,14 +347,13 @@ class Canvasy[I <: Shape](shape : I) {
     resize = false
     var move = false
 
-    val onClick ={(e: dom.MouseEvent) =>
+    val onClick ={e: dom.MouseEvent =>
       move = !move
     }
 
-    var handler: js.timers.SetIntervalHandle = js.timers.setInterval(20){
-    }
+    var handler: js.timers.SetIntervalHandle = js.timers.setInterval(20){}
 
-    val onKey ={(e: dom.KeyboardEvent) =>
+    val onKey ={e: dom.KeyboardEvent =>
       if (move) {
         e.key match {
           case "Enter" =>
@@ -389,6 +397,14 @@ class Canvasy[I <: Shape](shape : I) {
     this
   }
 
+  def resizeCanvas(w : Int, h : Int) : Canvasy[I] = {
+    if(!resize){
+      if(w < 0 || h < 0) throw new ShapeAttributeException("Canvas weight and height cannot be smaller than 0")
+      c.width= w
+      c.height= h
+    }
+    this
+  }
 
   private def resizeCanvas(): Unit ={
     var minX = Double.MaxValue

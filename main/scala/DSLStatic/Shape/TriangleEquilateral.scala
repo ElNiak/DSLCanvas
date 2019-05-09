@@ -1,14 +1,15 @@
 package DSLStatic.Shape
 
+import DSLStatic.ShapeAttributeException
 import DSLStatic.Style.{Clear, Color, ColorRGB, ColorStyle, Fill, Gradient, Stroke, Style}
 import org.scalajs.dom.CanvasRenderingContext2D
 
 
 case class TriangleEquilateral(from : (Double, Double), A: Double, s: Int, o : Double) extends Triangle {
-  override var opacity: Double = o
-  override var style : Style = if(s == 1) new Fill else if (s == 2) new Stroke else new Clear
-  override var x: Double = from._1
-  override var y: Double = from._2
+  override var opacity: Double = if(o >= 0) o else throw new ShapeAttributeException("Opacity cannot be smaller than 0")
+  override var style : Style = if(s == 1) new Fill else if (s == 2) new Stroke else null
+  override var x : Double = if(from._1 >= 0) from._1 else throw new ShapeAttributeException("x cannot be smaller than 0")
+  override var y : Double = if(from._2 >= 0) from._2 else throw new ShapeAttributeException("y cannot be smaller than 0")
   override var a: (Double, Double) = (x, y)
   override var b: (Double, Double) = (x + A, y)
   override var c: (Double, Double) = (x + A*0.5, y + A*Math.sqrt(3)/2)
@@ -17,7 +18,7 @@ case class TriangleEquilateral(from : (Double, Double), A: Double, s: Int, o : D
   override var size: Int = _
   override var rotation: Double = 0
   override var isMirror: Boolean = false
-  override val rangeSize = getSize()
+  override val rangeSize: Double = getSize()
 
   def this(from : (Double, Double), A: Double, s : Int, o : Double, ct : ColorRGB) {
     this(from, A, s , o)

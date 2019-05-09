@@ -1,5 +1,7 @@
 package DSLStatic.Style
 
+import DSLStatic.ShapeAttributeException
+
 case class ColorRGB(string: String, o : Double) extends ColorStyle {
   val color : String = string
   val opacity : Double = o
@@ -22,14 +24,16 @@ object ColorRGB {
     def rgba(args : String) : ColorRGB = { //rgba"1.0#000000"
       var array = args.split("#")
       if(checkColorPattern('#'+array(1)) && checkColorPattern2(array(0)))
-        ColorRGB('#'+array(1),array(0).toDouble)
+        if(array(0).toDouble < 0) throw new ShapeAttributeException("Opacity cannot be smaller than 0")
+        else ColorRGB('#'+array(1),array(0).toDouble)
       else
         ColorRGB("#000000",1)
     }
     def rgba(args : Unit) : ColorRGB = {
       var array = sc.parts(0).split("#")
       if(checkColorPattern('#'+array(1)) && checkColorPattern2(array(0)))
-        ColorRGB('#'+array(1),array(0).toDouble)
+        if(array(0).toDouble < 0) throw new ShapeAttributeException("Opacity cannot be smaller than 0")
+        else ColorRGB('#'+array(1),array(0).toDouble)
       else
         ColorRGB("#000000",1)
     }

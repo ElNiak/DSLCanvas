@@ -1,9 +1,6 @@
 package DSLStatic
 
-
-
 import DSLStatic.Shape.Shape
-
 import scala.collection.mutable.ListBuffer
 
 trait CanvasyElement {
@@ -11,7 +8,6 @@ trait CanvasyElement {
   def and(x: Shape): ListBuffer[Shape]
   def change(x: CanvasyElementModifier[Shape]): Shape
 }
-
 
 object CanvasyElement {
   implicit class Group[I <: Shape](group: ListBuffer[I]) {

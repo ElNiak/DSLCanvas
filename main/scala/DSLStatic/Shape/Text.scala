@@ -1,5 +1,6 @@
 package DSLStatic.Shape
 
+import DSLStatic.ShapeAttributeException
 import DSLStatic.Style.{Clear, Fill, Stroke, Style}
 import org.scalajs.dom
 import org.scalajs.dom.{CanvasRenderingContext2D, document, html}
@@ -7,12 +8,12 @@ import org.scalajs.dom.{CanvasRenderingContext2D, document, html}
 case class Text (from : (Double, Double), texte: String, SOX : Double , SOY : Double, SB : Double, SC : String, Font : String, strokeB : Boolean) extends Shape {
   override var opacity: Double = 1
   override var style: Style = new Fill
-  override var x: Double = from._1
-  override var y: Double = from._2
+  override var x : Double = if(from._1 >= 0) from._1 else throw new ShapeAttributeException("x cannot be smaller than 0")
+  override var y : Double = if(from._2 >= 0) from._2 else throw new ShapeAttributeException("y cannot be smaller than 0")
   override var  vx : Double = 0
   override var vy : Double = 0
   override var rotation: Double = 0
-  var text : String = texte
+  var text : String = texte //TODO check input
   var soX : Double = SOX
   var soY : Double = SOY
   var sb : Double = SB
@@ -21,7 +22,7 @@ case class Text (from : (Double, Double), texte: String, SOX : Double , SOY : Do
   var stroke : Boolean = strokeB
   override var size: Int = _
   override var isMirror: Boolean = false
-  override val rangeSize = getSize()
+  override val rangeSize: Double = getSize()
 
   def this(from : (Double, Double), texte: String, strokeB : Boolean, sizE : Int) {
     this(from,texte,0,0,0,"000000",sizE.toString + "px Times New Roman", strokeB)

@@ -18,10 +18,17 @@ case class Gradient(X1 : Double, Y1 : Double,X2 : Double, Y2 : Double, R1 : Doub
 
 object Gradient {
   implicit class GradientUtils(val sc: StringContext) extends AnyVal {
-    def gradR(args : String) : Gradient = {// gradR"x1|y1|x2|y2|R1|R2|0.1,0.2,0.6,0.1|#58a3f8#58a3f8"
+    def gradR(args : String) : Gradient = {// gradR"x1&y1&x2&y2&R1&R2&0.1#58a3f8,0.2#58a3f8"
       val array : Array[String] = args.split("&")
-      val off : Array[String] = array(array.length-2).split(",")
-      val col : Array[String] = array(array.length-1).split("#")
+      val inter : Array[String] = array(array.length-1).split(",")
+      val col : Array[String] = new Array[String](inter.length)
+      val off : Array[String] = new Array[String](inter.length)
+
+      for(item <- inter.indices){
+        col(item) = inter(item).split("#")(1)
+        off(item) = inter(item).split("#")(0)
+      }
+
       var color : ListBuffer[ColorRGB] = new ListBuffer[ColorRGB]
       var offset : ListBuffer[Double] = new ListBuffer[Double]
       if(checkColor(col) && checkCoord(array) && checkCoord(col)){
@@ -46,8 +53,15 @@ object Gradient {
     }
     def gradR(args : Unit) : Gradient = {
       val array : Array[String] = sc.parts(0).split("&")
-      val off : Array[String] = array(array.length-2).split(",")
-      val col : Array[String] = array(array.length-1).split("#")
+      val inter : Array[String] = array(array.length-1).split(",")
+      val col : Array[String] = new Array[String](inter.length)
+      val off : Array[String] = new Array[String](inter.length)
+
+      for(item <- inter.indices){
+        col(item) = inter(item).split("#")(1)
+        off(item) = inter(item).split("#")(0)
+      }
+
       var color : ListBuffer[ColorRGB] = new ListBuffer[ColorRGB]
       var offset : ListBuffer[Double] = new ListBuffer[Double]
       if(checkColor(col) && checkCoord(array) && checkCoord(col)){
@@ -72,8 +86,14 @@ object Gradient {
     }
     def gradL(args : String) : Gradient = {// gradL"x1|y1|x2|y2|0.1,0.2,0.6,0.1|#58a3f8#58a3f8"
       val array : Array[String] = args.split("&")
-      val off : Array[String] = array(array.length-2).split(",")
-      val col : Array[String] = array(array.length-1).split("#")
+      val inter : Array[String] = array(array.length-1).split(",")
+      val col : Array[String] = new Array[String](inter.length)
+      val off : Array[String] = new Array[String](inter.length)
+
+      for(item <- inter.indices){
+        col(item) = inter(item).split("#")(1)
+        off(item) = inter(item).split("#")(0)
+      }
       var color : ListBuffer[ColorRGB] = new ListBuffer[ColorRGB]
       var offset : ListBuffer[Double] = new ListBuffer[Double]
       if(checkColor(col) && checkCoord(array) && checkCoord(col)){
@@ -98,8 +118,14 @@ object Gradient {
     }
     def gradL(args : Unit) : Gradient = {
       val array : Array[String] = sc.parts(0).split("&")
-      val off : Array[String] = array(array.length-2).split(",")
-      val col : Array[String] = array(array.length-1).split("#")
+      val inter : Array[String] = array(array.length-1).split(",")
+      val col : Array[String] = new Array[String](inter.length)
+      val off : Array[String] = new Array[String](inter.length)
+
+      for(item <- inter.indices){
+        col(item) = inter(item).split("#")(1)
+        off(item) = inter(item).split("#")(0)
+      }
       var color : ListBuffer[ColorRGB] = new ListBuffer[ColorRGB]
       var offset : ListBuffer[Double] = new ListBuffer[Double]
       if(checkColor(col) && checkCoord(array) && checkCoord(col)){

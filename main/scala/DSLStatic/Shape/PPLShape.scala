@@ -1,5 +1,6 @@
 package DSLStatic.Shape
 
+import DSLStatic.ShapeAttributeException
 import DSLStatic.Style.{Clear, ColorRGB, Fill, Gradient, Stroke, Style}
 import org.scalajs.dom.CanvasRenderingContext2D
 
@@ -7,17 +8,17 @@ import scala.collection.mutable.ListBuffer
 
 //Point to Point Lined shape
 case class PPLShape(from : (Double, Double), s: Int, o : Double, list: ListBuffer[(Double,Double)]) extends Shape {
-  override var opacity: Double = o
-  override var style : Style =  if(s == 1) new Fill else if (s == 2) new Stroke else new Clear
-  override var x : Double = from._1
-  override var y : Double = from._2
+  override var opacity: Double = if(o >= 0) o else throw new ShapeAttributeException("Opacity cannot be smaller than 0")
+  override var style : Style =  if(s == 1) new Fill else if (s == 2) new Stroke else null
+  override var x : Double = if(from._1 >= 0) from._1 else throw new ShapeAttributeException("x cannot be smaller than 0")
+  override var y : Double = if(from._2 >= 0) from._2 else throw new ShapeAttributeException("y cannot be smaller than 0")
   override var  vx : Double = 0
   override var vy : Double = 0
   override var size: Int = _
   override var rotation: Double = 0
   override var isMirror: Boolean = false
   val coordinates : ListBuffer[(Double,Double)]= list
-  override val rangeSize = getSize()
+  override val rangeSize: Double = getSize()
 
 
   def this(from : (Double, Double), s : Int, o : Double, list: ListBuffer[(Double,Double)], ct : ColorRGB) {
@@ -56,11 +57,11 @@ case class PPLShape(from : (Double, Double), s: Int, o : Double, list: ListBuffe
         ctx.rotate(rotation * Math.PI / 180)
         ctx.translate(x, y)
         ctx.beginPath()
-        ctx.moveTo(coordinates(0)._1, coordinates(0)._2)
+        ctx.moveTo(coordinates.head._1, coordinates.head._2)
         for(i <- 1 until coordinates.length) {
           ctx.lineTo(coordinates(i)._1, coordinates(i)._2)
         }
-        ctx.lineTo(list(0)._1, list(0)._2)
+        ctx.lineTo(list.head._1, list.head._2)
         ctx.stroke()
       case _: Fill =>
         Shape.checkColor(this,ctx)
@@ -68,11 +69,11 @@ case class PPLShape(from : (Double, Double), s: Int, o : Double, list: ListBuffe
         ctx.rotate(rotation * Math.PI / 180)
         ctx.translate(x, y)
         ctx.beginPath()
-        ctx.moveTo(coordinates(0)._1, coordinates(0)._2)
+        ctx.moveTo(coordinates.head._1, coordinates.head._2)
         for(i <- 1 until coordinates.length) {
           ctx.lineTo(coordinates(i)._1, coordinates(i)._2)
         }
-        ctx.lineTo(coordinates(0)._1, coordinates(0)._2)
+        ctx.lineTo(coordinates.head._1, coordinates.head._2)
         ctx.fill()
       case _ =>
     }
