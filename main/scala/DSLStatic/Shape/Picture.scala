@@ -1,6 +1,7 @@
 package DSLStatic.Shape
 import DSLStatic.ShapeAttributeException
-import DSLStatic.Style.{Clear, Fill, Stroke, Style}
+import DSLStatic.Style.SV.SValue
+import DSLStatic.Style.{Clear, ColorRGB, Fill, Gradient, Stroke, Style}
 import org.scalajs.dom
 import org.scalajs.dom.{CanvasRenderingContext2D, Event}
 import org.scalajs.dom.html.Image
@@ -19,7 +20,14 @@ case class Picture (from : (Double, Double), path: String) extends Shape {
   val image: HTMLImageElement = dom.document.createElement("img").asInstanceOf[HTMLImageElement]
   image.src = path
   override val rangeSize: Double = getSize()
+  override var ax: Double = 0
+  override var ay: Double = 1
+  override var id : String = ""
 
+  def this(i : String,from : (Double, Double), path: String) {
+    this(from,path)
+    this.id = i
+  }
 
   override def getSize(): Double = {
 //    image.onload = (event: Event) => {

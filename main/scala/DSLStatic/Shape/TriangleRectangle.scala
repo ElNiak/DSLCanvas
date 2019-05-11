@@ -20,10 +20,19 @@ case class TriangleRectangle(from : (Double, Double), A: Double, B: Double, s: S
   override var c: (Double, Double) = (x, y + B)
   override var  vx : Double = 0
   override var vy : Double = 0
+  override var ax: Double = 0
+  override var ay: Double = 1
+  override var id : String = ""
   override var size: Int = _
   override var rotation: Double = 0
   override var isMirror: Boolean = false
   override val rangeSize: Double = getSize()
+
+
+  def this(i : String,from : (Double, Double), A: Double, B: Double, s : SValue, o : Double) {
+    this(from, A, B, s , o)
+    this.id = i
+  }
 
   def this(from : (Double, Double), A: Double, B: Double, s : SValue, o : Double, ct : ColorRGB) {
     this(from, A, B, s , o)
@@ -33,6 +42,18 @@ case class TriangleRectangle(from : (Double, Double), A: Double, B: Double, s: S
   def this(from : (Double, Double), A: Double, B: Double, s : SValue, o : Double, ct : Gradient) {
     this(from, A, B, s , o)
     this.style.colorStyle = ct
+  }
+
+  def this(i : String,from : (Double, Double), A: Double, B: Double, s : SValue, o : Double, ct : ColorRGB) {
+    this(from, A, B, s , o)
+    this.style.colorStyle = ct
+    this.id = i
+  }
+
+  def this(i : String,from : (Double, Double), A: Double, B: Double, s : SValue, o : Double, ct : Gradient) {
+    this(from, A, B, s , o)
+    this.style.colorStyle = ct
+    this.id = i
   }
 
   override def getSize(): Double ={

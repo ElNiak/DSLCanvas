@@ -14,10 +14,18 @@ case class Rectangle(from : (Double, Double), widthI: Double, heightI: Double, s
   override var vy : Double = 0
   override var rotation: Double = 0
   override var isMirror: Boolean = false
+  override var id : String = ""
   var height: Double = if(heightI >= 0) heightI else throw new ShapeAttributeException("Height cannot be smaller than 0")
   var width: Double = if(widthI >= 0) widthI else throw new ShapeAttributeException("Width cannot be smaller than 0")
   override val rangeSize: Double = getSize()
   override var size: Int = _
+  override var ax: Double = 0
+  override var ay: Double = 1
+
+  def this(i : String, from : (Double, Double), widthI: Double, heightI: Double, s : SValue, o : Double) {
+    this(from, widthI, heightI, s , o)
+    this.id = i
+  }
 
   def this(from : (Double, Double), widthI: Double, heightI: Double, s : SValue, o : Double, ct : ColorRGB) {
     this(from, widthI, heightI, s , o)
@@ -27,6 +35,18 @@ case class Rectangle(from : (Double, Double), widthI: Double, heightI: Double, s
   def this(from : (Double, Double), widthI: Double, heightI: Double, s : SValue, o : Double, ct : Gradient) {
     this(from, widthI, heightI, s , o)
     this.style.colorStyle = ct
+  }
+
+  def this(i : String, from : (Double, Double), widthI: Double, heightI: Double, s : SValue, o : Double, ct : ColorRGB) {
+    this(from, widthI, heightI, s , o)
+    this.style.colorStyle = ct
+    this.id = i
+  }
+
+  def this(i : String , from : (Double, Double), widthI: Double, heightI: Double, s : SValue, o : Double, ct : Gradient) {
+    this(from, widthI, heightI, s , o)
+    this.style.colorStyle = ct
+    this.id = i
   }
 
   def apply(w: Stroke): Unit = {

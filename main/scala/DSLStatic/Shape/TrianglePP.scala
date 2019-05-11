@@ -17,11 +17,19 @@ case class TrianglePP(A : (Double, Double), B : (Double, Double), C : (Double, D
   override var y : Double = if(A._2 >= 0) A._2 else throw new ShapeAttributeException("y cannot be smaller than 0")
   override var  vx : Double = 0
   override var vy : Double = 0
+  override var id : String = ""
   override var size: Int = _
   override var rotation: Double = 0
   override var isMirror: Boolean = false
+  override var ax: Double = 0
+  override var ay: Double = 1
   var coordinates: ListBuffer[(Double, Double)] = ListBuffer[(Double, Double)](a,b,c)
   override val rangeSize: Double = getSize()
+
+  def this(i : String, A : (Double, Double),B : (Double, Double),C : (Double, Double), s: SValue, o : Double) {
+    this(A,B,C, s , o)
+    this.id = i
+  }
 
   def this(A : (Double, Double),B : (Double, Double),C : (Double, Double), s: SValue, o : Double, ct : ColorRGB) {
     this(A,B,C, s , o)
@@ -31,6 +39,18 @@ case class TrianglePP(A : (Double, Double), B : (Double, Double), C : (Double, D
   def this(A : (Double, Double),B : (Double, Double),C : (Double, Double), s: SValue, o : Double, ct : Gradient) {
     this(A,B,C, s , o)
     this.style.colorStyle = ct
+  }
+
+  def this(i : String, A : (Double, Double),B : (Double, Double),C : (Double, Double), s: SValue, o : Double, ct : ColorRGB) {
+    this(A,B,C, s , o)
+    this.style.colorStyle = ct
+    this.id = i
+  }
+
+  def this(i : String, A : (Double, Double),B : (Double, Double),C : (Double, Double), s: SValue, o : Double, ct : Gradient) {
+    this(A,B,C, s , o)
+    this.style.colorStyle = ct
+    this.id = i
   }
 
   override def getSize(): Double ={

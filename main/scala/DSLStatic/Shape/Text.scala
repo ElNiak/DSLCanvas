@@ -12,6 +12,9 @@ case class Text (from : (Double, Double), texte: String, SOX : Double , SOY : Do
   override var y : Double = if(from._2 >= 0) from._2 else throw new ShapeAttributeException("y cannot be smaller than 0")
   override var  vx : Double = 0
   override var vy : Double = 0
+  override var ax: Double = 0
+  override var ay: Double = 1
+  override var id : String = ""
   override var rotation: Double = 0
   var text : String = texte
   var soX : Double = if(SOX >= 0) SOX else throw new ShapeAttributeException("shadow offset x cannot be smaller than 0")
@@ -26,6 +29,11 @@ case class Text (from : (Double, Double), texte: String, SOX : Double , SOY : Do
 
   def this(from : (Double, Double), texte: String, strokeB : Boolean, sizE : Int) {
     this(from,texte,0,0,0,"000000",sizE.toString + "px Times New Roman", strokeB)
+  }
+
+  def this(i : String, from : (Double, Double), texte: String, strokeB : Boolean, sizE : Int) {
+    this(from,texte,0,0,0,"000000",sizE.toString + "px Times New Roman", strokeB)
+    this.id = i
   }
 
   def apply(w: Stroke): Unit = {

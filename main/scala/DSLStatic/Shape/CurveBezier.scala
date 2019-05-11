@@ -24,6 +24,36 @@ case class CurveBezier(from : (Double, Double), to : (Double, Double), s: SValue
   var cp2y : Double = if(cp2._2 >= 0) cp2._2 else throw new ShapeAttributeException("cp2y cannot be smaller than 0")
   var coordinates: ListBuffer[(Double, Double)] = ListBuffer[(Double, Double)]((x,y),(tx,ty),(cp1x,cp1y),(cp2x,cp2y))
   override val rangeSize: Double = getSize()
+  override var ax: Double = 0
+  override var ay: Double = 1
+  override var id : String = ""
+
+  def this(i : String, from : (Double, Double), to : (Double, Double), s : SValue, o : Double, cp1 : (Double, Double), cp2 : (Double, Double)) {
+    this(from,to, s , o, cp1,cp2)
+    this.id = i
+  }
+
+  def this(from : (Double, Double), to : (Double, Double), s : SValue, o : Double, cp1 : (Double, Double), cp2 : (Double, Double), ct : ColorRGB) {
+    this(from,to, s , o, cp1,cp2)
+    this.style.colorStyle = ct
+  }
+
+  def this(from : (Double, Double), to : (Double, Double), s : SValue, o : Double, cp1 : (Double, Double), cp2 : (Double, Double), ct : Gradient) {
+    this(from,to, s , o, cp1,cp2)
+    this.style.colorStyle = ct
+  }
+
+  def this(i : String, from : (Double, Double), to : (Double, Double), s : SValue, o : Double, cp1 : (Double, Double), cp2 : (Double, Double), ct : ColorRGB) {
+    this(from,to, s , o, cp1,cp2)
+    this.style.colorStyle = ct
+    this.id = i
+  }
+
+  def this(i: String, from : (Double, Double), to : (Double, Double), s : SValue, o : Double, cp1 : (Double, Double), cp2 : (Double, Double), ct : Gradient) {
+    this(from,to, s , o, cp1,cp2)
+    this.style.colorStyle = ct
+    this.id = i
+  }
 
   override def getSize(): Double ={
     var minX = Double.MaxValue

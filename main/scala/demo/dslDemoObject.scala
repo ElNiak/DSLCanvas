@@ -31,14 +31,14 @@ object dslDemoObject {
     canvasy += new Rectangle((150.0,0.0),150.0,30.0,SV.fill,0.8, Color.purple)
     canvasy += new Rectangle((200.0,150.0),150.0,130.0,SV.fill,0.8, Color.green)
     canvasy += Circle((200, 100),SV.fill, 0.5, 50)
-    val xo = new PPLShape((100, 100), SV.stroke, 0.5, ListBuffer((0,0),(100,100),(100,50),(30,10),(25,50)),Color.orange)
+    val xo = new PPLShape("cool",(100.0, 100.0), SV.stroke, 0.5, ListBuffer[(Double,Double)]((0,0),(100,100),(100,50),(30,10),(25,50)),Color.orange)
     var canvasy4 = new Canvasy(xo)
 
     canvasy4 += new MyShapeExemple(500,400,SV.fill,1,1)
     //canvasy += re
 
     val Recttriangles = TriangleRectangle((100, 100), 40, 40, SV.stroke, 0.5)
-    val equTriangle   = TriangleEquilateral((200, 100), 100, SV.fill, 0.5)
+    val equTriangle   = new TriangleEquilateral("cool",(200.0, 100.0), 100, SV.fill, 0.5)
     val t = Text((50, 50), "Smoke Weed", 10, 10, 10, "#ff0000", "20px Times New Roman", false)
     canvasy4 += equTriangle += Recttriangles += t
     //re change FillColor(gradL"0&50&50&5&0#A7D30C,0.5#019F62,1#58f6f8")
@@ -52,7 +52,7 @@ object dslDemoObject {
     canvasy5 += CurveQuadratic((50,50),(100,100),SV.stroke,1,(50,50))
     canvasy5 += CurveBezier((50,50),(100,100),SV.stroke,1,(50,50),(60,60))
 
-    var canvasy6 = new Canvasy(new PPAShape((0, 0), SV.fill, 0.5, ListBuffer((0,0),(100,100),(100,50),(30,10),(25,50)),10.0,Color.red))
+    var canvasy6 = new Canvasy(new PPAShape((0.0, 0.0), SV.fill, 0.5, ListBuffer[(Double,Double)]((0,0),(100,100),(100,50),(30,10),(25,50)),10.0,Color.red))
 
     re rotate 80 //bug
     ree rotate -90 //bug
@@ -67,31 +67,34 @@ object dslDemoObject {
     xo change StrokeDashOff(2)
 
 
-    canvasy4.strokeElement change StrokeColor(Color.green)
-    canvasy4.strokeElement change StrokeWidth(10)
-    canvasy4.fillElement change FillColor(Color.purple)
+    canvasy4.StrokeShape change StrokeColor(Color.green)
+    canvasy4.StrokeShape change StrokeWidth(10)
+    canvasy4.FillShape change FillColor(Color.purple)
 
-    canvasy5.fillElement change FillColor(Color.green)
-    canvasy5.strokeElement change StrokeCap(Cap.round)
-    canvasy5.strokeElement change StrokeJoin(Join.bevel)
-    canvasy5.strokeElement change StrokeDashOff(2)
-    canvasy5.strokeElement change StrokeWidth(10)
-    canvasy5.strokeElement change StrokeColor(Color.red)
+    canvasy5.FillShape change FillColor(Color.green)
+    canvasy5.StrokeShape change StrokeCap(Cap.round)
+    canvasy5.StrokeShape change StrokeJoin(Join.bevel)
+    canvasy5.StrokeShape change StrokeDashOff(2)
+    canvasy5.StrokeShape change StrokeWidth(10)
+    canvasy5.StrokeShape change StrokeColor(Color.red)
 
-    canvasy4.getStrokeShape[PPLShape] change StrokeColor(Color.blue)
-    canvasy4.fillElement change FillColor(gradL"0&50&50&5&0#A7D30C,0.5#019F62,1#58f6f8")
+    canvasy4.StrokeShape[PPLShape] change StrokeColor(Color.blue)
+    canvasy4.FillShape change FillColor(gradL"0&50&50&5&0#A7D30C,0.5#019F62,1#58f6f8")
     //canvasy4 moveMouse  true
     //drawHand(500)
     //canvasy draw()
     //canvasy2 draw()
-    canvasy4 anim  (true,(20,30),true)
+
+    canvasy4.Shape change Speed(20,30)
+    canvasy4.get("cool") change Speed(0,0)
+    canvasy4 anim  (true,true)
     canvasy4 moveMouse true
 
     //canvasy4 draw()
     //canvasy6 keyRotate true
 
 
-    canvasy4 automaticResize  false resizeCanvas (300,300)
+    //canvasy4 automaticResize  false resizeCanvas (300,300)
     canvasy4 draw()
 
     //val canvasy7 = new Canvasy()

@@ -25,10 +25,6 @@ class Canvasy[I <: Shape](shape : I) {
   private var setEventAnimation : Boolean = true
   private var l : Double = 0
   private var t : Double = 0
-  var strokeElement : ListBuffer[Shape] = getStroke
-  var fillElement : ListBuffer[Shape] = getFill
-  private var ax : Double = 0
-  private var ay : Double = 0
   c.style.position = "absolute"
   if(shape != null) this += shape
 
@@ -57,7 +53,7 @@ class Canvasy[I <: Shape](shape : I) {
   }
 
 
-  private def getStroke: ListBuffer[Shape] = {
+  def StrokeShape: ListBuffer[Shape] = {
     val lst : ListBuffer[Shape] = new ListBuffer[Shape]
     for(shape <- shape_groups){
       shape.style match {
@@ -68,8 +64,9 @@ class Canvasy[I <: Shape](shape : I) {
     lst
   }
 
-  def getFillShape[A](implicit tag: ClassTag[A])  : ListBuffer[A] = {
+  def FillShape[A](implicit tag: ClassTag[A])  : ListBuffer[A] = {
     val lst : ListBuffer[A] = new ListBuffer[A]
+    val fillElement = FillShape
     for(shape <- fillElement){
       shape match {
         case a: A =>
@@ -85,8 +82,9 @@ class Canvasy[I <: Shape](shape : I) {
     this
   }
 
-  def getStrokeShape[A](implicit tag: ClassTag[A])  : ListBuffer[A] = {
+  def StrokeShape[A](implicit tag: ClassTag[A])  : ListBuffer[A] = {
     val lst : ListBuffer[A] = new ListBuffer[A]
+    val strokeElement = StrokeShape
     for(shape <- strokeElement){
       shape match {
         case a: A =>
@@ -97,7 +95,18 @@ class Canvasy[I <: Shape](shape : I) {
     lst
   }
 
-  private def getFill: ListBuffer[Shape] ={
+  def get(i: String): ListBuffer[Shape] ={
+    val lst : ListBuffer[Shape] = new ListBuffer[Shape]
+    if(i == null || i.isEmpty)
+      return null
+    for(shape <- shape_groups){
+      if(shape.id.equals(i))
+        lst += shape
+    }
+    lst
+  }
+
+  def FillShape: ListBuffer[Shape] ={
     val lst : ListBuffer[Shape] = new ListBuffer[Shape]
     for(shape <- shape_groups){
       shape.style match {
@@ -108,12 +117,14 @@ class Canvasy[I <: Shape](shape : I) {
     lst
   }
 
+  def Shape: ListBuffer[Shape] ={
+   shape_groups.asInstanceOf[ListBuffer[Shape]]
+  }
+
   def += (group: ListBuffer[Shape]): Canvasy[I] = {
     if(group != null){
       group foreach(shape_groups += _.asInstanceOf[I])
       shape_groups sortBy(shape_groups => (shape_groups.x,shape_groups.y))
-      strokeElement  = getStroke
-      fillElement = getFill
     }
     this
   }
@@ -122,8 +133,6 @@ class Canvasy[I <: Shape](shape : I) {
     if(shape != null) {
       shape_groups += shape.asInstanceOf[I]
       shape_groups sortBy (shape_groups => (shape_groups.x, shape_groups.y))
-      strokeElement = getStroke
-      fillElement = getFill
     }
     this
   }
@@ -146,23 +155,22 @@ class Canvasy[I <: Shape](shape : I) {
     this
   }
 
-  def anim(x : (Boolean,(Double,Double), Boolean)): Canvasy[I] = {
+  def anim(x : (Boolean, Boolean)): Canvasy[I] = {
     animable = x._1
-    border = x._3
+    border = x._2
+    acceleration = false
     resizeCanvas()
-    for(shape <- shape_groups){
-      shape.vx = x._2._1
-      shape.vy = x._2._2
-    }
     this
   }
 
   def animLeftRight(x : (Boolean, Double , Boolean)): Canvasy[I] = {
     animable = x._1
     border = x._3
+    acceleration = false
     resizeCanvas()
     for(shape <- shape_groups){
       shape.vx = x._2
+      shape.vy = 0
     }
     this
   }
@@ -170,49 +178,43 @@ class Canvasy[I <: Shape](shape : I) {
   def animUpDown(x : (Boolean, Double , Boolean)): Canvasy[I] = {
     animable = x._1
     border = x._3
+    acceleration = false
     resizeCanvas()
     for(shape <- shape_groups){
       shape.vy = x._2
+      shape.vx = 0
     }
     this
   }
 
-  def animA(x : (Boolean,(Double,Double), Boolean, (Double,Double))): Canvasy[I] = {
+  def animA(x : (Boolean, Boolean)): Canvasy[I] = {
     animable = x._1
-    border = x._3
+    border = x._2
     acceleration = true
-    ax = x._4._1
-    ay = x._4._2
     resizeCanvas()
-    for(shape <- shape_groups){
-      shape.vx = x._2._1
-      shape.vy = x._2._2
-    }
     this
   }
 
-  def animLeftRightA(x : (Boolean, Double , Boolean, (Double,Double))): Canvasy[I] = {
+  def animLeftRightA(x : (Boolean, Double , Boolean)): Canvasy[I] = {
     animable = x._1
     border = x._3
     acceleration = true
-    ax = x._4._1
-    ay = x._4._2
     resizeCanvas()
     for(shape <- shape_groups){
       shape.vx = x._2
+      shape.vy = 0
     }
     this
   }
 
-  def animUpDownA(x : (Boolean, Double , Boolean, (Double,Double))): Canvasy[I] = {
+  def animUpDownA(x : (Boolean, Double , Boolean)): Canvasy[I] = {
     animable = x._1
     border = x._3
     acceleration = true
-    ax = x._4._1
-    ay = x._4._2
     resizeCanvas()
     for(shape <- shape_groups){
       shape.vy = x._2
+      shape.vx = 0
     }
     this
   }
@@ -366,8 +368,8 @@ class Canvasy[I <: Shape](shape : I) {
                     }
                   }
                   if(acceleration){
-                    shape.vy *= ay
-                    shape.vy += ax
+                    shape.vy *= shape.ay
+                    shape.vy += shape.ax
                   }
                 }
                 draw()

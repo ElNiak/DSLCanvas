@@ -18,6 +18,9 @@ trait Shape extends CanvasyElement {
   val rangeSize : Double
   var  vx : Double
   var vy : Double
+  var  ax : Double
+  var ay : Double
+  var id : String
 
   def size(s: Int): Unit = {
     size = s
@@ -69,6 +72,9 @@ trait Shape extends CanvasyElement {
     style = w
   }
 
+  def apply(i: String): Unit = {
+    id = i
+  }
 }
 
 

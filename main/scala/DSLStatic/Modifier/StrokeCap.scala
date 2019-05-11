@@ -8,6 +8,8 @@ import DSLStatic.{CanvasyElementModifier, ShapeAttributeException}
 case class StrokeCap(w: CapValue) extends CanvasyElementModifier[Shape] {
   // every Shape has a stroke.
   override def change(x: Shape): Unit = {
+    if (x == null)
+      throw new ShapeAttributeException("shape cannot be null")
     if (w.cap == null || w.cap.isEmpty)
       throw new ShapeAttributeException("Cap cannot be null or empty")
     x.style match {

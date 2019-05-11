@@ -17,6 +17,9 @@ case class Circle(from : (Double, Double), s: SValue, o : Double, radiusv: Doubl
   override val rangeSize: Double = getSize()
   override var  vx : Double = 0
   override var vy : Double = 0
+  override var ax: Double = 0
+  override var ay: Double = 1
+  override var id : String = ""
 
   override def getSize(): Double ={
     radius
@@ -30,6 +33,23 @@ case class Circle(from : (Double, Double), s: SValue, o : Double, radiusv: Doubl
   def this(from : (Double, Double), s : SValue, o : Double, rad: Double, ct : Gradient) {
     this(from, s , o, rad)
     this.style.colorStyle = ct
+  }
+
+  def this(i : String,from : (Double, Double), s : SValue, o : Double, rad: Double, ct : ColorRGB) {
+    this(from, s , o, rad)
+    this.style.colorStyle = ct
+    this.id = i
+  }
+
+  def this(i : String, from : (Double, Double), s : SValue, o : Double, rad: Double, ct : Gradient) {
+    this(from, s , o, rad)
+    this.style.colorStyle = ct
+    this.id = i
+  }
+
+  def this(i : String,from : (Double, Double), s : SValue, o : Double, rad: Double) {
+    this(from, s , o, rad)
+    this.id = i
   }
 
   def apply(w: Double): Unit = {

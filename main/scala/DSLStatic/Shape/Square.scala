@@ -12,11 +12,19 @@ case class Square (from : (Double, Double), cotee: Double, s : SValue, o : Doubl
   override var y : Double = if(from._2 >= 0) from._2 else throw new ShapeAttributeException("y cannot be smaller than 0")
   override var  vx : Double = 0
   override var vy : Double = 0
+  override var ax: Double = 0
+  override var ay: Double = 1
+  override var id : String = ""
   var cote : Double = if(cotee >= 0) cotee else throw new ShapeAttributeException("Cote cannot be smaller than 0")
   override var rotation: Double = 0
   override var size: Int = _
   override var isMirror: Boolean = false
   override val rangeSize: Double = getSize()
+
+  def this(i: String, from : (Double, Double), widthI: Double, s : SValue, o : Double) {
+    this(from, widthI, s , o)
+    this.id = i
+  }
 
   def this(from : (Double, Double), widthI: Double, s : SValue, o : Double, ct : ColorRGB) {
     this(from, widthI, s , o)
@@ -26,6 +34,18 @@ case class Square (from : (Double, Double), cotee: Double, s : SValue, o : Doubl
   def this(from : (Double, Double), widthI: Double, s : SValue, o : Double, ct : Gradient) {
     this(from, widthI, s , o)
     this.style.colorStyle = ct
+  }
+
+  def this(i: String, from : (Double, Double), widthI: Double, s : SValue, o : Double, ct : ColorRGB) {
+    this(from, widthI, s , o)
+    this.style.colorStyle = ct
+    this.id = i
+  }
+
+  def this(i: String,  from : (Double, Double), widthI: Double, s : SValue, o : Double, ct : Gradient) {
+    this(from, widthI, s , o)
+    this.style.colorStyle = ct
+    this.id = i
   }
 
   def apply(w: Stroke): Unit = {

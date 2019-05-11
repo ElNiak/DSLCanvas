@@ -15,21 +15,41 @@ case class PPLShape(from : (Double, Double), s: SValue, o : Double, list: ListBu
   override var y : Double = if(from._2 >= 0) from._2 else throw new ShapeAttributeException("y cannot be smaller than 0")
   override var  vx : Double = 0
   override var vy : Double = 0
+  override var ax: Double = 0
+  override var ay: Double = 1
+  override var id : String = ""
   override var size: Int = _
   override var rotation: Double = 0
   override var isMirror: Boolean = false
   val coordinates : ListBuffer[(Double,Double)]= list
   override val rangeSize: Double = getSize()
 
+  def this(i : String , from : (Double, Double), s : SValue, o : Double, list: ListBuffer[(Double,Double)]) {
+    this(from, s , o, list)
+    this.id = i
+  }
 
-  def this(from : (Double, Double), s : SValue, o : Double, list: ListBuffer[(Double,Double)], ct : ColorRGB) {
+
+  def this(from : (Double, Double), s : SValue, o : Double, list: ListBuffer[(Double,Double)] ,ct : ColorRGB) {
     this(from, s , o, list)
     this.style.colorStyle = ct
   }
 
-  def this(from : (Double, Double), widthI: Double, heightI: Double, s : SValue, o : Double,list: ListBuffer[(Double,Double)], ct : Gradient) {
+  def this(from : (Double, Double), s : SValue, o : Double,list: ListBuffer[(Double,Double)], ct : Gradient) {
     this(from, s , o, list)
     this.style.colorStyle = ct
+  }
+
+  def this(i : String , from : (Double, Double), s : SValue, o : Double, list: ListBuffer[(Double,Double)] ,ct : ColorRGB) {
+    this(from, s , o, list)
+    this.style.colorStyle = ct
+    this.id = i
+  }
+
+  def this(i : String , from : (Double, Double), s : SValue, o : Double,list: ListBuffer[(Double,Double)], ct : Gradient) {
+    this(from, s , o, list)
+    this.style.colorStyle = ct
+    this.id = i
   }
 
   override def getSize(): Double ={
