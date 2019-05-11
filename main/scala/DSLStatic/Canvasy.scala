@@ -1,7 +1,7 @@
 package DSLStatic
 
 import DSLStatic.Shape._
-import DSLStatic.Style.{Clear, ColorRGB, Fill, Gradient, Stroke}
+import DSLStatic.Style.{Clear,Fill, Stroke}
 import org.scalajs.dom
 import org.scalajs.dom.html.Canvas
 import org.scalajs.dom.{CanvasRenderingContext2D, document, html}
@@ -35,15 +35,15 @@ class Canvasy[I <: Shape](shape : I) {
   def draw(): Unit = {
     ctx.clearRect(0, 0, c.width, c.height)
     if(valid){
-      if(animable){
+      if(animable)
         addListenerMoveAnimation()
-      }
       if(resize)
         resizeCanvas()
       if(movable)
         addListenerMove()
       if(rotatable)
         addListenerRotate()
+
       for(shape <- shape_groups){
         ctx.save()
         shape.draw(ctx)
@@ -51,7 +51,6 @@ class Canvasy[I <: Shape](shape : I) {
       }
     }
   }
-
 
   def StrokeShape: ListBuffer[Shape] = {
     val lst : ListBuffer[Shape] = new ListBuffer[Shape]
@@ -341,12 +340,10 @@ class Canvasy[I <: Shape](shape : I) {
     this
   }
 
-  private def addListenerMoveAnimation(): Canvasy[I] ={
+  private def addListenerMoveAnimation(): Unit ={
     resize = false
     var move = false
-
     val onClick ={ _: dom.MouseEvent => move = !move }
-
     var handler: js.timers.SetIntervalHandle = js.timers.setInterval(20){}
 
     val onKey ={e: dom.KeyboardEvent =>
@@ -390,7 +387,6 @@ class Canvasy[I <: Shape](shape : I) {
       dom.window.addEventListener("keydown", onKey, useCapture = false)
       setEventAnimation = false
     }
-    this
   }
 
   def resizeCanvas(w : Int, h : Int) : Canvasy[I] = {

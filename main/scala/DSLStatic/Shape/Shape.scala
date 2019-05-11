@@ -7,7 +7,7 @@ import org.scalajs.dom
 import scala.collection.mutable.ListBuffer
 import scala.scalajs.js
 
-trait Shape extends CanvasyElement {
+trait Shape {
   var style : Style
   var opacity: Double
   var x: Double
@@ -30,16 +30,16 @@ trait Shape extends CanvasyElement {
 
   def draw(ctx : dom.CanvasRenderingContext2D):Unit
 
-  override def change(x: CanvasyElementModifier[Shape]): Shape = {
+  def change(x: CanvasyElementModifier[Shape]): Shape = {
     x.change(this)
     this
   }
 
-  override def and(x: Shape): ListBuffer[Shape] = {
+  def and(x: Shape): ListBuffer[Shape] = {
     ListBuffer(this, x)
   }
 
-  override def and(x: CanvasyElementModifier[Shape]): Shape = {
+  def and(x: CanvasyElementModifier[Shape]): Shape = {
      this.change(x)
   }
 
@@ -80,14 +80,25 @@ trait Shape extends CanvasyElement {
 
 object Shape {
   implicit class Group[I <: Shape](group: ListBuffer[I]) {
+    def change[J <: CanvasyElementModifier[Shape]] (modifier: J): ListBuffer[I]  = {
+      group foreach(_ change(modifier))
+      group
+    }
+
+    def and[J <: CanvasyElementModifier[Shape]] (modifier: J): Unit = {
+      group foreach(modifier change _)
+    }
+
     def translateY(Y: Int) : ListBuffer[I] = {
       group foreach(_ translateY(Y))
       return group
     }
+
     def translateX(X: Int) : ListBuffer[I] = {
       group foreach(_ translateX(X))
       return group
     }
+
     def rotate(X: Double) : ListBuffer[I] = {
       group foreach(_ rotate(X))
       return group
