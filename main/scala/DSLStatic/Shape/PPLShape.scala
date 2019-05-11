@@ -1,15 +1,16 @@
 package DSLStatic.Shape
 
 import DSLStatic.ShapeAttributeException
-import DSLStatic.Style.{Clear, ColorRGB, Fill, Gradient, Stroke, Style}
+import DSLStatic.Style.SV.SValue
+import DSLStatic.Style._
 import org.scalajs.dom.CanvasRenderingContext2D
 
 import scala.collection.mutable.ListBuffer
 
 //Point to Point Lined shape
-case class PPLShape(from : (Double, Double), s: Int, o : Double, list: ListBuffer[(Double,Double)]) extends Shape {
+case class PPLShape(from : (Double, Double), s: SValue, o : Double, list: ListBuffer[(Double,Double)]) extends Shape {
   override var opacity: Double = if(o >= 0) o else throw new ShapeAttributeException("Opacity cannot be smaller than 0")
-  override var style : Style =  if(s == 1) new Fill else if (s == 2) new Stroke else null
+  override var style : Style =  if(s ==  SV.fill) new Fill else if (s == SV.stroke) new Stroke else null
   override var x : Double = if(from._1 >= 0) from._1 else throw new ShapeAttributeException("x cannot be smaller than 0")
   override var y : Double = if(from._2 >= 0) from._2 else throw new ShapeAttributeException("y cannot be smaller than 0")
   override var  vx : Double = 0
@@ -21,12 +22,12 @@ case class PPLShape(from : (Double, Double), s: Int, o : Double, list: ListBuffe
   override val rangeSize: Double = getSize()
 
 
-  def this(from : (Double, Double), s : Int, o : Double, list: ListBuffer[(Double,Double)], ct : ColorRGB) {
+  def this(from : (Double, Double), s : SValue, o : Double, list: ListBuffer[(Double,Double)], ct : ColorRGB) {
     this(from, s , o, list)
     this.style.colorStyle = ct
   }
 
-  def this(from : (Double, Double), widthI: Double, heightI: Double, s : Int, o : Double,list: ListBuffer[(Double,Double)], ct : Gradient) {
+  def this(from : (Double, Double), widthI: Double, heightI: Double, s : SValue, o : Double,list: ListBuffer[(Double,Double)], ct : Gradient) {
     this(from, s , o, list)
     this.style.colorStyle = ct
   }

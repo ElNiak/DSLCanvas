@@ -6,7 +6,7 @@ import org.scalajs.dom.{CanvasRenderingContext2D, Event}
 import org.scalajs.dom.html.Image
 import org.scalajs.dom.raw.HTMLImageElement
 
-case class Picture (from : (Double, Double), path: String, s : Int) extends Shape {
+case class Picture (from : (Double, Double), path: String) extends Shape {
   override var opacity: Double = 0
   override var style : Style = new Fill
   override var x : Double = if(from._1 >= 0) from._1 else throw new ShapeAttributeException("x cannot be smaller than 0")

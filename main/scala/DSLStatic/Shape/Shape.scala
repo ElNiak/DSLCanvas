@@ -234,13 +234,13 @@ object Shape {
             else
               ctx.lineWidth = ctx_stroke_width
 
-            if (!s.cap.equals(""))
-              ctx.lineCap = s.cap
+            if (!s.cap.cap.equals(""))
+              ctx.lineCap = s.cap.cap
             else
               ctx.lineCap = ctx_stroke_cap
 
-            if (!s.join.equals(""))
-              ctx.lineJoin = s.join
+            if (!s.join.jn.equals(""))
+              ctx.lineJoin = s.join.jn
             else
               ctx.lineJoin = ctx_stroke_join
 

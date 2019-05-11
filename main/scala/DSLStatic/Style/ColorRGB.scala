@@ -22,14 +22,14 @@ object ColorRGB {
         ColorRGB("#000000",1)
     }
     def rgba(args : String) : ColorRGB = { //rgba"1.0#000000"
-      var array = args.split("#")
+      val array = args.split("#")
       if(checkColorPattern('#'+array(1)) && checkColorPattern2(array(0)))
         ColorRGB('#'+array(1),array(0).toDouble)
       else
         ColorRGB("#000000",1)
     }
     def rgba(args : Unit) : ColorRGB = {
-      var array = sc.parts(0).split("#")
+      val array = sc.parts(0).split("#")
       if(checkColorPattern('#'+array(1)) && checkColorPattern2(array(0)))
         ColorRGB('#'+array(1),array(0).toDouble)
       else

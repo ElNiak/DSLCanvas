@@ -1,17 +1,18 @@
 package DSLStatic.Shape
 
 import DSLStatic.ShapeAttributeException
-import DSLStatic.Style.{Clear, ColorRGB, Fill, Gradient, Stroke, Style}
+import DSLStatic.Style.SV.SValue
+import DSLStatic.Style._
 import org.scalajs.dom.CanvasRenderingContext2D
 
 import scala.collection.mutable.ListBuffer
 
-case class TrianglePP( A : (Double, Double),B : (Double, Double),C : (Double, Double), s: Int, o : Double) extends Triangle {
+case class TrianglePP(A : (Double, Double), B : (Double, Double), C : (Double, Double), s: SValue, o : Double) extends Triangle {
   override var a: (Double, Double) = if(A._1 >= 0 && A._2 >= 0) (A._1, A._2) else throw new ShapeAttributeException("(A,A) cannot be smaller than 0")
   override var b: (Double, Double) = if(B._1 >= 0 && B._2 >= 0) (B._1, B._2) else throw new ShapeAttributeException("(B,B) cannot be smaller than 0")
   override var c: (Double, Double) = if(C._1 >= 0 && C._2 >= 0) (C._1, C._2) else throw new ShapeAttributeException("(C,C) cannot be smaller than 0")
   override var opacity: Double = if(o >= 0) o else throw new ShapeAttributeException("Opacity cannot be smaller than 0")
-  override var style : Style = if(s == 1) new Fill else if (s == 2) new Stroke else null
+  override var style : Style =  if(s ==  SV.fill) new Fill else if (s == SV.stroke) new Stroke else null
   override var x : Double = if(A._1 >= 0) A._1 else throw new ShapeAttributeException("x cannot be smaller than 0")
   override var y : Double = if(A._2 >= 0) A._2 else throw new ShapeAttributeException("y cannot be smaller than 0")
   override var  vx : Double = 0
@@ -22,12 +23,12 @@ case class TrianglePP( A : (Double, Double),B : (Double, Double),C : (Double, Do
   var coordinates: ListBuffer[(Double, Double)] = ListBuffer[(Double, Double)](a,b,c)
   override val rangeSize: Double = getSize()
 
-  def this(A : (Double, Double),B : (Double, Double),C : (Double, Double), s: Int, o : Double, ct : ColorRGB) {
+  def this(A : (Double, Double),B : (Double, Double),C : (Double, Double), s: SValue, o : Double, ct : ColorRGB) {
     this(A,B,C, s , o)
     this.style.colorStyle = ct
   }
 
-  def this(A : (Double, Double),B : (Double, Double),C : (Double, Double), s: Int, o : Double, ct : Gradient) {
+  def this(A : (Double, Double),B : (Double, Double),C : (Double, Double), s: SValue, o : Double, ct : Gradient) {
     this(A,B,C, s , o)
     this.style.colorStyle = ct
   }

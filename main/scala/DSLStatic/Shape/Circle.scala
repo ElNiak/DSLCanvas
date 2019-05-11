@@ -1,12 +1,13 @@
 package DSLStatic.Shape
 
 import DSLStatic.ShapeAttributeException
-import DSLStatic.Style.{Clear, Color, ColorRGB, ColorStyle, Fill, Gradient, Stroke, Style}
+import DSLStatic.Style.SV.SValue
+import DSLStatic.Style._
 import org.scalajs.dom.CanvasRenderingContext2D
 
-case class Circle(from : (Double, Double), s: Int , o : Double, radiusv: Double) extends Shape {
+case class Circle(from : (Double, Double), s: SValue, o : Double, radiusv: Double) extends Shape {
   override var opacity: Double = if(o >= 0) o else throw new ShapeAttributeException("Opacity cannot be smaller than 0")
-  override var style : Style =  if(s == 1) new Fill else if (s == 2) new Stroke else null
+  override var style : Style =  if(s ==  SV.fill) new Fill else if (s == SV.stroke) new Stroke else null
   override var x : Double = if(from._1 >= 0) from._1 else throw new ShapeAttributeException("x cannot be smaller than 0")
   override var y : Double = if(from._2 >= 0) from._2 else throw new ShapeAttributeException("y cannot be smaller than 0")
   override var size: Int = _
@@ -21,12 +22,12 @@ case class Circle(from : (Double, Double), s: Int , o : Double, radiusv: Double)
     radius
   }
 
-  def this(from : (Double, Double), s : Int, o : Double, rad: Double, ct : ColorRGB) {
+  def this(from : (Double, Double), s : SValue, o : Double, rad: Double, ct : ColorRGB) {
     this(from, s , o, rad)
     this.style.colorStyle = ct
   }
 
-  def this(from : (Double, Double), s : Int, o : Double, rad: Double, ct : Gradient) {
+  def this(from : (Double, Double), s : SValue, o : Double, rad: Double, ct : Gradient) {
     this(from, s , o, rad)
     this.style.colorStyle = ct
   }

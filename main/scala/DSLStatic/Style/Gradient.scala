@@ -162,7 +162,7 @@ object Gradient {
 
   def checkColor(coo : Array[String]): Boolean = {
     val test = (x : String) => x.length == 6
-    val res = true
+    var res = true
     coo foreach(res && test(_))
     res
   }

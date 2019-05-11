@@ -33,7 +33,7 @@ class Canvasy[I <: Shape](shape : I) {
   if(shape != null) this += shape
 
   def this(){
-    this(Text((0, 0), "", 2, 2, 2, "#ffffff", "0px Times New Roman", false).asInstanceOf[I])
+    this(Text((0, 0), "", 2, 2, 2, "#ffffff", "0px Times New Roman", strokeB = false).asInstanceOf[I])
   }
 
   def draw(): Unit = {
@@ -249,7 +249,7 @@ class Canvasy[I <: Shape](shape : I) {
         c.style.top  = (e.clientY - offY) + "px"
       }
     }
-    val onmouseup = {e: dom.MouseEvent =>
+    val onmouseup = { _: dom.MouseEvent =>
       if(isDragging) {
         dom.window.removeEventListener("mousemove", onmousemove, useCapture = true)
         isDragging = false
@@ -273,7 +273,7 @@ class Canvasy[I <: Shape](shape : I) {
   private def addListenerRotate(): Unit ={
     var rotate = false
 
-    val onClick ={e: dom.MouseEvent => rotate = !rotate }
+    val onClick ={ _: dom.MouseEvent => rotate = !rotate }
 
     val onKey ={e: dom.KeyboardEvent =>
       if (rotate) {
@@ -316,7 +316,7 @@ class Canvasy[I <: Shape](shape : I) {
         ctx.stroke()
       }
     }
-    c.onmouseup = {e: dom.MouseEvent =>
+    c.onmouseup = { _: dom.MouseEvent =>
       if(dragState == 1) {
         ctx.fill()
         dragState = 2
@@ -343,7 +343,7 @@ class Canvasy[I <: Shape](shape : I) {
     resize = false
     var move = false
 
-    val onClick ={e: dom.MouseEvent => move = !move }
+    val onClick ={ _: dom.MouseEvent => move = !move }
 
     var handler: js.timers.SetIntervalHandle = js.timers.setInterval(20){}
 
@@ -431,12 +431,12 @@ class Canvasy[I <: Shape](shape : I) {
     }
     else {
       if(!isText || animable){
-        c.width= maxX.toInt + maxAdd.toInt
-        c.height= maxY.toInt + maxAdd.toInt
+        c.width = maxX.toInt + maxAdd.toInt
+        c.height = maxY.toInt + maxAdd.toInt
       }
       else {
-        c.width= maxX.toInt + maxAdd.toInt
-        c.height= maxY.toInt + maxAdd.toInt + 20
+        c.width = maxX.toInt + maxAdd.toInt
+        c.height = maxY.toInt + maxAdd.toInt + 20
         ctx.translate(0,20)
       }
       document.getElementById("container").appendChild(c)
