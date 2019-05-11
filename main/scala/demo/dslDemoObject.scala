@@ -72,7 +72,7 @@ object dslDemoObject {
     canvasy4.fillElement change FillColor(Color.purple)
 
     canvasy5.fillElement change FillColor(Color.green)
-    canvasy5.strokeElement change StrokeCap(Cap.butt)
+    canvasy5.strokeElement change StrokeCap(Cap.round)
     canvasy5.strokeElement change StrokeJoin(Join.bevel)
     canvasy5.strokeElement change StrokeDashOff(2)
     canvasy5.strokeElement change StrokeWidth(10)
