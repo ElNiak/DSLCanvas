@@ -95,7 +95,11 @@ object dslDemoObject {
 
 
     //canvasy4 automaticResize  false resizeCanvas (300,300)
-    canvasy4 draw()
+    //canvasy4 draw()
+
+    val canvasy8 = new Canvasy(new Video((0, 0), "src/main/scala/demo/video.ogv"))
+    canvasy8 moveMouse true
+    canvasy8 draw()
 
     //val canvasy7 = new Canvasy()
     //canvasy7 drawHand(200,200) translateX 50 translateY 600
