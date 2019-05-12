@@ -1,14 +1,14 @@
-package DSLStatic
+package DSLPerso
 
-import DSLStatic.Modifier._
-import DSLStatic._
+import DSLPerso.Modifier._
+import DSLPerso._
 import org.scalajs.dom
 import org.scalajs.dom.html
 import org.scalajs.dom.{document, html}
-import DSLStatic.Shape._
-import DSLStatic.Style.{Color, Cap, Join, SV}
-import DSLStatic.Style.ColorRGB.ColorRGBUtils
-import DSLStatic.Style.Gradient.GradientUtils
+import DSLPerso.Shape._
+import DSLPerso.Style.{Color, Cap, Join, SV}
+import DSLPerso.Style.ColorRGB.ColorRGBUtils
+import DSLPerso.Style.Gradient.GradientUtils
 
 import scala.collection.mutable.ListBuffer
 
