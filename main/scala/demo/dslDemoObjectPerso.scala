@@ -1,4 +1,4 @@
-package DSLPerso
+package demo
 
 import DSLPerso.Modifier._
 import DSLPerso._
@@ -6,16 +6,17 @@ import org.scalajs.dom
 import org.scalajs.dom.html
 import org.scalajs.dom.{document, html}
 import DSLPerso.Shape._
-import DSLPerso.Style.{Color, Cap, Join, SV}
+import DSLPerso.Style.{Cap, Color, Join, SV}
 import DSLPerso.Style.ColorRGB.ColorRGBUtils
 import DSLPerso.Style.Gradient.GradientUtils
 
 import scala.collection.mutable.ListBuffer
 
-object dslDemoObject {
+object dslDemoObjectPerso {
   def main(args: Array[String]): Unit = {
     val container = document.createElement("div").asInstanceOf[html.Div]
     container.setAttribute("id","container")
+
     document.body.appendChild(container)
     dslDemoPerso()
   }
@@ -28,7 +29,7 @@ object dslDemoObject {
     canvasy += new Rectangle((200.0,150.0),150.0,130.0,SV.fill,0.8, Color.green)
     canvasy += Circle((200, 100),SV.fill, 0.5, 50)
     canvasy rotate 80
-    canvasy draw()
+    //canvasy draw()
 
     // 2sd Canvas
     val rectangle = Rectangle((230, 300), 200, 300, SV.fill, 0.5)
@@ -63,7 +64,7 @@ object dslDemoObject {
     canvasy4.FillShape change FillColor(Color.green)
     canvasy4.StrokeShape change StrokeCap(Cap.round) change StrokeJoin(Join.bevel) change StrokeDashOff(2) change StrokeWidth(10) change StrokeColor(Color.red)
     canvasy4 automaticResize false resizeCanvas (300,300)
-    canvasy4 draw()
+    //canvasy4 draw()
 
     // 5th Canvas
     var canvasy5 = new Canvasy(new PPAShape((0.0, 0.0), SV.fill, 0.5, ListBuffer[(Double,Double)]((0,0),(100,100),(100,50),(30,10),(25,50)),10.0,Color.red))
@@ -71,10 +72,10 @@ object dslDemoObject {
     // 6th Canvas
     val canvasy6 = new Canvasy(Video((0, 0), "src/main/scala/demo/video.ogv"))
     canvasy6 moveMouse true
-    canvasy6 draw()
+    //canvasy6 draw()
 
     // 7th Canvas
     val canvasy7 = new Canvasy()
-    canvasy7 drawHand(200,200) translateX 50 translateY 600
+    //canvasy7 drawHand(200,200) translateX 50 translateY 600
   }
 }
