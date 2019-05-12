@@ -32,18 +32,24 @@ class Canvasy[I <: Shape](shape : I) {
     this(Text((0, 0), "", 2, 2, 2, "#ffffff", "0px Times New Roman", strokeB = false).asInstanceOf[I])
   }
 
+  def this(l :ListBuffer[I]){
+    this(l.head)
+    l - l.head
+    this += l.asInstanceOf[ListBuffer[Shape]]
+  }
+
   def draw(): Unit = {
-    ctx.clearRect(0, 0, c.width, c.height)
     if(valid){
       if(animable)
         addListenerMoveAnimation()
       if(resize)
         resizeCanvas()
+      else
+        document.getElementById("container").appendChild(c)
       if(movable)
         addListenerMove()
       if(rotatable)
         addListenerRotate()
-
       for(shape <- shape_groups){
         ctx.save()
         shape.draw(ctx)
@@ -158,7 +164,6 @@ class Canvasy[I <: Shape](shape : I) {
     animable = x._1
     border = x._2
     acceleration = false
-    resizeCanvas()
     this
   }
 
@@ -166,7 +171,6 @@ class Canvasy[I <: Shape](shape : I) {
     animable = x._1
     border = x._3
     acceleration = false
-    resizeCanvas()
     for(shape <- shape_groups){
       shape.vx = x._2
       shape.vy = 0
@@ -178,7 +182,6 @@ class Canvasy[I <: Shape](shape : I) {
     animable = x._1
     border = x._3
     acceleration = false
-    resizeCanvas()
     for(shape <- shape_groups){
       shape.vy = x._2
       shape.vx = 0
@@ -190,7 +193,6 @@ class Canvasy[I <: Shape](shape : I) {
     animable = x._1
     border = x._2
     acceleration = true
-    resizeCanvas()
     this
   }
 
@@ -198,7 +200,6 @@ class Canvasy[I <: Shape](shape : I) {
     animable = x._1
     border = x._3
     acceleration = true
-    resizeCanvas()
     for(shape <- shape_groups){
       shape.vx = x._2
       shape.vy = 0
@@ -210,7 +211,6 @@ class Canvasy[I <: Shape](shape : I) {
     animable = x._1
     border = x._3
     acceleration = true
-    resizeCanvas()
     for(shape <- shape_groups){
       shape.vy = x._2
       shape.vx = 0
@@ -369,6 +369,7 @@ class Canvasy[I <: Shape](shape : I) {
                     shape.vy += shape.ax
                   }
                 }
+                ctx.clearRect(0, 0, c.width, c.height)
                 draw()
               }
             }
@@ -383,6 +384,7 @@ class Canvasy[I <: Shape](shape : I) {
     }
 
     if(setEventAnimation) {
+      resizeCanvas()
       c.addEventListener("click", onClick, useCapture = false)
       dom.window.addEventListener("keydown", onKey, useCapture = false)
       setEventAnimation = false

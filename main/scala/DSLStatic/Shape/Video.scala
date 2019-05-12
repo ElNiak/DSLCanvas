@@ -34,44 +34,20 @@ case class Video (from : (Double, Double), path: String) extends Shape {
   }
 
   override def getSize(): Double = {
-    //    image.onload = (event: Event) => {
-    val width = video.width
-    val height = video.height
-    if(rotation == 0) {
-      if(width > height) width else height
-    }
-    else {
-      if(rotation <= 45 && rotation >= -45)
-        if(width > height) width + width/2 * Math.cos(Math.abs(rotation)*Math.PI/180) else height + height/2 * Math.cos(Math.abs(rotation)*Math.PI/180)
-      else
-      if(width > height) width - width/2 * Math.cos(Math.abs(rotation)*Math.PI/180) else height - height/2 * Math.cos(Math.abs(rotation)*Math.PI/180)
-    }
-    //    }
-    600
+    100
   }
 
   override def draw(ctx: CanvasRenderingContext2D): Unit = {
-//    video.onload = (event: Event) => {
-//      val videoWidth = video.naturalWidth
-//      val videoHeight = video.naturalHeight
-//
-//      val width: Int = videoWidth
-//      val height: Int = videoHeight
-//
-//
-//    }
     var playVideo = (e: Event) => {
-      video.style.display = "none"
+      //video.style.display = "none"
       println(video.videoWidth)
       println(video.videoHeight)
       ctx.drawImage(video, x, y, video.videoWidth, video.videoHeight)
       timers.setInterval(30) {
         ctx.drawImage(video, x, y, video.videoWidth, video.videoHeight)
       }
-
     }
     video.addEventListener("play", playVideo, false)
-    document.body.appendChild(video)
-
+    document.getElementById("container").appendChild(video)
   }
 }

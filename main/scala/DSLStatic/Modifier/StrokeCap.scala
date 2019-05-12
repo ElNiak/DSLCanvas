@@ -6,7 +6,6 @@ import DSLStatic.Style.Stroke
 import DSLStatic.{CanvasyElementModifier, ShapeAttributeException}
 
 case class StrokeCap(w: CapValue) extends CanvasyElementModifier[Shape] {
-  // every Shape has a stroke.
   override def change(x: Shape): Unit = {
     if (x == null)
       throw new ShapeAttributeException("shape cannot be null")
@@ -17,5 +16,4 @@ case class StrokeCap(w: CapValue) extends CanvasyElementModifier[Shape] {
       case _ => throw new ShapeAttributeException("Only stroke shape can be modified")
     }
   }
-
 }
