@@ -1,5 +1,8 @@
 package DSLStatic.Style
 
+/**
+  * Define some enumeration for common colors
+  */
 object Color extends Enumeration {
   type Color = ColorRGB
   case class ColorValue(color: String) extends Val(color)

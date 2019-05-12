@@ -12,7 +12,8 @@ import scala.scalajs.js
 class Canvasy[I <: Shape](shape : I) {
   val c : Canvas = document.createElement("canvas").asInstanceOf[html.Canvas]
   val ctx : CanvasRenderingContext2D = c.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
-  private val shape_groups : ListBuffer[I] = new ListBuffer[I]()
+  private val shape_groups : ListBuffer[I] = new ListBuffer[I]() // contains the shapes of the canvas
+  //These are used to represente the "state" of the canvas and then modify the behavior
   private var movable : Boolean = false
   private var rotatable : Boolean = false
   private var animable : Boolean = false
@@ -23,21 +24,32 @@ class Canvasy[I <: Shape](shape : I) {
   private var setEventRotate : Boolean = true
   private var setEventMovable : Boolean = true
   private var setEventAnimation : Boolean = true
+
+  //left and top offset of the canvas
   private var l : Double = 0
   private var t : Double = 0
+
   c.style.position = "absolute"
   if(shape != null) this += shape
 
+  /**
+    * New constructor : Empty
+    */
   def this(){
     this(Text((0, 0), "", 2, 2, 2, "#ffffff", "0px Times New Roman", strokeB = false).asInstanceOf[I])
   }
-
+  /**
+    * New constructor : List of shape
+    */
   def this(l :ListBuffer[I]){
     this(l.head)
     l - l.head
     this += l.asInstanceOf[ListBuffer[Shape]]
   }
 
+  /**
+    * Draw all the shape in the canvas
+    */
   def draw(): Unit = {
     if(valid){
       if(animable)
@@ -58,6 +70,10 @@ class Canvasy[I <: Shape](shape : I) {
     }
   }
 
+
+  /**
+    * @return all stroke shape in the canvas
+    */
   def StrokeShape: ListBuffer[Shape] = {
     val lst : ListBuffer[Shape] = new ListBuffer[Shape]
     for(shape <- shape_groups){
@@ -69,6 +85,9 @@ class Canvasy[I <: Shape](shape : I) {
     lst
   }
 
+  /**
+    * @return all fill shape of instance A in the canvas
+    */
   def FillShape[A](implicit tag: ClassTag[A])  : ListBuffer[A] = {
     val lst : ListBuffer[A] = new ListBuffer[A]
     val fillElement = FillShape
@@ -82,11 +101,17 @@ class Canvasy[I <: Shape](shape : I) {
     lst
   }
 
+  /**
+    * set or not the automatic resize of the canvas
+    */
   def automaticResize(v : Boolean): Canvasy[I] ={
     resize = v
     this
   }
 
+  /**
+    * @return all stroke shape of instance A in the canvas
+    */
   def StrokeShape[A](implicit tag: ClassTag[A])  : ListBuffer[A] = {
     val lst : ListBuffer[A] = new ListBuffer[A]
     val strokeElement = StrokeShape
@@ -100,6 +125,10 @@ class Canvasy[I <: Shape](shape : I) {
     lst
   }
 
+
+  /**
+    * @return all shape of id:"id" in the canvas
+    */
   def get(i: String): ListBuffer[Shape] ={
     val lst : ListBuffer[Shape] = new ListBuffer[Shape]
     if(i == null || i.isEmpty)
@@ -111,6 +140,9 @@ class Canvasy[I <: Shape](shape : I) {
     lst
   }
 
+  /**
+    * @return all fill shape in the canvas
+    */
   def FillShape: ListBuffer[Shape] ={
     val lst : ListBuffer[Shape] = new ListBuffer[Shape]
     for(shape <- shape_groups){
@@ -122,10 +154,16 @@ class Canvasy[I <: Shape](shape : I) {
     lst
   }
 
+  /**
+    * @return all shape in the canvas
+    */
   def Shape: ListBuffer[Shape] ={
    shape_groups.asInstanceOf[ListBuffer[Shape]]
   }
 
+  /**
+    * @return append new shape in the canvas
+    */
   def += (group: ListBuffer[Shape]): Canvasy[I] = {
     if(group != null){
       group foreach(shape_groups += _.asInstanceOf[I])
@@ -133,7 +171,6 @@ class Canvasy[I <: Shape](shape : I) {
     }
     this
   }
-
   def +=  (shape: Shape): Canvasy[I] = {
     if(shape != null) {
       shape_groups += shape.asInstanceOf[I]
@@ -142,6 +179,9 @@ class Canvasy[I <: Shape](shape : I) {
     this
   }
 
+  /**
+    * Translate the canvas
+    */
   def translateX(v : Double): Canvasy[I] ={
     if(!movable){
       l += v
@@ -149,24 +189,32 @@ class Canvasy[I <: Shape](shape : I) {
     }
     this
   }
+  def translateY(v : Double): Canvasy[I] ={
+    if(!movable) {
+      t += v
+      c.style.top = t + "px"
+    }
+    this
+  }
 
+
+  /**
+    * Active or not the listener
+    */
   def moveMouse(boolean: Boolean): Canvasy[I] = {
     movable = boolean
     this
   }
-
   def keyRotate(boolean: Boolean): Canvasy[I] = {
     rotatable = boolean
     this
   }
-
   def anim(x : (Boolean, Boolean)): Canvasy[I] = {
     animable = x._1
     border = x._2
     acceleration = false
     this
   }
-
   def animLeftRight(x : (Boolean, Double , Boolean)): Canvasy[I] = {
     animable = x._1
     border = x._3
@@ -177,7 +225,6 @@ class Canvasy[I <: Shape](shape : I) {
     }
     this
   }
-
   def animUpDown(x : (Boolean, Double , Boolean)): Canvasy[I] = {
     animable = x._1
     border = x._3
@@ -188,14 +235,12 @@ class Canvasy[I <: Shape](shape : I) {
     }
     this
   }
-
-  def animA(x : (Boolean, Boolean)): Canvasy[I] = {
+  def animA(x : (Boolean, Boolean)): Canvasy[I] = { //with acceleration
     animable = x._1
     border = x._2
     acceleration = true
     this
   }
-
   def animLeftRightA(x : (Boolean, Double , Boolean)): Canvasy[I] = {
     animable = x._1
     border = x._3
@@ -206,7 +251,6 @@ class Canvasy[I <: Shape](shape : I) {
     }
     this
   }
-
   def animUpDownA(x : (Boolean, Double , Boolean)): Canvasy[I] = {
     animable = x._1
     border = x._3
@@ -218,19 +262,18 @@ class Canvasy[I <: Shape](shape : I) {
     this
   }
 
-  def translateY(v : Double): Canvasy[I] ={
-    if(!movable) {
-      t += v
-      c.style.top = t + "px"
-    }
-    this
-  }
-
+  /**
+    * set rotation on all shape of the canvas
+    */
   def rotate(v: Double): Canvasy[I] = {
     shape_groups foreach(_.rotation=v)
     this
   }
 
+
+  /**
+    * Define the mouse drag and drop canvas
+    */
   private def addListenerMove(): Unit ={
     def reinitXY(): Unit ={
       shape_groups foreach(_.asInstanceOf[Shape].x = 0)
@@ -271,6 +314,9 @@ class Canvasy[I <: Shape](shape : I) {
     }
   }
 
+  /**
+    * Define the keyboard rotate listener
+    */
   private def addListenerRotate(): Unit ={
     var rotate = false
 
@@ -299,6 +345,10 @@ class Canvasy[I <: Shape](shape : I) {
     }
   }
 
+  /**
+    * Allow to draw hand figure
+    * from : https://scala-js.github.io/scala-js-dom/
+    */
   def drawHand(w:(Int,Int)): Canvasy[I] ={
     valid = false
     c.width = w._1+1
@@ -340,6 +390,9 @@ class Canvasy[I <: Shape](shape : I) {
     this
   }
 
+  /**
+    * Define the animation bahavior
+    */
   private def addListenerMoveAnimation(): Unit ={
     resize = false
     var move = false
@@ -391,6 +444,9 @@ class Canvasy[I <: Shape](shape : I) {
     }
   }
 
+  /**
+    * Resize canvas with specified values
+    */
   def resizeCanvas(w : Int, h : Int) : Canvasy[I] = {
     if(!resize){
       if(w < 0 || h < 0) throw new ShapeAttributeException("Canvas weight and height cannot be smaller than 0")
@@ -400,6 +456,9 @@ class Canvasy[I <: Shape](shape : I) {
     this
   }
 
+  /**
+    * Automatic resize with optimal size
+    */
   private def resizeCanvas(): Unit ={
     var minX = Double.MaxValue
     var minY = Double.MaxValue

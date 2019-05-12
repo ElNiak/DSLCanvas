@@ -2,12 +2,19 @@ package DSLStatic.Style
 
 import DSLStatic.ShapeAttributeException
 
+
+/**
+  * Used to represente RGB colors without gradient
+  */
 case class ColorRGB(string: String, o : Double) extends ColorStyle {
   val color : String = string
   val opacity : Double = if(o >= 0) o else throw new ShapeAttributeException("Opacity cannot be smaller than 0")
 }
 
 object ColorRGB {
+  /**
+    * Extension of the String Context to add rgb and rgba
+    */
   implicit class ColorRGBUtils(val sc: StringContext) extends AnyVal {
     def rgb(args : String) : ColorRGB = {
       if(checkColorPattern(args))

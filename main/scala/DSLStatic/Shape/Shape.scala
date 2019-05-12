@@ -8,16 +8,19 @@ import scala.collection.mutable.ListBuffer
 import scala.scalajs.js
 
 trait Shape {
-  var style : Style
-  var opacity: Double
+  var style : Style //The style of the shape
+  var opacity: Double //opacity level
+  //positions
   var x: Double
   var y: Double
   var size : Int
-  var rotation : Double
-  var isMirror : Boolean
+  var rotation : Double //angle of rotation
+  var isMirror : Boolean //useless for now
   val rangeSize : Double
+  //speed
   var  vx : Double
   var vy : Double
+  //acceleration
   var  ax : Double
   var ay : Double
   var id : String
@@ -26,34 +29,50 @@ trait Shape {
     size = s
   }
 
+   /**
+    * @return the size taken by the shape in the canvas
+    */
   def getSize(): Double
 
+   /**
+    * @return Implementation of the drawed shape
+    */
   def draw(ctx : dom.CanvasRenderingContext2D):Unit
 
+
+  /**
+    * @return Used to modify the shape with modifier
+    */
   def change(x: CanvasyElementModifier[Shape]): Shape = {
     x.change(this)
     this
   }
 
+  /**
+    * @return Used to group shapes
+    */
   def and(x: Shape): ListBuffer[Shape] = {
     ListBuffer(this, x)
   }
-
   def and(x: CanvasyElementModifier[Shape]): Shape = {
      this.change(x)
   }
 
-
+  /**
+    * @return Define the translation of the coordinates in the canvas
+    */
   def translateY(Y: Int): Shape = {
     y += Y
     this
   }
-
   def translateX(X: Int): Shape = {
     x += X
     this
   }
 
+  /**
+    * @return Set the rotation of the shape
+    */
   def rotate(X: Double) : Shape = {
     if(X <= 90 && X >= -90)
       rotation = X
@@ -68,10 +87,12 @@ trait Shape {
     this
   }
 
+  /**
+    * @return Some apply()
+    */
   def apply(w: Style): Unit = {
     style = w
   }
-
   def apply(i: String): Unit = {
     id = i
   }
@@ -79,6 +100,9 @@ trait Shape {
 
 
 object Shape {
+  /**
+    * @return Implementation of some previous function for group of shape
+    */
   implicit class Group[I <: Shape](group: ListBuffer[I]) {
     def change[J <: CanvasyElementModifier[Shape]] (modifier: J): ListBuffer[I]  = {
       group foreach(_ change(modifier))
@@ -88,7 +112,6 @@ object Shape {
     def and[J <: CanvasyElementModifier[Shape]] (modifier: J): Unit = {
       group foreach(modifier change _)
     }
-
     def translateY(Y: Int) : ListBuffer[I] = {
       group foreach(_ translateY(Y))
       return group
@@ -104,6 +127,11 @@ object Shape {
       return group
     }
   }
+
+  /**
+    * @return Check th user input for the opacity and change the style
+    *         if correct
+    */
   def checkOpacity [K <: Shape](shape : K, ctx : dom.CanvasRenderingContext2D) : Unit = {
     val ctx_stroke_color = ctx.strokeStyle
     val ctx_stroke_width = ctx.lineWidth
@@ -205,6 +233,10 @@ object Shape {
     }
   }
 
+  /**
+    * @return Check th user input for the color and change the style
+    *         if correct
+    */
   def checkColor [K <: Shape](shape : K, ctx : dom.CanvasRenderingContext2D) : Unit = {
     val ctx_stroke_color = ctx.strokeStyle
     val ctx_stroke_width = ctx.lineWidth

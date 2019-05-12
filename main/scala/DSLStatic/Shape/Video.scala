@@ -34,14 +34,11 @@ case class Video (from : (Double, Double), path: String) extends Shape {
   }
 
   override def getSize(): Double = {
-    100
+    0
   }
 
   override def draw(ctx: CanvasRenderingContext2D): Unit = {
     var playVideo = (e: Event) => {
-      //video.style.display = "none"
-      println(video.videoWidth)
-      println(video.videoHeight)
       ctx.drawImage(video, x, y, video.videoWidth, video.videoHeight)
       timers.setInterval(30) {
         ctx.drawImage(video, x, y, video.videoWidth, video.videoHeight)

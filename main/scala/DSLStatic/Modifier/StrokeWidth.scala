@@ -5,7 +5,6 @@ import DSLStatic.Style.Stroke
 import DSLStatic.{CanvasyElementModifier, ShapeAttributeException}
 
 case class StrokeWidth(w: Double) extends CanvasyElementModifier[Shape] {
-  // every Shape has a stroke.
   override def change(x: Shape): Unit = {
     if (x == null)
       throw new ShapeAttributeException("shape cannot be null")

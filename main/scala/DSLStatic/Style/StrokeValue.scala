@@ -1,5 +1,9 @@
 package DSLStatic.Style
 
+/**
+  * Theses objects are used in order to limit wrong user input
+  */
+
 object SV  extends Enumeration {
   type SV = SValue
   case class SValue(sv: Int) extends Val(sv)

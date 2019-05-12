@@ -8,7 +8,7 @@ import org.scalajs.dom.CanvasRenderingContext2D
 
 case class TriangleEquilateral(from : (Double, Double), A: Double, s: SValue, o : Double) extends Triangle {
   if(A < 0) throw new ShapeAttributeException("A cannot be smaller than 0")
-  override var opacity: Double = if(o >= 0) o else throw new ShapeAttributeException("Opacity cannot be smaller than 0")
+  override var opacity: Double = if(o >= 0 && o <=1) o else throw new ShapeAttributeException("Opacity cannot be smaller than 0")
   override var style : Style =  if(s ==  SV.fill) new Fill else if (s == SV.stroke) new Stroke else null
   override var x : Double = if(from._1 >= 0) from._1 else throw new ShapeAttributeException("x cannot be smaller than 0")
   override var y : Double = if(from._2 >= 0) from._2 else throw new ShapeAttributeException("y cannot be smaller than 0")

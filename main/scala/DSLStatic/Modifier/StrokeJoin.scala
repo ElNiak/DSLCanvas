@@ -6,7 +6,6 @@ import DSLStatic.Style.Stroke
 import DSLStatic.{CanvasyElementModifier, ShapeAttributeException}
 
 case class StrokeJoin(w: JoinValue) extends CanvasyElementModifier[Shape] {
-  // every Shape has a stroke.
   override def change(x: Shape): Unit = {
     if (x == null)
       throw new ShapeAttributeException("shape cannot be null")

@@ -4,6 +4,9 @@ import DSLStatic.ShapeAttributeException
 
 import scala.collection.mutable.ListBuffer
 
+/**
+  * Used to represent gradient style
+  */
 case class Gradient(X1 : Double, Y1 : Double,X2 : Double, Y2 : Double, R1 : Double, R2 : Double,  color: ListBuffer[ColorRGB], off : ListBuffer[Double]) extends ColorStyle {
   val x1 : Double = if(X1 >= 0) X1 else throw new ShapeAttributeException("X1 cannot be smaller than 0")
   val y1 : Double = if(Y1 >= 0) Y1 else throw new ShapeAttributeException("Y1 cannot be smaller than 0")
@@ -13,6 +16,8 @@ case class Gradient(X1 : Double, Y1 : Double,X2 : Double, Y2 : Double, R1 : Doub
   val r2 : Double = if(R2 >= -1) R2 else throw new ShapeAttributeException("R2 cannot be smaller than 0")
   val colors : ListBuffer[ColorRGB] = color
   val offset : ListBuffer[Double] = off
+  for(i <- offset)
+    if(i < 0 || i >1) throw new ShapeAttributeException("offset must be [0,1]")
   if(colors.size != offset.size)throw new ShapeAttributeException("Number of offset must be equal to the number of color cannot be smaller than 0")
   def this() {
       this(0,0,0,0,0,0,null,null)
@@ -20,6 +25,9 @@ case class Gradient(X1 : Double, Y1 : Double,X2 : Double, Y2 : Double, R1 : Doub
 }
 
 object Gradient {
+  /**
+    * Extension of the String Context to add gradL and gradR
+    */
   implicit class GradientUtils(val sc: StringContext) extends AnyVal {
     def gradR(args : String) : Gradient = {// gradR"x1&y1&x2&y2&R1&R2&0.1#58a3f8,0.2#58a3f8"
       val array : Array[String] = args.split("&")
