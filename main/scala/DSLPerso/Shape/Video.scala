@@ -21,12 +21,15 @@ case class Video (from : (Double, Double), path: String) extends Shape {
   override var vx: Double = 0
   override var vy: Double = 0
   val video: HTMLVideoElement = document.createElement("video").asInstanceOf[HTMLVideoElement]
+  video.style.position = "absolute"
   video.controls = true
   video.src = path
+  var draggable : Boolean = false
   override val rangeSize: Double = getSize()
   override var ax: Double = 0
   override var ay: Double = 1
   override var id : String = ""
+  var scale : Double = 1
 
   def this(i : String,from : (Double, Double), path: String) {
     this(from,path)
@@ -38,13 +41,53 @@ case class Video (from : (Double, Double), path: String) extends Shape {
   }
 
   override def draw(ctx: CanvasRenderingContext2D): Unit = {
-    var playVideo = (e: Event) => {
-      ctx.drawImage(video, x, y, video.videoWidth, video.videoHeight)
+    val loadmetadata = (e: Event) => {
+      ctx.canvas.width = (video.videoWidth*scale).toInt + 10
+      ctx.canvas.height = (video.videoHeight*scale).toInt +10
+      video.setAttribute("height",(video.videoHeight*scale).toString)
+      video.setAttribute("width",(video.videoWidth*scale).toString)
+      ctx.drawImage(video, x, y, video.videoWidth, video.videoHeight, 0, 0, video.videoWidth*scale, video.videoHeight*scale)
+
+    }
+
+    val playVideo = (e: Event) => {
       timers.setInterval(30) {
-        ctx.drawImage(video, x, y, video.videoWidth, video.videoHeight)
+        ctx.drawImage(video, x, y, video.videoWidth, video.videoHeight, 0, 0, video.videoWidth*scale, video.videoHeight*scale)
       }
     }
-    video.addEventListener("play", playVideo, false)
+
+    def rect = ctx.canvas.getBoundingClientRect()
+    var offX : Double = 0
+    var offY : Double = 0
+    var isDragging = false
+    val onmousemove ={e: dom.MouseEvent =>
+      if(isDragging){
+        ctx.canvas.style.left = (e.clientX - offX) + "px"
+        ctx.canvas.style.top  = (e.clientY - offY) + "px"
+        video.style.left = (e.clientX - offX) + "px"
+        video.style.top  = (e.clientY - offY) + "px"
+      }
+    }
+    val onmouseup = { _: dom.MouseEvent =>
+      if(isDragging) {
+        dom.window.removeEventListener("mousemove", onmousemove, useCapture = true)
+        isDragging = false
+      }
+    }
+    val onmousedown ={e: dom.MouseEvent =>
+      if(!isDragging){
+        isDragging = true
+        offX = e.clientX - rect.left
+        offY = e.clientY - rect.top
+        dom.window.addEventListener("mousemove", onmousemove, useCapture = true)
+      }
+    }
+    if(draggable){
+      video.addEventListener("play", playVideo, false)
+      video.addEventListener("loadedmetadata", loadmetadata, false)
+    }
+    ctx.canvas.addEventListener("mousedown", onmousedown, useCapture = false)
+    dom.window.addEventListener("mouseup", onmouseup, useCapture = false)
     document.getElementById("container").appendChild(video)
   }
 }

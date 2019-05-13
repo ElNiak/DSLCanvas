@@ -12,7 +12,7 @@ import scala.scalajs.js
 class Canvasy[I <: Shape](shape : I) {
   val c : Canvas = document.createElement("canvas").asInstanceOf[html.Canvas]
   val ctx : CanvasRenderingContext2D = c.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
-  private val shape_groups : ListBuffer[I] = new ListBuffer[I]() // contains the shapes of the canvas
+  private var shape_groups : ListBuffer[I] = new ListBuffer[I]() // contains the shapes of the canvas
   //These are used to represente the "state" of the canvas and then modify the behavior
   private var movable : Boolean = false
   private var rotatable : Boolean = false
@@ -70,6 +70,17 @@ class Canvasy[I <: Shape](shape : I) {
     }
   }
 
+  def Background(src : String, op:Double) : Canvasy[I]  = {
+    val nwgroup : ListBuffer[I] = new ListBuffer[I]()
+    val i = new Picture(true, (0.0, 0.0), src)
+    i.opacity = op
+    nwgroup += i.asInstanceOf[I]
+    for(s <- shape_groups)
+      nwgroup += s
+
+    shape_groups = nwgroup
+    this
+  }
 
   /**
     * @return all stroke shape in the canvas
@@ -276,8 +287,16 @@ class Canvasy[I <: Shape](shape : I) {
     */
   private def addListenerMove(): Unit ={
     def reinitXY(): Unit ={
-      shape_groups foreach(_.asInstanceOf[Shape].x = 0)
-      shape_groups foreach(_.asInstanceOf[Shape].y = 0)
+      for(shap <- shape_groups){
+        shap.x = 0
+        shap.y = 0
+      }
+    }
+    for(shap <- shape_groups){
+      shap match {
+        case video: Video => video.draggable = true
+        case _ =>
+      }
     }
     if(shape_groups.length == 1){
       reinitXY()

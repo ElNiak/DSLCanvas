@@ -37,7 +37,7 @@ object dslDemoObjectPerso {
     canvasy2 += Rectangle((0,0),150,30,SV.fill,1)
     rectangle change FillColor(Color.red)
     rectangle rotate -90
-    canvasy2 draw()
+    //canvasy2 draw()
 
     // 3rd Canvas
     val xo = new PPLShape("iamid",(100.0, 100.0), SV.stroke, 0.5, ListBuffer[(Double,Double)]((0,0),(100,100),(100,50),(30,10),(25,50)),Color.orange)
@@ -56,7 +56,7 @@ object dslDemoObjectPerso {
     canvasy3.Shape change Speed(10,5)
     canvasy3 anim  (true,true) //set animation available and take in count the borders
     canvasy3 moveMouse true
-    canvasy3 draw()
+    //canvasy3 draw()
 
     // 4th Canvas
     var canvasy4 = new Canvasy(Text((50, 50), "Smoke Weed", 0, 0, 0, "#ff0000", "20px Times New Roman", false))
@@ -64,18 +64,28 @@ object dslDemoObjectPerso {
     canvasy4.FillShape change FillColor(Color.green)
     canvasy4.StrokeShape change StrokeCap(Cap.round) change StrokeJoin(Join.bevel) change StrokeDashOff(2) change StrokeWidth(10) change StrokeColor(Color.red)
     canvasy4 automaticResize false resizeCanvas (300,300)
-    //canvasy4 draw()
+    canvasy4 Background("src/main/scala/demo/ColourSurge1.jpg",0.5)
+    canvasy4 draw()
 
     // 5th Canvas
     var canvasy5 = new Canvasy(new PPAShape((0.0, 0.0), SV.fill, 0.5, ListBuffer[(Double,Double)]((0,0),(100,100),(100,50),(30,10),(25,50)),10.0,Color.red))
-    canvasy5 draw()
+    //canvasy5 draw()
+
     // 6th Canvas
-    val canvasy6 = new Canvasy(Video((0, 0), "src/main/scala/demo/video.ogv"))
+    val canvasy6 = new Canvasy(Video((50, 50), "src/main/scala/demo/video.ogv"))
     canvasy6 moveMouse true
+    canvasy6.FillShape[Video] change Scale(0.5)
     //canvasy6 draw()
 
     // 7th Canvas
     val canvasy7 = new Canvasy()
     //canvasy7 drawHand(200,200) translateX 50 translateY 600
+
+    val canvasy8 = new Canvasy(Picture((0, 0), "src/main/scala/demo/ColourSurge1.jpg"))
+    canvasy8 moveMouse true
+    canvasy8.FillShape[Picture] change Scale(0.5)
+    //canvasy8 draw()
+    canvasy8.FillShape[Picture] change Scale(0.7)
+    //canvasy8 draw()
   }
 }
