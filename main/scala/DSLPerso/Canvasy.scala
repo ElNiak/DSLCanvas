@@ -25,6 +25,10 @@ class Canvasy[I <: Shape](shape : I) {
   private var setEventMovable : Boolean = true
   private var setEventAnimation : Boolean = true
 
+  private var background : Boolean = false
+  private var backgroundS : String = ""
+  private var backgroundO: Double = 0
+
   //left and top offset of the canvas
   private var l : Double = 0
   private var t : Double = 0
@@ -71,14 +75,12 @@ class Canvasy[I <: Shape](shape : I) {
   }
 
   def Background(src : String, op:Double) : Canvasy[I]  = {
-    val nwgroup : ListBuffer[I] = new ListBuffer[I]()
     val i = new Picture(true, (0.0, 0.0), src)
     i.opacity = op
-    nwgroup += i.asInstanceOf[I]
-    for(s <- shape_groups)
-      nwgroup += s
-
-    shape_groups = nwgroup
+    i.draw(ctx)
+    background = true
+    backgroundO = op
+    backgroundS = src
     this
   }
 
@@ -441,7 +443,10 @@ class Canvasy[I <: Shape](shape : I) {
                     shape.vy += shape.ax
                   }
                 }
-                ctx.clearRect(0, 0, c.width, c.height)
+                if(background)
+                  Background(backgroundS,backgroundO)
+                else
+                  ctx.clearRect(0, 0, c.width, c.height)
                 draw()
               }
             }

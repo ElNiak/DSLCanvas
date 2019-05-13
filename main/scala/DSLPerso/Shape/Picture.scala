@@ -68,9 +68,10 @@ case class Picture (from : (Double, Double), path: String) extends Shape {
         val imageHeight = image.naturalHeight
         val width: Int = imageWidth
         val height: Int = imageHeight
+        ctx.save()
         ctx.globalAlpha = opacity
         ctx.drawImage(image, x, y, width, height, 0, 0, ctx.canvas.width, ctx.canvas.width)
-        ctx.globalAlpha = 1
+        ctx.restore()
       }
     }
   }

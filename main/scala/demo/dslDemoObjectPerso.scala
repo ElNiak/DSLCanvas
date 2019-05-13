@@ -42,6 +42,7 @@ object dslDemoObjectPerso {
     // 3rd Canvas
     val xo = new PPLShape("iamid",(100.0, 100.0), SV.stroke, 0.5, ListBuffer[(Double,Double)]((0,0),(100,100),(100,50),(30,10),(25,50)),Color.orange)
     var canvasy3 = new Canvasy(xo)
+    canvasy3 Background("src/main/scala/demo/ColourSurge1.jpg",0.5)
     canvasy3 += new MyShapeExemple(500,400,SV.fill,1,1)
     val RectTriangle = TriangleRectangle((100, 100), 40, 40, SV.stroke, 0.5)
     val EquTriangle  = new TriangleEquilateral("iamid",(200.0, 100.0), 100, SV.fill, 0.5)
@@ -56,7 +57,7 @@ object dslDemoObjectPerso {
     canvasy3.Shape change Speed(10,5)
     canvasy3 anim  (true,true) //set animation available and take in count the borders
     canvasy3 moveMouse true
-    //canvasy3 draw()
+    canvasy3 draw()
 
     // 4th Canvas
     var canvasy4 = new Canvasy(Text((50, 50), "Smoke Weed", 0, 0, 0, "#ff0000", "20px Times New Roman", false))
@@ -64,8 +65,7 @@ object dslDemoObjectPerso {
     canvasy4.FillShape change FillColor(Color.green)
     canvasy4.StrokeShape change StrokeCap(Cap.round) change StrokeJoin(Join.bevel) change StrokeDashOff(2) change StrokeWidth(10) change StrokeColor(Color.red)
     canvasy4 automaticResize false resizeCanvas (300,300)
-    canvasy4 Background("src/main/scala/demo/ColourSurge1.jpg",0.5)
-    canvasy4 draw()
+    //canvasy4 draw()
 
     // 5th Canvas
     var canvasy5 = new Canvasy(new PPAShape((0.0, 0.0), SV.fill, 0.5, ListBuffer[(Double,Double)]((0,0),(100,100),(100,50),(30,10),(25,50)),10.0,Color.red))
